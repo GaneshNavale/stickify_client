@@ -131,7 +131,7 @@ const NavBar = (props) => {
                   <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                     <Avatar
                       alt="Remy Sharp"
-                      src="https://picsum.photos/seed/picsum/200/300"
+                      src={user.avtar_image_url}
                       sx={{ width: 30, height: 30 }}
                     />
                   </IconButton>

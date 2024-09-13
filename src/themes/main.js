@@ -3,6 +3,16 @@ import { createTheme } from "@mui/material/styles";
 
 const main = createTheme({
   components: {
+    MuiLink: {
+      styleOverrides: {
+        root: {
+          // Ensure link color does not change when visited
+          "&:visited": {
+            color: teal[700],
+          },
+        },
+      },
+    },
     MuiAppBar: {
       styleOverrides: {
         colorPrimary: {

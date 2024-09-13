@@ -1,10 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Button,
-  Checkbox,
   FormControl,
-  FormControlLabel,
   FormLabel,
   Link,
   TextField,
@@ -14,32 +12,30 @@ import {
   Backdrop,
   CircularProgress,
 } from "@mui/material";
-import { NavLink } from "react-router-dom";
 import Card from "@mui/material/Card";
-import ForgotPassword from "./ForgotPassword";
+import { NavLink } from "react-router-dom";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import GoogleIcon from "@mui/icons-material/Google";
 import { useLinkedInLoginHook } from "../../hooks/useLinkedInLoginHook";
 import { useGoogleLoginHook } from "../../hooks/useGoogleLoginHook";
 import { useNavigate } from "react-router-dom";
 
-const SignIn = () => {
+const SignUp = () => {
   const [user, setUser] = useState({
+    firstName: "",
+    lastName: "",
     email: "",
     password: "",
+    confirmPassword: "",
   });
 
-  const [errors, setErrors] = useState({
-    email: "",
-    password: "",
-  });
-  const [open, setOpen] = useState(false);
+  const [errors, setErrors] = useState({});
   const [formIsValid, setFormIsValid] = useState(false);
   const [openBackdrop, setOpenBackdrop] = useState(false);
 
+  const navigate = useNavigate();
   const linkedInRedirectUri = `${window.location.origin}/linkedin`;
   const googleRedirectUri = `${window.location.origin}`;
-  const navigate = useNavigate();
 
   const handleBackdropClose = () => setOpenBackdrop(false);
   const handleBackdropOpen = () => setOpenBackdrop(true);
@@ -69,19 +65,12 @@ const SignIn = () => {
     handleError("LinkedIn")
   );
 
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    if (formIsValid) {
-      console.log("Form submitted", user);
-    }
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setUser((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
   };
 
   const handleBlur = (event) => {
@@ -93,6 +82,12 @@ const SignIn = () => {
     let fieldErrors = { ...errors };
 
     switch (fieldName) {
+      case "firstName":
+        fieldErrors.firstName = value ? "" : "First name is required";
+        break;
+      case "lastName":
+        fieldErrors.lastName = value ? "" : "Last name is required";
+        break;
       case "email":
         if (!value) {
           fieldErrors.email = "Email is required";
@@ -105,9 +100,22 @@ const SignIn = () => {
       case "password":
         if (!value) {
           fieldErrors.password = "Password is required";
+        } else if (value.length < 6) {
+          fieldErrors.password = "Password must be at least 6 characters long";
         } else {
           fieldErrors.password = "";
         }
+
+        // Also check if passwords match when password field is updated
+        if (user.confirmPassword && value !== user.confirmPassword) {
+          fieldErrors.confirmPassword = "Passwords do not match";
+        } else {
+          fieldErrors.confirmPassword = "";
+        }
+        break;
+      case "confirmPassword":
+        fieldErrors.confirmPassword =
+          value === user.password ? "" : "Passwords do not match";
         break;
       default:
         break;
@@ -115,6 +123,7 @@ const SignIn = () => {
 
     setErrors(fieldErrors);
     checkFormValidity(fieldErrors);
+    return fieldErrors;
   };
 
   const checkFormValidity = (fieldErrors) => {
@@ -124,14 +133,29 @@ const SignIn = () => {
     setFormIsValid(isValid);
   };
 
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    setUser((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const fieldErrors = validateAllFields();
+    setErrors(fieldErrors);
+
+    const isFormValid = Object.values(fieldErrors).every(
+      (error) => error === ""
+    );
+    if (isFormValid) {
+      console.log("Form submitted", user);
+    }
   };
 
+  const validateAllFields = () => {
+    const fieldErrors = {};
+
+    Object.keys(user).forEach((key) => {
+      const errorsForField = validateField(key, user[key]);
+      fieldErrors[key] = errorsForField[key] || "";
+    });
+
+    return fieldErrors;
+  };
   return (
     <Stack
       direction="column"
@@ -163,19 +187,16 @@ const SignIn = () => {
         }}
         variant="outlined"
       >
-        {/* <SitemarkIcon />  */}
-        {/* Todo: Add Logo */}
         <Typography
           component="h1"
           variant="h4"
           sx={{ width: "100%", fontSize: "clamp(2rem, 10vw, 2.15rem)" }}
         >
-          Sign in
+          Sign up
         </Typography>
         <Box
           component="form"
           onSubmit={handleSubmit}
-          noValidate
           sx={{
             display: "flex",
             flexDirection: "column",
@@ -184,97 +205,143 @@ const SignIn = () => {
           }}
         >
           <FormControl>
+            <FormLabel htmlFor="firstname">First Name</FormLabel>
+            <TextField
+              key="first-name"
+              id="firstName"
+              name="firstName"
+              type="text"
+              value={user.firstName}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              error={Boolean(errors.firstName)}
+              helperText={errors.firstName}
+              placeholder="Enter your first name"
+              fullWidth
+              variant="outlined"
+              size="small"
+            />
+          </FormControl>
+
+          <FormControl>
+            <FormLabel htmlFor="lastname">Last Name</FormLabel>
+            <TextField
+              key="last-name"
+              id="lastName"
+              name="lastName"
+              type="text"
+              value={user.lastName}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              error={Boolean(errors.lastName)}
+              helperText={errors.lastName}
+              placeholder="Enter your last name"
+              fullWidth
+              variant="outlined"
+              size="small"
+            />
+          </FormControl>
+
+          <FormControl>
             <FormLabel htmlFor="email">Email</FormLabel>
             <TextField
-              error={!!errors.email}
-              helperText={errors.email}
+              key="email"
               id="email"
-              type="email"
               name="email"
+              type="email"
               value={user.email}
-              placeholder="your@email.com"
-              autoComplete="email"
-              required
+              onChange={handleChange}
+              onBlur={handleBlur}
+              error={Boolean(errors.email)}
+              helperText={errors.email}
+              placeholder="Enter your email"
               fullWidth
               variant="outlined"
-              color={errors.email ? "error" : "primary"}
               size="small"
-              onBlur={handleBlur}
-              onChange={handleChange}
-              sx={{ ariaLabel: "email" }}
             />
           </FormControl>
+
           <FormControl>
-            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-              <FormLabel htmlFor="password">Password</FormLabel>
-              <Link
-                component="button"
-                onClick={handleClickOpen}
-                variant="body2"
-                sx={{ alignSelf: "baseline", textDecoration: "none" }}
-              >
-                Forgot your password?
-              </Link>
-            </Box>
+            <FormLabel htmlFor="password">Password</FormLabel>
             <TextField
-              error={!!errors.password}
-              helperText={errors.password}
-              name="password"
-              placeholder="••••••"
-              type="password"
+              key="password"
               id="password"
-              autoComplete="current-password"
-              required
-              fullWidth
-              variant="outlined"
-              size="small"
-              color={errors.password ? "error" : "primary"}
-              onBlur={handleBlur}
+              name="password"
+              type="password"
               value={user.password}
               onChange={handleChange}
+              onBlur={handleBlur}
+              error={Boolean(errors.password)}
+              helperText={errors.password}
+              placeholder="Enter your password"
+              fullWidth
+              variant="outlined"
+              size="small"
             />
           </FormControl>
-          <FormControlLabel
-            control={<Checkbox value="remember" color="primary" />}
-            label="Remember me"
-          />
-          <ForgotPassword open={open} handleClose={handleClose} />
-          <Button type="submit" fullWidth variant="contained">
-            Sign in
+
+          <FormControl>
+            <FormLabel htmlFor="confirm-password">Confirm Password</FormLabel>
+            <TextField
+              key="confirm-password"
+              id="confirmPassword"
+              name="confirmPassword"
+              type="password"
+              value={user.confirmPassword}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              error={Boolean(errors.confirmPassword)}
+              helperText={errors.confirmPassword}
+              placeholder="Confirm your password"
+              fullWidth
+              variant="outlined"
+              size="small"
+            />
+          </FormControl>
+
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            fullWidth
+            sx={{ mt: 2 }}
+          >
+            Sign Up
           </Button>
           <Typography sx={{ textAlign: "center" }}>
-            Don&apos;t have an account?{" "}
+            Already have an account?{" "}
             <span>
               <Link
                 as={NavLink}
-                to="/sign_up"
+                to="/sign_in"
                 variant="body2"
                 sx={{ alignSelf: "center", textDecoration: "none" }}
               >
-                Sign up
+                Sign in
               </Link>
             </span>
           </Typography>
         </Box>
+
         <Divider>or</Divider>
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
           <Button
-            type="submit"
+            type="button"
             fullWidth
             variant="outlined"
             onClick={() => googleLogin()}
             startIcon={<GoogleIcon />}
           >
-            Sign in with Google
+            Sign up with Google
           </Button>
           <Button
-            type="submit"
+            type="button"
             fullWidth
             variant="outlined"
             onClick={() => linkedInLogin()}
             startIcon={<LinkedInIcon />}
           >
-            Sign in with LinkedIn
+            Sign up with LinkedIn
           </Button>
         </Box>
       </Card>
@@ -288,4 +355,4 @@ const SignIn = () => {
   );
 };
 
-export default SignIn;
+export default SignUp;
