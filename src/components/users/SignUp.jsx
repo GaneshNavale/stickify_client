@@ -19,6 +19,10 @@ import GoogleIcon from "@mui/icons-material/Google";
 import { useLinkedInLoginHook } from "../../hooks/useLinkedInLoginHook";
 import { useGoogleLoginHook } from "../../hooks/useGoogleLoginHook";
 import { useNavigate } from "react-router-dom";
+import Grid from "@mui/material/Grid";
+import Alert from "@mui/material/Alert";
+import CheckIcon from "@mui/icons-material/Check";
+import * as API from "../../utils/api";
 
 const SignUp = () => {
   const [user, setUser] = useState({
@@ -32,6 +36,9 @@ const SignUp = () => {
   const [errors, setErrors] = useState({});
   const [formIsValid, setFormIsValid] = useState(false);
   const [openBackdrop, setOpenBackdrop] = useState(false);
+
+  const [alertMessage, setAlertMessage] = useState(null);
+  const [alertSeverity, setAlertSeverity] = useState("success");
 
   const navigate = useNavigate();
   const linkedInRedirectUri = `${window.location.origin}/linkedin`;
@@ -143,12 +150,29 @@ const SignUp = () => {
     );
     if (isFormValid) {
       console.log("Form submitted", user);
+      const userParams = {
+        email: user.email,
+        password: user.password,
+        password_confirmation: user.confirmPassword,
+        name: `${user.firstName} ${user.last}`,
+        confirm_success_url: "/",
+      };
+
+      // Submit form Logic
+      API.signUpUser(userParams)
+        .then((response) => {
+          setAlertSeverity("success");
+          setAlertMessage("You will receive an email within 5 minutes.");
+        })
+        .catch((error) => {
+          setAlertSeverity("error");
+          setAlertMessage("Sign up failed. Please try again.");
+        });
     }
   };
 
   const validateAllFields = () => {
     const fieldErrors = {};
-
     Object.keys(user).forEach((key) => {
       const errorsForField = validateField(key, user[key]);
       fieldErrors[key] = errorsForField[key] || "";
@@ -170,16 +194,31 @@ const SignUp = () => {
         backgroundRepeat: "no-repeat",
       }}
     >
+      {alertMessage && (
+        <Alert
+          icon={
+            alertSeverity === "success" ? (
+              <CheckIcon fontSize="inherit" />
+            ) : null
+          }
+          severity={alertSeverity}
+          sx={{
+            marginBottom: 5,
+          }}
+        >
+          {alertMessage}
+        </Alert>
+      )}
       <Card
         sx={{
-          "display": "flex",
-          "flexDirection": "column",
-          "alignSelf": "center",
-          "width": "100%",
-          "padding": 4,
-          "gap": 2,
-          "margin": "auto",
-          "boxShadow":
+          display: "flex",
+          flexDirection: "column",
+          alignSelf: "center",
+          width: "100%",
+          padding: 4,
+          gap: 2,
+          margin: "auto",
+          boxShadow:
             "hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px",
           "@media (min-width: 600px)": {
             maxWidth: "500px",
@@ -204,43 +243,50 @@ const SignUp = () => {
             gap: 2,
           }}
         >
-          <FormControl>
-            <FormLabel htmlFor="firstname">First Name</FormLabel>
-            <TextField
-              key="first-name"
-              id="firstName"
-              name="firstName"
-              type="text"
-              value={user.firstName}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              error={Boolean(errors.firstName)}
-              helperText={errors.firstName}
-              placeholder="Enter your first name"
-              fullWidth
-              variant="outlined"
-              size="small"
-            />
-          </FormControl>
-
-          <FormControl>
-            <FormLabel htmlFor="lastname">Last Name</FormLabel>
-            <TextField
-              key="last-name"
-              id="lastName"
-              name="lastName"
-              type="text"
-              value={user.lastName}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              error={Boolean(errors.lastName)}
-              helperText={errors.lastName}
-              placeholder="Enter your last name"
-              fullWidth
-              variant="outlined"
-              size="small"
-            />
-          </FormControl>
+          <Box sx={{ flexGrow: 1 }}>
+            <Grid container spacing={2}>
+              <Grid item xs={6}>
+                <FormControl>
+                  <FormLabel htmlFor="firstname">First Name</FormLabel>
+                  <TextField
+                    key="first-name"
+                    id="firstName"
+                    name="firstName"
+                    type="text"
+                    value={user.firstName}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={Boolean(errors.firstName)}
+                    helperText={errors.firstName}
+                    placeholder="Enter your first name"
+                    fullWidth
+                    variant="outlined"
+                    size="small"
+                  />
+                </FormControl>
+              </Grid>
+              <Grid item xs={6}>
+                <FormControl>
+                  <FormLabel htmlFor="lastname">Last Name</FormLabel>
+                  <TextField
+                    key="last-name"
+                    id="lastName"
+                    name="lastName"
+                    type="text"
+                    value={user.lastName}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={Boolean(errors.lastName)}
+                    helperText={errors.lastName}
+                    placeholder="Enter your last name"
+                    fullWidth
+                    variant="outlined"
+                    size="small"
+                  />
+                </FormControl>
+              </Grid>
+            </Grid>
+          </Box>
 
           <FormControl>
             <FormLabel htmlFor="email">Email</FormLabel>

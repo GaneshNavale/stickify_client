@@ -16,15 +16,14 @@ import {
 } from "@mui/material";
 import { NavLink } from "react-router-dom";
 import Card from "@mui/material/Card";
-import ForgotPassword from "./ForgotPassword";
+// import ForgotPassword from "./ForgotPassword";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import GoogleIcon from "@mui/icons-material/Google";
-import { useLinkedInLoginHook } from "../../hooks/useLinkedInLoginHook";
-import { useGoogleLoginHook } from "../../hooks/useGoogleLoginHook";
+// import { useGoogleLoginHook } from "../../hooks/useGoogleLoginHook";
 import { useNavigate } from "react-router-dom";
-import * as API from "../../utils/api";
+import * as API from "../utils/api";
 
-const SignIn = () => {
+const AdminSignIn = () => {
   const [user, setUser] = useState({
     email: "",
     password: "",
@@ -54,22 +53,6 @@ const SignIn = () => {
     console.error(`${platform} login failed: `, error);
   };
 
-  const { googleLogin } = useGoogleLoginHook(
-    googleRedirectUri,
-    handleBackdropClose,
-    handleBackdropOpen,
-    handleSuccess("Google"),
-    handleError("Google")
-  );
-
-  const { linkedInLogin } = useLinkedInLoginHook(
-    linkedInRedirectUri,
-    handleBackdropClose,
-    handleBackdropOpen,
-    handleSuccess("LinkedIn"),
-    handleError("LinkedIn")
-  );
-
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -88,7 +71,7 @@ const SignIn = () => {
         password: user.password,
       };
 
-      API.signInUser(userParams).then((response) => {
+      API.adminLogin(userParams).then((response) => {
         console.log("Successfull Login", response);
       });
     }
@@ -180,7 +163,7 @@ const SignIn = () => {
           variant="h4"
           sx={{ width: "100%", fontSize: "clamp(2rem, 10vw, 2.15rem)" }}
         >
-          Sign in
+          Admin Sign in
         </Typography>
         <Box
           component="form"
@@ -215,17 +198,6 @@ const SignIn = () => {
             />
           </FormControl>
           <FormControl>
-            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-              <FormLabel htmlFor="password">Password</FormLabel>
-              <Link
-                component="button"
-                onClick={handleClickOpen}
-                variant="body2"
-                sx={{ alignSelf: "baseline", textDecoration: "none" }}
-              >
-                Forgot your password?
-              </Link>
-            </Box>
             <TextField
               error={!!errors.password}
               helperText={errors.password}
@@ -248,43 +220,8 @@ const SignIn = () => {
             control={<Checkbox value="remember" color="primary" />}
             label="Remember me"
           />
-          <ForgotPassword open={open} handleClose={handleClose} />
           <Button type="submit" fullWidth variant="contained">
             Sign in
-          </Button>
-          <Typography sx={{ textAlign: "center" }}>
-            Don&apos;t have an account?{" "}
-            <span>
-              <Link
-                as={NavLink}
-                to="/sign_up"
-                variant="body2"
-                sx={{ alignSelf: "center", textDecoration: "none" }}
-              >
-                Sign up
-              </Link>
-            </span>
-          </Typography>
-        </Box>
-        <Divider>or</Divider>
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-          <Button
-            type="submit"
-            fullWidth
-            variant="outlined"
-            onClick={() => googleLogin()}
-            startIcon={<GoogleIcon />}
-          >
-            Sign in with Google
-          </Button>
-          <Button
-            type="submit"
-            fullWidth
-            variant="outlined"
-            onClick={() => linkedInLogin()}
-            startIcon={<LinkedInIcon />}
-          >
-            Sign in with LinkedIn
           </Button>
         </Box>
       </Card>
@@ -298,4 +235,4 @@ const SignIn = () => {
   );
 };
 
-export default SignIn;
+export default AdminSignIn;

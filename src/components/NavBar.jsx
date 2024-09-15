@@ -25,7 +25,7 @@ import { useNavigate } from "react-router-dom";
 
 const drawerWidth = 240;
 const drawerHeight = 360;
-const navItems = ["Home", "Agents", "Reviews", "Submit a Review"];
+const navItems = ["Home", "Orders", "About Us", "Contact Us"];
 const settings = ["Profile", "Logout"];
 
 const NavBar = (props) => {
@@ -178,7 +178,7 @@ const NavBar = (props) => {
             keepMounted: true, // Better open performance on mobile.
           }}
           sx={{
-            "display": { xs: "block", sm: "none" },
+            display: { xs: "block", sm: "none" },
             "& .MuiDrawer-paper": {
               width: drawerWidth,
               height: drawerHeight,

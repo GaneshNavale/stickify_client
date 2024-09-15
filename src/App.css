@@ -36,3 +36,14 @@
     transform: rotate(360deg);
   }
 }
+
+
+/* Admin Csss */
+
+.admin-sign-in-container {
+  max-width: 600px !important;
+  margin: 0 auto !important;
+  /* Center horizontally */
+  padding: 16px !important;
+  /* Adjust padding as needed */
+}
