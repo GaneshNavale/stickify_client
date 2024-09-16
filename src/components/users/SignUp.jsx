@@ -13,7 +13,7 @@ import {
   CircularProgress,
 } from "@mui/material";
 import Card from "@mui/material/Card";
-import { NavLink } from "react-router-dom";
+import { NavLink, redirect } from "react-router-dom";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import GoogleIcon from "@mui/icons-material/Google";
 import { useLinkedInLoginHook } from "../../hooks/useLinkedInLoginHook";
@@ -25,6 +25,14 @@ import CheckIcon from "@mui/icons-material/Check";
 import * as API from "../../utils/api";
 
 const SignUp = () => {
+  const navigate = useNavigate();
+
+  const handleClose = () => {
+    setShowAlert(false);
+  };
+
+  const [showAlert, setShowAlert] = useState(false);
+
   const [user, setUser] = useState({
     firstName: "",
     lastName: "",
@@ -40,7 +48,7 @@ const SignUp = () => {
   const [alertMessage, setAlertMessage] = useState(null);
   const [alertSeverity, setAlertSeverity] = useState("success");
 
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const linkedInRedirectUri = `${window.location.origin}/linkedin`;
   const googleRedirectUri = `${window.location.origin}`;
 
@@ -142,35 +150,48 @@ const SignUp = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+
     const fieldErrors = validateAllFields();
     setErrors(fieldErrors);
 
     const isFormValid = Object.values(fieldErrors).every(
       (error) => error === ""
     );
+
     if (isFormValid) {
       console.log("Form submitted", user);
+
       const userParams = {
         email: user.email,
         password: user.password,
         password_confirmation: user.confirmPassword,
-        name: `${user.firstName} ${user.last}`,
+        name: `${user.firstName} ${user.lastName}`,
         confirm_success_url: "/",
       };
 
-      // Submit form Logic
       API.signUpUser(userParams)
         .then((response) => {
           setAlertSeverity("success");
           setAlertMessage("You will receive an email within 5 minutes.");
+          navigate("/", {
+            state: {
+              message: "You’ll receive an email in just a moment..",
+            },
+          });
         })
         .catch((error) => {
+          console.log("User Error :", error);
           setAlertSeverity("error");
-          setAlertMessage("Sign up failed. Please try again.");
+          // message = error message in response
+          const message =
+            error.response?.data?.errors?.full_messages?.[0] ||
+            "Something went wrong, please try again";
+
+          setAlertMessage(message);
+          setShowAlert(true);
         });
     }
   };
-
   const validateAllFields = () => {
     const fieldErrors = {};
     Object.keys(user).forEach((key) => {
@@ -194,21 +215,30 @@ const SignUp = () => {
         backgroundRepeat: "no-repeat",
       }}
     >
-      {alertMessage && (
-        <Alert
-          icon={
-            alertSeverity === "success" ? (
-              <CheckIcon fontSize="inherit" />
-            ) : null
-          }
-          severity={alertSeverity}
-          sx={{
-            marginBottom: 5,
-          }}
-        >
-          {alertMessage}
-        </Alert>
+      {showAlert && (
+        <Stack sx={{ width: "100%", marginTop: 8 }} spacing={4}>
+          <Alert
+            icon={
+              alertSeverity === "success" ? (
+                <CheckIcon fontSize="inherit" />
+              ) : null
+            }
+            severity={alertSeverity}
+            sx={{
+              marginBottom: 5,
+            }}
+            onClose={handleClose}
+            action={
+              <Button color="inherit" size="small" onClick={handleClose}>
+                Close
+              </Button>
+            }
+          >
+            {alertMessage}
+          </Alert>
+        </Stack>
       )}
+
       <Card
         sx={{
           display: "flex",

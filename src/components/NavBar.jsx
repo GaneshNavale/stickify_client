@@ -22,11 +22,11 @@ import CssBaseline from "@mui/material/CssBaseline";
 import { useAuth } from "../hooks/useAuth";
 import { NavLink } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import UserSettingsMenu from "./users/UserSettingsMenu";
 
 const drawerWidth = 240;
 const drawerHeight = 360;
 const navItems = ["Home", "Orders", "About Us", "Contact Us"];
-const settings = ["Profile", "Logout"];
 
 const NavBar = (props) => {
   const { user, window } = props;
@@ -151,17 +151,17 @@ const NavBar = (props) => {
                   }}
                   open={Boolean(anchorElUser)}
                   onClose={handleCloseUserMenu}
+                  PaperProps={{
+                    sx: {
+                      width: 265, // Adjust this value to set the desired width
+                    },
+                  }}
                 >
-                  {settings.map((setting) => (
-                    <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                      <Typography
-                        sx={{ textAlign: "center" }}
-                        onClick={() => logout()}
-                      >
-                        {setting}
-                      </Typography>
-                    </MenuItem>
-                  ))}
+                  <UserSettingsMenu
+                    handleCloseUserMenu={handleCloseUserMenu}
+                    logout={logout}
+                    user={user}
+                  />
                 </Menu>
               </Box>
             )}
