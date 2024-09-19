@@ -1,28 +1,24 @@
-import Box from "@mui/material/Box";
 import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
+import CopyrightIcon from "@mui/icons-material/Copyright";
 
 function Copyright() {
   return (
-    <Container maxWidth="sm">
-      <Box sx={{ my: 4 }}>
-        <Typography
-          variant="body2"
-          align="center"
-          sx={{
-            color: "text.secondary",
-          }}
-        >
-          {"Copyright © "}
-          <Link color="inherit" href="#" underline="none">
-            Your Website
-          </Link>{" "}
-          {new Date().getFullYear()}
-          {"."}
-        </Typography>
-      </Box>
-    </Container>
+    <Typography variant="body1" color="text.secondary" align="center">
+      Copyright
+      <CopyrightIcon
+        fontSize="small"
+        style={{
+          verticalAlign: "middle",
+          marginLeft: "3px",
+        }}
+      />{" "}
+      {new Date().getFullYear()}{" "}
+      <Link underline="none" color="inherit" href="https://yourwebsite.com">
+        Stickify
+      </Link>
+      {"."}
+    </Typography>
   );
 }
 

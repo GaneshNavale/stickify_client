@@ -20,7 +20,16 @@ import { useLinkedInLoginHook } from "../../hooks/useLinkedInLoginHook";
 import { useGoogleLoginHook } from "../../hooks/useGoogleLoginHook";
 import { useNavigate } from "react-router-dom";
 
+import * as API from "../../utils/api";
+import Notification from "../../utils/notification";
+
 const SignUp = () => {
+  const navigate = useNavigate();
+
+  const [errors, setErrors] = useState({});
+  const [alert, setAlert] = useState({ message: "", type: "" });
+  const [openBackdrop, setOpenBackdrop] = useState(false);
+
   const [user, setUser] = useState({
     firstName: "",
     lastName: "",
@@ -29,11 +38,6 @@ const SignUp = () => {
     confirmPassword: "",
   });
 
-  const [errors, setErrors] = useState({});
-  const [formIsValid, setFormIsValid] = useState(false);
-  const [openBackdrop, setOpenBackdrop] = useState(false);
-
-  const navigate = useNavigate();
   const linkedInRedirectUri = `${window.location.origin}/linkedin`;
   const googleRedirectUri = `${window.location.origin}`;
 
@@ -122,27 +126,51 @@ const SignUp = () => {
     }
 
     setErrors(fieldErrors);
-    checkFormValidity(fieldErrors);
     return fieldErrors;
-  };
-
-  const checkFormValidity = (fieldErrors) => {
-    const isValid =
-      Object.values(fieldErrors).every((error) => error === "") &&
-      Object.values(user).every((val) => val !== "");
-    setFormIsValid(isValid);
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
     const fieldErrors = validateAllFields();
+    setAlert({ message: "", type: "" });
     setErrors(fieldErrors);
 
     const isFormValid = Object.values(fieldErrors).every(
       (error) => error === ""
     );
     if (isFormValid) {
-      console.log("Form submitted", user);
+      handleBackdropOpen();
+      const userParams = {
+        email: user.email,
+        password: user.password,
+        password_confirmation: user.confirmPassword,
+        name: `${user.firstName} ${user.lastName}`,
+        confirm_success_url: process.env.REACT_APP_CONFIRM_SUCCESS_URL,
+      };
+
+      API.signUpUser(userParams)
+        .then((response) => {
+          handleBackdropClose();
+          navigate("/", {
+            state: {
+              alert: {
+                message:
+                  "Thank you for registering! Please check your email for a confirmation link. You’ll need to confirm your account before logging in.",
+                type: "success",
+              },
+            },
+          });
+        })
+        .catch((error) => {
+          console.log("User Error :", error);
+          setAlert({
+            message:
+              error.response?.data?.errors?.full_messages?.[0] ||
+              "Something went wrong, please try again",
+            type: "error",
+          });
+          handleBackdropClose();
+        });
     }
   };
 
@@ -156,6 +184,7 @@ const SignUp = () => {
 
     return fieldErrors;
   };
+
   return (
     <Stack
       direction="column"
@@ -170,6 +199,7 @@ const SignUp = () => {
         backgroundRepeat: "no-repeat",
       }}
     >
+      <Notification alert={alert} setAlert={setAlert} />
       <Card
         sx={{
           "display": "flex",
@@ -222,7 +252,6 @@ const SignUp = () => {
               size="small"
             />
           </FormControl>
-
           <FormControl>
             <FormLabel htmlFor="lastname">Last Name</FormLabel>
             <TextField
@@ -241,7 +270,6 @@ const SignUp = () => {
               size="small"
             />
           </FormControl>
-
           <FormControl>
             <FormLabel htmlFor="email">Email</FormLabel>
             <TextField
@@ -260,7 +288,6 @@ const SignUp = () => {
               size="small"
             />
           </FormControl>
-
           <FormControl>
             <FormLabel htmlFor="password">Password</FormLabel>
             <TextField
@@ -279,7 +306,6 @@ const SignUp = () => {
               size="small"
             />
           </FormControl>
-
           <FormControl>
             <FormLabel htmlFor="confirm-password">Confirm Password</FormLabel>
             <TextField
@@ -298,7 +324,6 @@ const SignUp = () => {
               size="small"
             />
           </FormControl>
-
           <Button
             type="submit"
             variant="contained"

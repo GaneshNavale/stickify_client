@@ -7,18 +7,28 @@ import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 import { AuthProvider } from "./hooks/useAuth";
+
 import { BrowserRouter } from "react-router-dom";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import { AdminAuthProvider } from "./hooks/useAdminAuth";
+import AdminApp from "./AdminApp";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
 root.render(
   <BrowserRouter>
-    <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
-      <AuthProvider>
-        <App />
-      </AuthProvider>
-    </GoogleOAuthProvider>
+    {window.location.pathname.startsWith("/admin") && (
+      <AdminAuthProvider>
+        <AdminApp />
+      </AdminAuthProvider>
+    )}
+    {!window.location.pathname.startsWith("/admin") && (
+      <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
+        <AuthProvider>
+          <App />
+        </AuthProvider>
+      </GoogleOAuthProvider>
+    )}
   </BrowserRouter>
 );
 

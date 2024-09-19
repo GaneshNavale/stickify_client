@@ -22,6 +22,8 @@ import GoogleIcon from "@mui/icons-material/Google";
 import { useLinkedInLoginHook } from "../../hooks/useLinkedInLoginHook";
 import { useGoogleLoginHook } from "../../hooks/useGoogleLoginHook";
 import { useNavigate } from "react-router-dom";
+import * as API from "../../utils/api";
+import { useAuth } from "../../hooks/useAuth";
 
 const SignIn = () => {
   const [user, setUser] = useState({
@@ -34,8 +36,8 @@ const SignIn = () => {
     password: "",
   });
   const [open, setOpen] = useState(false);
-  const [formIsValid, setFormIsValid] = useState(false);
   const [openBackdrop, setOpenBackdrop] = useState(false);
+  const { login } = useAuth();
 
   const linkedInRedirectUri = `${window.location.origin}/linkedin`;
   const googleRedirectUri = `${window.location.origin}`;
@@ -79,9 +81,41 @@ const SignIn = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    if (formIsValid) {
-      console.log("Form submitted", user);
+    const fieldErrors = validateAllFields();
+    setErrors(fieldErrors);
+
+    const isFormValid = Object.values(fieldErrors).every(
+      (error) => error === ""
+    );
+
+    if (isFormValid) {
+      handleBackdropOpen();
+      const userParams = {
+        email: user.email,
+        password: user.password,
+      };
+
+      API.signInUser(userParams).then((response) => {
+        const userInfo = {
+          token: response.headers?.authorization,
+          ...response.data?.data,
+        };
+        login(userInfo);
+        navigate("/");
+        handleBackdropClose();
+      });
     }
+  };
+
+  const validateAllFields = () => {
+    const fieldErrors = {};
+
+    Object.keys(user).forEach((key) => {
+      const errorsForField = validateField(key, user[key]);
+      fieldErrors[key] = errorsForField[key] || "";
+    });
+
+    return fieldErrors;
   };
 
   const handleBlur = (event) => {
@@ -114,14 +148,7 @@ const SignIn = () => {
     }
 
     setErrors(fieldErrors);
-    checkFormValidity(fieldErrors);
-  };
-
-  const checkFormValidity = (fieldErrors) => {
-    const isValid =
-      Object.values(fieldErrors).every((error) => error === "") &&
-      Object.values(user).every((val) => val !== "");
-    setFormIsValid(isValid);
+    return fieldErrors;
   };
 
   const handleChange = (event) => {

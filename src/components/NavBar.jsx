@@ -20,42 +20,27 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import CssBaseline from "@mui/material/CssBaseline";
 import { useAuth } from "../hooks/useAuth";
-import { NavLink } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
 const drawerWidth = 240;
 const drawerHeight = 360;
-const navItems = ["Home", "Agents", "Reviews", "Submit a Review"];
-const settings = ["Profile", "Logout"];
+const navItems = ["Home", "Products", "About Us"];
 
 const NavBar = (props) => {
   const { user, window } = props;
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = React.useState(false);
 
-  const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
-  const handleOpenNavMenu = (event) => {
-    setAnchorElNav(event.currentTarget);
-  };
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
   };
-  const handleCloseNavMenu = () => {
-    setAnchorElNav(null);
-  };
+
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
 
-  // const [showSignInModal, setShowSignInModal] = useState(false);
   const { logout } = useAuth();
-
-  const handleLogOut = () => {
-    // logout(); // useAuth not working ........
-    localStorage.removeItem("user");
-    window.location.reload(false); // use to reload a page ....
-  };
 
   const handleDrawerToggle = () => {
     setMobileOpen((prevState) => !prevState);
@@ -131,7 +116,7 @@ const NavBar = (props) => {
                   <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                     <Avatar
                       alt="Remy Sharp"
-                      src={user.avtar_image_url}
+                      src={user.avatar_image_url}
                       sx={{ width: 30, height: 30 }}
                     />
                   </IconButton>
@@ -152,16 +137,19 @@ const NavBar = (props) => {
                   open={Boolean(anchorElUser)}
                   onClose={handleCloseUserMenu}
                 >
-                  {settings.map((setting) => (
-                    <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                      <Typography
-                        sx={{ textAlign: "center" }}
-                        onClick={() => logout()}
-                      >
-                        {setting}
-                      </Typography>
-                    </MenuItem>
-                  ))}
+                  <MenuItem key="profile" onClick={handleCloseUserMenu}>
+                    <Typography sx={{ textAlign: "center" }}>
+                      Profile
+                    </Typography>
+                  </MenuItem>
+                  <MenuItem key="logout" onClick={handleCloseUserMenu}>
+                    <Typography
+                      sx={{ textAlign: "center" }}
+                      onClick={() => logout()}
+                    >
+                      Logout
+                    </Typography>
+                  </MenuItem>
                 </Menu>
               </Box>
             )}
