@@ -10,11 +10,11 @@ import { useTheme } from "@mui/material/styles";
 import { ListItem, ListItemText, Grid, Box } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import * as API from "../../utils/api";
-import UpdateBillingAddress from "./UpdateBillingAddress";
+import UpdateShippingAddress from "./updateShippingAddress";
 
-const ListOfAllBillingAddressCard = ({ open, onClose }) => {
-  const [billingAddresses, setBillingAddresses] = useState([]);
-  const [selectedAddress, setSelectedAddress] = useState(null);
+const ListOfAllShippingAddressCard = ({ open, onClose }) => {
+  const [shippingAddresses, setShippingAddresses] = useState([]);
+  const [selectedShippingAddress, setSelectedShippingAddress] = useState(null);
   const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
 
   const theme = useTheme();
@@ -22,25 +22,26 @@ const ListOfAllBillingAddressCard = ({ open, onClose }) => {
 
   useEffect(() => {
     if (open) {
-      API.listAllBillingAddress()
+      API.listAllShippingAddress()
         .then((response) => {
-          console.log("Billing address detail Response", response);
-          setBillingAddresses(response.data);
+          console.log("Shipping address detail Response", response);
+          setShippingAddresses(response.data);
         })
         .catch((error) => {
-          console.log("billing address error", error);
+          console.log("Shipping address error", error);
         });
     }
   }, [open]);
 
   const handleEditClick = (address) => {
-    setSelectedAddress(address);
+    setSelectedShippingAddress(address);
+    console.log("Selected Shipping Address = ", address);
     setIsUpdateDialogOpen(true);
   };
 
   const handleCloseUpdateDialog = () => {
     setIsUpdateDialogOpen(false);
-    setSelectedAddress(null);
+    setSelectedShippingAddress(null);
   };
 
   return (
@@ -49,15 +50,15 @@ const ListOfAllBillingAddressCard = ({ open, onClose }) => {
         fullScreen={fullScreen}
         open={open}
         onClose={onClose}
-        aria-labelledby="list-billing-address-title"
+        aria-labelledby="list-shipping-address-title"
       >
-        <DialogTitle id="list-billing-address-title">
-          List of All Billing Addresses
+        <DialogTitle id="list-shipping-address-title">
+          List of All Shipping Addresses
         </DialogTitle>
         <DialogContent>
-          {billingAddresses.length > 0 ? (
+          {shippingAddresses.length > 0 ? (
             <Grid container spacing={2}>
-              {billingAddresses.map((address, index) => (
+              {shippingAddresses.map((address, index) => (
                 <Grid item xs={12} key={address.id}>
                   <ListItem
                     secondaryAction={
@@ -90,14 +91,14 @@ const ListOfAllBillingAddressCard = ({ open, onClose }) => {
                       }
                     />
                   </ListItem>
-                  {index < billingAddresses.length - 1 && (
+                  {index < shippingAddresses.length - 1 && (
                     <Divider style={{ margin: "16px 0" }} />
                   )}
                 </Grid>
               ))}
             </Grid>
           ) : (
-            <Typography>No billing addresses found.</Typography>
+            <Typography>No shipping addresses found.</Typography>
           )}
         </DialogContent>
         <DialogActions>
@@ -105,13 +106,13 @@ const ListOfAllBillingAddressCard = ({ open, onClose }) => {
         </DialogActions>
       </Dialog>
 
-      <UpdateBillingAddress
+      <UpdateShippingAddress
         open={isUpdateDialogOpen}
         onClose={handleCloseUpdateDialog}
-        address={selectedAddress}
+        address={selectedShippingAddress} // Pass selected address here
       />
     </>
   );
 };
 
-export default ListOfAllBillingAddressCard;
+export default ListOfAllShippingAddressCard;

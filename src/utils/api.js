@@ -46,12 +46,12 @@ export const listAllShippingAddress = () => {
   return axios.get("/shipping_addresses")
 }
 
-export const createShipping = () => {
-  return axios.post("/shipping_addresses")
+export const createShippingAddress = (params) => {
+  return axios.post("/shipping_addresses", params)
 }
 
-export const updateShippingAddress = (id) => {
-  return axios.put("/shipping_addresses", id)
+export const updateShippingAddress = (id, params) => {
+  return axios.put(`/shipping_addresses/${id}`, params);
 }
 
 export const deleteShippingAddress = (id) => {

@@ -6,6 +6,7 @@ import AdminDashboard from "./Admin/AdminDashboard";
 import AdminSignIn from "./Admin/AdminSignIn";
 import UserAccountSettings from "./pages/UserAccountSettings";
 import ListOfAllBillingAddressCard from "./components/users/ListOfAllBillingAddressCard";
+import UpdateShippingAddress from "./components/users/UpdateBillingAddress";
 
 const routes = [
   { path: "/", component: <Home />, exact: true },
@@ -14,6 +15,7 @@ const routes = [
   { path: "/linkedin", component: <LinkedInCallback />, exact: true },
   { path: "/user_account_settings", component: <UserAccountSettings />, exact: true },
   { path: "/list_of_all_address", component: <ListOfAllBillingAddressCard />, exact: true },
+  { path: "/updateShipping", component: <UpdateShippingAddress />, exact: true },
 
   // Admin Route
   { path: "/admin", component: <AdminDashboard />, exact: true },
