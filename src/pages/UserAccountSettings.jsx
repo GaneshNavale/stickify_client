@@ -3,7 +3,7 @@ import { useAuth } from "../hooks/useAuth";
 import { Grid, Avatar, Typography, ListItemText, Divider } from "@mui/material";
 import { ListItem, Button } from "@mui/material";
 import UpdateUserDetail from "../components/users/UpdateUserDetail";
-import UpdateBillingAddress from "../components/users/UpdateBillingAddress";
+import ListOfAllBillingAddressCard from "../components/users/ListOfAllBillingAddressCard";
 import UpdateShippingAddress from "../components/users/updateShipingAddress";
 import UpdateUserAccountPassword from "../components/users/UpdateUserAccountPassword";
 import * as API from "../utils/api";
@@ -15,31 +15,40 @@ const UserAccountSettings = () => {
   const [email, setEmail] = useState("");
   const [bio, setBio] = useState("");
 
-  console.log("User Detail", user);
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [openBillingDialog, setOpenBillingDialog] = useState(false);
-  const [openShippingDialog, setOpenShippingDialog] = useState(false);
-  const [openPasswordDialog, setOpenPasswordDialog] = useState(false);
+  const [isUserDetailDialogOpen, setIsUserDetailDialogOpen] = useState(false);
+  const [isBillingAddressDialogOpen, setIsBillingAddressDialogOpen] = useState(
+    false
+  );
+  const [
+    isShippingAddressDialogOpen,
+    setIsShippingAddressDialogOpen,
+  ] = useState(false);
+  const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
 
-  //handling user detail dialog
-  const handleOpenUserDetailDialog = () => setDialogOpen(true);
-  const handleCloseUserDetailDialog = () => setDialogOpen(false);
+  const [billingAddress, setBillingAddress] = useState([]);
 
-  //handling billing address dialog
-  const handleOpenBillingDialog = () => setOpenBillingDialog(true);
-  const handleCloseBillingDialog = () => setOpenBillingDialog(false);
+  // Handling user detail dialog
+  const handleOpenUserDetailDialog = () => setIsUserDetailDialogOpen(true);
+  const handleCloseUserDetailDialog = () => setIsUserDetailDialogOpen(false);
 
-  //handling shipping address dialog
-  const handleOpenShippingDialog = () => setOpenShippingDialog(true);
-  const handleCloseShippingDialog = () => setOpenShippingDialog(false);
+  // Handling billing address dialog
+  const handleOpenBillingAddressDialog = () =>
+    setIsBillingAddressDialogOpen(true);
+  const handleCloseBillingAddressDialog = () =>
+    setIsBillingAddressDialogOpen(false);
 
-  const handleOpenPasswordDialog = () => setOpenPasswordDialog(true);
-  const handleClosePasswordDialog = () => setOpenPasswordDialog(false);
+  // Handling shipping address dialog
+  const handleOpenShippingAddressDialog = () =>
+    setIsShippingAddressDialogOpen(true);
+  const handleCloseShippingAddressDialog = () =>
+    setIsShippingAddressDialogOpen(false);
+
+  const handleOpenPasswordDialog = () => setIsPasswordDialogOpen(true);
+  const handleClosePasswordDialog = () => setIsPasswordDialogOpen(false);
 
   useEffect(() => {
     API.getUserDetail(user.id)
       .then((response) => {
-        console.log("User detail Response", response);
         setBio(response.data.user.bio);
         setEmail(response.data.user.email);
         setName(response.data.user.name);
@@ -47,8 +56,18 @@ const UserAccountSettings = () => {
       .catch((error) => {
         console.log("user error", error);
       });
-  }, [handleOpenUserDetailDialog]);
+  }, [user.id]);
 
+  useEffect(() => {
+    API.listAllBillingAddress()
+      .then((response) => {
+        console.log("Billing address detail Response", response);
+        setBillingAddress(response.data); // Set the response data directly
+      })
+      .catch((error) => {
+        console.log("billing address error", error);
+      });
+  }, []);
   return (
     <>
       <Grid
@@ -85,6 +104,7 @@ const UserAccountSettings = () => {
         <h3>Account Settings</h3>
       </Grid>
       <Divider />
+
       {/* User Detail */}
       <Grid container spacing={2}>
         <Grid item xs={12}>
@@ -122,7 +142,7 @@ const UserAccountSettings = () => {
       </Grid>
 
       <UpdateUserDetail
-        open={dialogOpen}
+        open={isUserDetailDialogOpen}
         onClose={handleCloseUserDetailDialog}
       />
 
@@ -151,10 +171,11 @@ const UserAccountSettings = () => {
       </Grid>
 
       <UpdateUserAccountPassword
-        open={openPasswordDialog}
+        open={isPasswordDialogOpen}
         onClose={handleClosePasswordDialog}
       />
       <Divider />
+
       {/* Shipping Address Section */}
       <Grid item>
         <ListItem
@@ -162,7 +183,7 @@ const UserAccountSettings = () => {
             <Button
               variant="text"
               color="primary"
-              onClick={handleOpenShippingDialog}
+              onClick={handleOpenShippingAddressDialog}
             >
               Edit
             </Button>
@@ -178,13 +199,14 @@ const UserAccountSettings = () => {
           />
         </ListItem>
       </Grid>
+
       <UpdateShippingAddress
-        open={openShippingDialog}
-        onClose={handleCloseShippingDialog}
-        currentAddress={"706, Palash Oak Society, Baner Pune"} // Pass the shipping address
+        open={isShippingAddressDialogOpen}
+        onClose={handleCloseShippingAddressDialog}
       />
 
       <Divider />
+
       {/* Billing Address Section */}
       <Grid item>
         <ListItem
@@ -192,7 +214,7 @@ const UserAccountSettings = () => {
             <Button
               variant="text"
               color="primary"
-              onClick={handleOpenBillingDialog}
+              onClick={handleOpenBillingAddressDialog}
             >
               Edit
             </Button>
@@ -202,20 +224,20 @@ const UserAccountSettings = () => {
             primary="Billing Address"
             secondary={
               <Typography variant="body2" color="text.secondary">
-                706, Palash Oak Society, Baner Pune
+                {billingAddress.length + " Addresses"}
               </Typography>
             }
           />
         </ListItem>
       </Grid>
 
-      <UpdateBillingAddress
-        open={openBillingDialog}
-        onClose={handleCloseBillingDialog}
-        currentAddress={"706, Palash Oak Society, Baner Pune"} // Pass the billing address
+      <ListOfAllBillingAddressCard
+        open={isBillingAddressDialogOpen}
+        onClose={handleCloseBillingAddressDialog}
       />
       <Divider />
-      {/* Payment Method */}
+
+      {/* Payment Method Section */}
       <Grid item>
         <ListItem
           secondaryAction={
@@ -227,7 +249,9 @@ const UserAccountSettings = () => {
           <ListItemText
             primary="Payment Method"
             secondary={
-              <Typography variant="body2" color="text.secondary"></Typography>
+              <Typography variant="body2" color="text.secondary">
+                **** **** **** 1234
+              </Typography>
             }
           />
         </ListItem>

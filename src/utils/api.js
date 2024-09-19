@@ -29,13 +29,14 @@ export const listAllBillingAddress = () => {
   return axios.get("/billing_addresses")
 }
 
-export const createBillingAddress = () => {
-  return axios.post("/billing_addresses")
+export const createBillingAddress = (params) => {
+  return axios.post("/billing_addresses", params)
 }
 
-export const updateBillingAddress = (id) => {
-  return axios.put("/billing_addresses", id)
+export const updateBillingAddress = (id, params) => {
+  return axios.put(`/billing_addresses/${id}`, params);
 }
+
 
 export const deleteBillingAddress = (id) => {
   return axios.get("/billing_addresses", id)
