@@ -31,7 +31,6 @@ const UpdateUserDetail = ({ open, onClose }) => {
 
   useEffect(() => {
     API.getUserDetail(user.id).then((response) => {
-      console.log("User Details in account settings :", response);
       setUserDetail((prevDetail) => ({
         ...prevDetail,
         name: response.data.user.name,
@@ -56,7 +55,6 @@ const UpdateUserDetail = ({ open, onClose }) => {
       website: user.website || "",
       bio: user.bio || "",
     };
-    console.log("Email Check :", user.email);
     setUserDetail(initialDetails);
   }, [user]);
 

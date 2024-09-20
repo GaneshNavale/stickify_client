@@ -8,11 +8,11 @@ import {
 } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
 import Avatar from "@mui/material/Avatar";
+import { Link } from "react-router-dom";
 
 const UserSettingsMenu = ({ handleCloseUserMenu, logout, user }) => {
   return (
     <>
-      {/* User Information */}
       <MenuItem onClick={handleCloseUserMenu}>
         <Avatar
           alt="Remy Sharp"
@@ -31,13 +31,17 @@ const UserSettingsMenu = ({ handleCloseUserMenu, logout, user }) => {
 
       <Divider />
 
-      <MenuItem onClick={handleCloseUserMenu}>
-        <ListItemText>Account</ListItemText>
+      <MenuItem
+        component={Link}
+        to={`/user_account_settings`}
+        onClick={handleCloseUserMenu}
+      >
+        <ListItemText>Account Settings</ListItemText>
       </MenuItem>
 
-      <MenuItem onClick={handleCloseUserMenu}>
+      {/* <MenuItem onClick={handleCloseUserMenu}>
         <ListItemText>Settings</ListItemText>
-      </MenuItem>
+      </MenuItem> */}
 
       <MenuItem onClick={handleCloseUserMenu}>
         <ListItemText>Orders</ListItemText>

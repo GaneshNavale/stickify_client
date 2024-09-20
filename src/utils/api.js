@@ -71,3 +71,7 @@ export const updateUserDetail = (params) => {
 export const getUserDetail = (id) => {
   return axios.get("/get_user_details", id)
 }
+
+export const updateUserPassword = (user) => {
+  return axios.put("/update_user_password", {user :user});
+};
