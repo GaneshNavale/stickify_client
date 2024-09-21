@@ -21,7 +21,7 @@ import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import GoogleIcon from "@mui/icons-material/Google";
 import { useLinkedInLoginHook } from "../../hooks/useLinkedInLoginHook";
 import { useGoogleLoginHook } from "../../hooks/useGoogleLoginHook";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import * as API from "../../utils/api";
 import { useAuth } from "../../hooks/useAuth";
 import Notification from "../../utils/notification";
@@ -36,7 +36,12 @@ const SignIn = () => {
     email: "",
     password: "",
   });
-  const [alert, setAlert] = useState({ message: "", type: "" });
+  const location = useLocation();
+
+  const [alert, setAlert] = useState({
+    message: location.state?.alert?.message,
+    type: location.state?.alert?.type,
+  });
   const [open, setOpen] = useState(false);
   const [openBackdrop, setOpenBackdrop] = useState(false);
   const { login } = useAuth();
@@ -105,7 +110,6 @@ const SignIn = () => {
           };
           login(userInfo);
           navigate("/");
-          handleBackdropClose();
         })
         .catch((error) => {
           console.log("User Error :", error);
@@ -115,6 +119,8 @@ const SignIn = () => {
               "Something went wrong, please try again",
             type: "error",
           });
+        })
+        .finally(() => {
           handleBackdropClose();
         });
     }

@@ -22,6 +22,15 @@ export const listAllBillingAddress = () => {
   return axios.get("/billing_addresses")
 }
 
+
+export const sendResetPasswordInstruction = (params) => {
+  return axios.post("/auth/password", params);
+};
+
+export const resetUserPassword = (params, customHeaders) => {
+  return axios.put("/auth/password", params, { headers: { ...customHeaders } });
+};
+
 export const createBillingAddress = (params) => {
   return axios.post("/billing_addresses", params)
 }

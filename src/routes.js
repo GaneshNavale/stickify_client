@@ -3,6 +3,7 @@ import SignIn from "./components/users/SignIn";
 import SignUp from "./components/users/SignUp";
 import { LinkedInCallback } from "react-linkedin-login-oauth2";
 import UserAccountSettings from "./pages/UserAccountSettings";
+import ResetUserPassword from "./components/users/ResetUserPassword";
 
 const routes = [
   { path: "/", component: <Home />, exact: true },
@@ -12,6 +13,11 @@ const routes = [
   {
     path: "/user_account_settings",
     component: <UserAccountSettings />,
+    exact: true,
+  },
+  {
+    path: "/reset_user_password",
+    component: <ResetUserPassword />,
     exact: true,
   },
 ];

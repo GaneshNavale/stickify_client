@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Box,
   Button,
@@ -150,7 +150,6 @@ const SignUp = () => {
 
       API.signUpUser(userParams)
         .then((response) => {
-          handleBackdropClose();
           navigate("/", {
             state: {
               alert: {
@@ -169,6 +168,8 @@ const SignUp = () => {
               "Something went wrong, please try again",
             type: "error",
           });
+        })
+        .finally(() => {
           handleBackdropClose();
         });
     }
