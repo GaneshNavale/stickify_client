@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // Load user data from localStorage
-let user = window.localStorage.getItem("stickify_user");
+let user = window.localStorage.getItem("stickify_admin_user");
 user = user ? JSON.parse(user) : null;
 
 // Create axios instance

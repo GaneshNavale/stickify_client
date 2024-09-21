@@ -7,7 +7,9 @@ import Typography from "@mui/material/Typography";
 import CssBaseline from "@mui/material/CssBaseline";
 import { ThemeProvider } from "@mui/material/styles";
 import DashboardIcon from "@mui/icons-material/Dashboard";
+import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import PeopleIcon from "@mui/icons-material/People";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import ReviewsIcon from "@mui/icons-material/Reviews";
@@ -15,7 +17,8 @@ import { AppProvider } from "@toolpad/core/AppProvider";
 import { DashboardLayout } from "@toolpad/core/DashboardLayout";
 import Orders from "./orders";
 import AdminSignIn from "./components/users/AdminSignIn";
-import UserManagement from "./components/users";
+import Users from "./components/user_management/Users";
+import AdminUsers from "./components/user_management/AdminUsers";
 
 const NAVIGATION = [
   {
@@ -35,9 +38,21 @@ const NAVIGATION = [
   },
   { kind: "divider" },
   {
-    segment: "admin/users",
+    segment: "admin/users_management",
     title: "User Management",
     icon: <ManageAccountsIcon />,
+    children: [
+      {
+        segment: "",
+        title: "Users",
+        icon: <PeopleIcon />,
+      },
+      {
+        segment: "admin_users",
+        title: "Admin Users",
+        icon: <AdminPanelSettingsIcon />,
+      },
+    ],
   },
   {
     segment: "admin/reviews",
@@ -57,17 +72,6 @@ function AdminApp(props) {
     );
     return matchingNav ? `/${matchingNav.segment}` : "/admin/dashboard";
   });
-
-  // const router = useMemo(() => {
-  //   return {
-  //     pathname,
-  //     searchParams: new URLSearchParams(),
-  //     navigate: (path) => {
-  //       navigate(String(path));
-  //       setPathname(String(path));
-  //     },
-  //   };
-  // }, [pathname, navigate]);
 
   const router = useMemo(
     () => ({
@@ -136,9 +140,14 @@ function AdminApp(props) {
             >
               <Typography>Dashboard content for {pathname}</Typography>
             </Box>
+
             <Routes>
               <Route path="/admin/orders" element={<Orders />} />
-              <Route path="/admin/users" element={<UserManagement />} />
+              <Route path="/admin/users_management/*" element={<Users />} />
+              <Route
+                path="/admin/users_management/admin_users"
+                element={<AdminUsers />}
+              />
             </Routes>
           </DashboardLayout>
         </AppProvider>

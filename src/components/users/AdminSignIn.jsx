@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import Card from "@mui/material/Card";
 import ForgotPassword from "./ForgotPassword";
-import * as API from "../../utils/api";
+import * as AdminAPI from "../../utils/adminApi";
 import { useAdminAuth } from "../../hooks/useAdminAuth";
 import Notification from "../../utils/notification";
 
@@ -110,7 +110,7 @@ const AdminSignIn = () => {
           email: user.email,
           password: user.password,
         };
-        const response = await API.adminSignIn(userParams);
+        const response = await AdminAPI.adminSignIn(userParams);
         const userInfo = {
           token: response.headers?.authorization,
           ...response.data?.data,

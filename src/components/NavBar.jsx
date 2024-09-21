@@ -21,6 +21,7 @@ import MenuItem from "@mui/material/MenuItem";
 import CssBaseline from "@mui/material/CssBaseline";
 import { useAuth } from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
+import UserMenuItems from "./users/user_settings/UserMenuItems";
 
 const drawerWidth = 240;
 const drawerHeight = 360;
@@ -136,20 +137,17 @@ const NavBar = (props) => {
                   }}
                   open={Boolean(anchorElUser)}
                   onClose={handleCloseUserMenu}
+                  PaperProps={{
+                    sx: {
+                      width: 265, // Adjust this value to set the desired width
+                    },
+                  }}
                 >
-                  <MenuItem key="profile" onClick={handleCloseUserMenu}>
-                    <Typography sx={{ textAlign: "center" }}>
-                      Profile
-                    </Typography>
-                  </MenuItem>
-                  <MenuItem key="logout" onClick={handleCloseUserMenu}>
-                    <Typography
-                      sx={{ textAlign: "center" }}
-                      onClick={() => logout()}
-                    >
-                      Logout
-                    </Typography>
-                  </MenuItem>
+                  <UserMenuItems
+                    handleCloseUserMenu={handleCloseUserMenu}
+                    logout={logout}
+                    user={user}
+                  />
                 </Menu>
               </Box>
             )}

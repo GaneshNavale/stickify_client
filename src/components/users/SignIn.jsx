@@ -24,6 +24,7 @@ import { useGoogleLoginHook } from "../../hooks/useGoogleLoginHook";
 import { useNavigate } from "react-router-dom";
 import * as API from "../../utils/api";
 import { useAuth } from "../../hooks/useAuth";
+import Notification from "../../utils/notification";
 
 const SignIn = () => {
   const [user, setUser] = useState({
@@ -35,6 +36,7 @@ const SignIn = () => {
     email: "",
     password: "",
   });
+  const [alert, setAlert] = useState({ message: "", type: "" });
   const [open, setOpen] = useState(false);
   const [openBackdrop, setOpenBackdrop] = useState(false);
   const { login } = useAuth();
@@ -95,15 +97,26 @@ const SignIn = () => {
         password: user.password,
       };
 
-      API.signInUser(userParams).then((response) => {
-        const userInfo = {
-          token: response.headers?.authorization,
-          ...response.data?.data,
-        };
-        login(userInfo);
-        navigate("/");
-        handleBackdropClose();
-      });
+      API.signInUser(userParams)
+        .then((response) => {
+          const userInfo = {
+            token: response.headers?.authorization,
+            ...response.data?.data,
+          };
+          login(userInfo);
+          navigate("/");
+          handleBackdropClose();
+        })
+        .catch((error) => {
+          console.log("User Error :", error);
+          setAlert({
+            message:
+              error.response?.data?.errors?.[0] ||
+              "Something went wrong, please try again",
+            type: "error",
+          });
+          handleBackdropClose();
+        });
     }
   };
 
@@ -165,7 +178,7 @@ const SignIn = () => {
       justifyContent="space-between"
       sx={{
         height: "100%",
-        paddingTop: 10,
+        paddingTop: 3,
         paddingLeft: 3,
         paddingRight: 3,
         backgroundImage:
@@ -173,6 +186,7 @@ const SignIn = () => {
         backgroundRepeat: "no-repeat",
       }}
     >
+      <Notification alert={alert} setAlert={setAlert} />
       <Card
         sx={{
           "display": "flex",

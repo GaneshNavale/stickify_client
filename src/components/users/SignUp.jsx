@@ -191,7 +191,7 @@ const SignUp = () => {
       justifyContent="space-between"
       sx={{
         height: "100%",
-        paddingTop: 10,
+        paddingTop: 3,
         paddingLeft: 3,
         paddingRight: 3,
         backgroundImage:
