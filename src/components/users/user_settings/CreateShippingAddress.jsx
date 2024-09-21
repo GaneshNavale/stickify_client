@@ -9,8 +9,8 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import * as API from "../../../utils/api";
 
-const UpdateBillingAddress = ({ open, onClose, address }) => {
-  const [billingAddress, setBillingAddress] = useState({
+const CreateShippingAddress = ({ open, onClose }) => {
+  const [shippingAddress, setShippingAddress] = useState({
     full_name: "",
     mobile: "",
     address_line_1: "",
@@ -22,25 +22,9 @@ const UpdateBillingAddress = ({ open, onClose, address }) => {
   });
 
   const [isFormValid, setIsFormValid] = useState(false);
-  const [change, setChange] = useState(false);
 
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
-
-  useEffect(() => {
-    if (address) {
-      setBillingAddress({
-        full_name: address.full_name || "",
-        mobile: address.mobile || "",
-        address_line_1: address.address_line_1 || "",
-        address_line_2: address.address_line_2 || "",
-        landmark: address.landmark || "",
-        city: address.city || "",
-        state: address.state || "",
-        zip_code: address.zip_code || "",
-      });
-    }
-  }, [address]);
 
   useEffect(() => {
     const {
@@ -50,7 +34,7 @@ const UpdateBillingAddress = ({ open, onClose, address }) => {
       city,
       state,
       zip_code,
-    } = billingAddress;
+    } = shippingAddress;
 
     const isValid =
       full_name !== "" &&
@@ -61,35 +45,34 @@ const UpdateBillingAddress = ({ open, onClose, address }) => {
       zip_code !== "";
 
     setIsFormValid(isValid);
-  }, [billingAddress]);
+  }, [shippingAddress]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setBillingAddress((prev) => ({ ...prev, [name]: value }));
-    setChange(true); // Set to true when any field is changed
+    setShippingAddress((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = () => {
-    const userParams = {
-      full_name: billingAddress.full_name,
-      mobile: billingAddress.mobile,
-      address_line_1: billingAddress.address_line_1,
-      address_line_2: billingAddress.address_line_2,
-      landmark: billingAddress.landmark,
-      city: billingAddress.city,
-      state: billingAddress.state,
-      zip_code: billingAddress.zip_code,
+    const newAddress = {
+      full_name: shippingAddress.full_name,
+      mobile: shippingAddress.mobile,
+      address_line_1: shippingAddress.address_line_1,
+      address_line_2: shippingAddress.address_line_2,
+      landmark: shippingAddress.landmark,
+      city: shippingAddress.city,
+      state: shippingAddress.state,
+      zip_code: shippingAddress.zip_code,
     };
 
     if (isFormValid) {
-      API.updateBillingAddress(address.id, userParams)
+      API.createShippingAddress(newAddress)
         .then((response) => {
-          console.log("Billing Address Updated Successfully:", response);
+          console.log("Shipping Address Created Successfully:", response);
+          onClose();
         })
         .catch((error) => {
           console.error("Error occurred:", error);
         });
-      onClose();
     }
   };
 
@@ -98,10 +81,10 @@ const UpdateBillingAddress = ({ open, onClose, address }) => {
       fullScreen={fullScreen}
       open={open}
       onClose={onClose}
-      aria-labelledby="update-billing-address-title"
+      aria-labelledby="create-shipping-address-title"
     >
-      <DialogTitle id="update-billing-address-title">
-        Update Billing Address
+      <DialogTitle id="create-shipping-address-title">
+        Create New Shipping Address
       </DialogTitle>
       <DialogContent>
         <TextField
@@ -109,7 +92,7 @@ const UpdateBillingAddress = ({ open, onClose, address }) => {
           name="full_name"
           size="small"
           fullWidth
-          value={billingAddress.full_name}
+          value={shippingAddress.full_name}
           onChange={handleInputChange}
           required
           margin="dense"
@@ -119,7 +102,7 @@ const UpdateBillingAddress = ({ open, onClose, address }) => {
           name="mobile"
           size="small"
           fullWidth
-          value={billingAddress.mobile}
+          value={shippingAddress.mobile}
           onChange={handleInputChange}
           required
           margin="dense"
@@ -129,7 +112,7 @@ const UpdateBillingAddress = ({ open, onClose, address }) => {
           name="address_line_1"
           size="small"
           fullWidth
-          value={billingAddress.address_line_1}
+          value={shippingAddress.address_line_1}
           onChange={handleInputChange}
           required
           margin="dense"
@@ -139,7 +122,7 @@ const UpdateBillingAddress = ({ open, onClose, address }) => {
           name="address_line_2"
           size="small"
           fullWidth
-          value={billingAddress.address_line_2}
+          value={shippingAddress.address_line_2}
           onChange={handleInputChange}
           margin="dense"
         />
@@ -148,7 +131,7 @@ const UpdateBillingAddress = ({ open, onClose, address }) => {
           name="landmark"
           size="small"
           fullWidth
-          value={billingAddress.landmark}
+          value={shippingAddress.landmark}
           onChange={handleInputChange}
           margin="dense"
         />
@@ -157,7 +140,7 @@ const UpdateBillingAddress = ({ open, onClose, address }) => {
           name="city"
           size="small"
           fullWidth
-          value={billingAddress.city}
+          value={shippingAddress.city}
           onChange={handleInputChange}
           required
           margin="dense"
@@ -167,7 +150,7 @@ const UpdateBillingAddress = ({ open, onClose, address }) => {
           name="state"
           size="small"
           fullWidth
-          value={billingAddress.state}
+          value={shippingAddress.state}
           onChange={handleInputChange}
           required
           margin="dense"
@@ -177,7 +160,7 @@ const UpdateBillingAddress = ({ open, onClose, address }) => {
           name="zip_code"
           size="small"
           fullWidth
-          value={billingAddress.zip_code}
+          value={shippingAddress.zip_code}
           onChange={handleInputChange}
           required
           margin="dense"
@@ -185,7 +168,7 @@ const UpdateBillingAddress = ({ open, onClose, address }) => {
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
-        <Button onClick={handleSubmit} color="primary" disabled={!change}>
+        <Button onClick={handleSubmit} color="primary" disabled={!isFormValid}>
           Save
         </Button>
       </DialogActions>
@@ -193,4 +176,4 @@ const UpdateBillingAddress = ({ open, onClose, address }) => {
   );
 };
 
-export default UpdateBillingAddress;
+export default CreateShippingAddress;
