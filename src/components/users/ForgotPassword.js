@@ -55,7 +55,6 @@ const ForgotPassword = ({ open, handleClose }) => {
         redirect_url: `${process.env.REACT_APP_DOMAIN}/reset_user_password`,
       });
       navigate("/", {
-        replace: true,
         state: {
           alert: {
             message: `We emailed ${email} with a link to reset your password`,
@@ -66,7 +65,6 @@ const ForgotPassword = ({ open, handleClose }) => {
     } catch (error) {
       console.error("Password Reset Error:", error.response);
       navigate("/", {
-        replace: true,
         state: {
           alert: {
             message: `We emailed ${email} with a link to reset your password`,

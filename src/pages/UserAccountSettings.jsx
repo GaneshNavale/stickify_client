@@ -71,7 +71,12 @@ const UserAccountSettings = () => {
 
   // Dialog handlers
   const handleOpenUserDetailDialog = () => setIsUserDetailDialogOpen(true);
-  const handleCloseUserDetailDialog = () => setIsUserDetailDialogOpen(false);
+  const handleCloseUserDetailDialog = (event, reason) => {
+    if (reason === "backdropClick") {
+      return;
+    }
+    setIsUserDetailDialogOpen(false);
+  };
 
   const handleOpenBillingAddressDialog = () =>
     setIsBillingAddressDialogOpen(true);
@@ -136,7 +141,7 @@ const UserAccountSettings = () => {
               }
             />
             <Button
-              variant="text"
+              variant="outlined"
               color="primary"
               onClick={handleOpenUserDetailDialog}
             >
@@ -170,7 +175,7 @@ const UserAccountSettings = () => {
         <ListItem
           secondaryAction={
             <Button
-              variant="text"
+              variant="outlined"
               color="primary"
               onClick={handleOpenPasswordDialog}
             >
@@ -199,7 +204,7 @@ const UserAccountSettings = () => {
         <ListItem
           secondaryAction={
             <Button
-              variant="text"
+              variant="outlined"
               color="primary"
               onClick={handleOpenShippingAddressDialog}
             >
@@ -230,7 +235,7 @@ const UserAccountSettings = () => {
         <ListItem
           secondaryAction={
             <Button
-              variant="text"
+              variant="outlined"
               color="primary"
               onClick={handleOpenBillingAddressDialog}
             >
@@ -254,30 +259,6 @@ const UserAccountSettings = () => {
         onClose={handleCloseBillingAddressDialog}
       />
       <Divider />
-
-      {/* Payment Method */}
-      <Grid item>
-        <ListItem
-          secondaryAction={
-            <Button variant="text" color="primary">
-              Edit
-            </Button>
-          }
-        >
-          <ListItemText
-            primary="Payment Method"
-            secondary={
-              <Typography variant="body2" color="text.secondary">
-                **** **** **** 1234
-              </Typography>
-            }
-          />
-        </ListItem>
-      </Grid>
-      {/* <UpdateShippingAddress
-        open={isShippingAddressDialogOpen}
-        onClose={handleCloseShippingAddressDialog}
-      /> */}
     </>
   );
 };

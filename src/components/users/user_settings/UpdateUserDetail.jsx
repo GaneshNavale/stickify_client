@@ -3,68 +3,65 @@ import {
   Dialog,
   TextField,
   Button,
-  useMediaQuery,
-  useTheme,
+  Grid2 as Grid,
+  Backdrop,
+  CircularProgress,
 } from "@mui/material";
 
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
+
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+
 import * as API from "../../../utils/api";
 import { useAuth } from "../../../hooks/useAuth";
 
 const UpdateUserDetail = ({ open, onClose }) => {
-  const { user } = useAuth();
-  const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
-
+  const { user, login } = useAuth();
+  const [alert, setAlert] = useState({ message: "", type: "" });
+  const [openBackdrop, setOpenBackdrop] = useState(false);
+  const [dateOfBirth, setDateOfBirth] = useState(dayjs(user.dob || ""));
+  const [dobError, setDobError] = useState(null);
   const [userDetail, setUserDetail] = useState({
-    name: "",
-    email: "",
-    dateOfBirth: "",
-    mobile: "",
-    website: "",
-    bio: "",
+    name: user.name,
+    email: user.email,
+    mobile: user.mobile,
+    website: user.website,
+    bio: user.bio,
   });
 
-  const [change, setChange] = useState(false);
+  const dobErrorMessage = React.useMemo(() => {
+    switch (dobError) {
+      case "disableFuture": {
+        return "Date of Birth can't be a future date";
+      }
 
-  useEffect(() => {
-    API.getUserDetail(user.id).then((response) => {
-      setUserDetail((prevDetail) => ({
-        ...prevDetail,
-        name: response.data.user.name,
-        email: response.data.user.email,
-        dateOfBirth: response.data.user.dateOfBirth,
-        mobile: response.data.user.mobile,
-        website: response.data.user.website,
-        bio: response.data.user.bio,
-      }));
-    });
-  }, []);
+      case "invalidDate": {
+        return "Your date is not valid";
+      }
+
+      default: {
+        return "";
+      }
+    }
+  }, [dobError]);
 
   const [errors, setErrors] = useState({});
   const [hasChanges, setHasChanges] = useState(false);
 
-  useEffect(() => {
-    const initialDetails = {
-      name: user.name || "",
-      email: user.email || "",
-      dateOfBirth: user.dateOfBirth || "",
-      mobile: user.mobile || "",
-      website: user.website || "",
-      bio: user.bio || "",
-    };
-    setUserDetail(initialDetails);
-  }, [user]);
-
   const handleChange = (event) => {
+    if (!event) return;
     const { name, value } = event.target;
     setUserDetail((prevState) => ({
       ...prevState,
       [name]: value,
     }));
-    setChange(true);
     setHasChanges(true);
   };
 
@@ -78,20 +75,6 @@ const UpdateUserDetail = ({ open, onClose }) => {
 
     // Optional fields, no required checks
     switch (fieldName) {
-      case "email":
-        if (value && !/\S+@\S+\.\S+/.test(value)) {
-          fieldErrors.email = "Email is not valid";
-        } else {
-          fieldErrors.email = "";
-        }
-        break;
-      case "dateOfBirth":
-        if (value && !/\d{4}-\d{2}-\d{2}/.test(value)) {
-          fieldErrors.dateOfBirth = "Date of birth is not valid";
-        } else {
-          fieldErrors.dateOfBirth = "";
-        }
-        break;
       case "mobile":
         if (value && !/^\d+$/.test(value)) {
           fieldErrors.mobile = "Mobile number should contain only digits";
@@ -114,39 +97,41 @@ const UpdateUserDetail = ({ open, onClose }) => {
     return fieldErrors;
   };
 
-  // function to convert date from yyyy-mm-dd to dd-mm-yyyy
-  function reformatDate(dateString) {
-    if (
-      typeof dateString !== "string" ||
-      !/^\d{4}-\d{2}-\d{2}$/.test(dateString)
-    ) {
-      // throw new Error("Invalid date format. Expected yyyy-mm-dd.");
-    }
-    const [year, month, day] = dateString.split("-");
-    return `${day}-${month}-${year}`;
-  }
-
   const handleUserDetailUpdateSubmit = (event) => {
     event.preventDefault();
     const fieldErrors = validateAllFields();
+    setAlert({ message: "", type: "" });
+    setErrors(fieldErrors);
 
-    if (hasChanges) {
+    const isFormValid = Object.values(fieldErrors).every(
+      (error) => error === ""
+    );
+    if (hasChanges && isFormValid && !dobError) {
+      setOpenBackdrop(true);
       console.log("U are in handle update");
       const userParams = {
-        name: `${userDetail.name}`,
+        name: userDetail.name,
         bio: userDetail.bio,
         mobile: userDetail.mobile,
         website: userDetail.website,
         avatar_image: userDetail.avatar,
+        dob: dateOfBirth?.format("DD-MM-YYYY"),
       };
 
       API.updateUserDetail(userParams)
         .then((response) => {
+          console.log("response", response);
+          const updatedUser = {
+            ...response.data.user,
+            token: user.token,
+          };
+          login(updatedUser);
           onClose();
         })
-        .catch((error) => {});
-    } else {
-      console.log("No changes detected");
+        .catch((error) => {})
+        .finally(() => {
+          setOpenBackdrop(false);
+        });
     }
   };
 
@@ -162,107 +147,167 @@ const UpdateUserDetail = ({ open, onClose }) => {
 
   return (
     <Dialog
-      fullScreen={fullScreen}
       open={open}
       onClose={onClose}
+      maxWidth="sm"
+      fullWidth
       aria-labelledby="update-user-details-title"
     >
       <DialogTitle id="update-user-details-title">
         Update User Details
       </DialogTitle>
+      <IconButton
+        aria-label="close"
+        onClick={onClose}
+        sx={(theme) => ({
+          position: "absolute",
+          right: 8,
+          top: 8,
+          color: theme.palette.grey[500],
+        })}
+      >
+        <CloseIcon />
+      </IconButton>
       <DialogContent>
-        <TextField
-          label="Name"
-          name="name"
-          type="text"
-          size="small"
-          fullWidth
-          value={userDetail.name}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          error={Boolean(errors.name)}
-          helperText={errors.name}
-          margin="dense"
-        />
-        <TextField
-          label="Email"
-          name="email"
-          type="email"
-          size="small"
-          fullWidth
-          value={userDetail.email}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          error={Boolean(errors.email)}
-          helperText={errors.email}
-          margin="dense"
-        />
-        <TextField
-          label="Date of Birth"
-          name="dateOfBirth"
-          type="date"
-          size="small"
-          fullWidth
-          InputLabelProps={{ shrink: true }}
-          value={userDetail.dateOfBirth}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          error={Boolean(errors.dateOfBirth)}
-          helperText={errors.dateOfBirth}
-          margin="dense"
-        />
-        <TextField
-          label="Mobile"
-          name="mobile"
-          type="tel"
-          size="small"
-          fullWidth
-          value={userDetail.mobile}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          error={Boolean(errors.mobile)}
-          helperText={errors.mobile}
-          margin="dense"
-        />
-        <TextField
-          label="Website"
-          name="website"
-          type="url"
-          size="small"
-          fullWidth
-          value={userDetail.website}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          error={Boolean(errors.website)}
-          helperText={errors.website}
-          margin="dense"
-        />
-        <TextField
-          label="Bio"
-          name="bio"
-          multiline
-          size="small"
-          rows={3}
-          fullWidth
-          value={userDetail.bio}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          placeholder="Enter your bio"
-          margin="dense"
-        />
+        <Grid container spacing={2} direction="column">
+          <Grid item md={12}>
+            <TextField
+              label="Name"
+              name="name"
+              type="text"
+              size="small"
+              fullWidth
+              value={userDetail.name}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              error={Boolean(errors.name)}
+              helperText={errors.name}
+              margin="dense"
+            />
+          </Grid>
+          <Grid item>
+            <TextField
+              label="Email"
+              name="email"
+              type="email"
+              size="small"
+              fullWidth
+              value={userDetail.email}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              error={Boolean(errors.email)}
+              helperText={errors.email}
+              margin="dense"
+            />
+          </Grid>
+          <Grid item>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DatePicker
+                label="Date of Birth"
+                value={dateOfBirth}
+                onChange={(newValue) => {
+                  setDateOfBirth(newValue);
+                  setHasChanges(true);
+                }}
+                disableFuture
+                format="DD-MM-YYYY"
+                sx={{ width: "100%" }}
+                onError={(newError) => setDobError(newError)}
+                slotProps={{
+                  textField: {
+                    helperText: dobErrorMessage,
+                  },
+                }}
+              />
+            </LocalizationProvider>
+          </Grid>
+          {/* <Grid item>
+            <TextField
+              label="Date of Birth"
+              name="dateOfBirth"
+              type="date"
+              size="small"
+              fullWidth
+              InputLabelProps={{ shrink: true }}
+              value={dayjs("2022-04-17")}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              error={Boolean(errors.dateOfBirth)}
+              helperText={errors.dateOfBirth}
+              margin="dense"
+            />
+          </Grid> */}
+          <Grid item>
+            <TextField
+              label="Mobile"
+              name="mobile"
+              type="tel"
+              size="small"
+              fullWidth
+              value={userDetail.mobile}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              error={Boolean(errors.mobile)}
+              helperText={errors.mobile}
+              margin="dense"
+            />
+          </Grid>
+          <Grid item>
+            <TextField
+              label="Website"
+              name="website"
+              type="url"
+              size="small"
+              fullWidth
+              value={userDetail.website}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              error={Boolean(errors.website)}
+              helperText={errors.website}
+              margin="dense"
+            />
+          </Grid>
+          <Grid item>
+            <TextField
+              label="Bio"
+              name="bio"
+              multiline
+              size="small"
+              rows={3}
+              fullWidth
+              value={userDetail.bio}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              placeholder="Enter your bio"
+              margin="dense"
+            />
+          </Grid>
+        </Grid>
       </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
-        <Button
-          type="submit"
-          color="primary"
-          variant="contained"
-          disabled={!change}
-          onClick={handleUserDetailUpdateSubmit}
-        >
-          Save Changes
-        </Button>
+      <DialogActions sx={{ paddingBottom: 3 }}>
+        <Grid container spacing={2} direction="row">
+          <Grid item>
+            <Button onClick={onClose}>Cancel</Button>
+          </Grid>
+          <Grid item sx={{ marginRight: 2 }}>
+            <Button
+              type="submit"
+              color="primary"
+              variant="contained"
+              disabled={!hasChanges}
+              onClick={handleUserDetailUpdateSubmit}
+            >
+              Save Changes
+            </Button>
+          </Grid>
+        </Grid>
       </DialogActions>
+      <Backdrop
+        sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}
+        open={openBackdrop}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
     </Dialog>
   );
 };
