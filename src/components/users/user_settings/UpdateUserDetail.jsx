@@ -6,6 +6,7 @@ import {
   Grid2 as Grid,
   Backdrop,
   CircularProgress,
+  Divider,
 } from "@mui/material";
 
 import DialogActions from "@mui/material/DialogActions";
@@ -13,10 +14,9 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
+import AvatarUpload from "./AvatarUpload";
 
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
 import * as API from "../../../utils/api";
@@ -26,7 +26,10 @@ const UpdateUserDetail = ({ open, onClose }) => {
   const { user, login } = useAuth();
   const [alert, setAlert] = useState({ message: "", type: "" });
   const [openBackdrop, setOpenBackdrop] = useState(false);
-  const [dateOfBirth, setDateOfBirth] = useState(dayjs(user.dob || ""));
+  const [dateOfBirth, setDateOfBirth] = useState(
+    user.dob ? dayjs(user.dob, "DD-MM-YYYY") : null
+  );
+
   const [dobError, setDobError] = useState(null);
   const [userDetail, setUserDetail] = useState({
     name: user.name,
@@ -34,6 +37,7 @@ const UpdateUserDetail = ({ open, onClose }) => {
     mobile: user.mobile,
     website: user.website,
     bio: user.bio,
+    avatarImage: null,
   });
 
   const dobErrorMessage = React.useMemo(() => {
@@ -108,17 +112,26 @@ const UpdateUserDetail = ({ open, onClose }) => {
     );
     if (hasChanges && isFormValid && !dobError) {
       setOpenBackdrop(true);
-      console.log("U are in handle update");
-      const userParams = {
+      let userParams = {
         name: userDetail.name,
         bio: userDetail.bio,
         mobile: userDetail.mobile,
         website: userDetail.website,
-        avatar_image: userDetail.avatar,
-        dob: dateOfBirth?.format("DD-MM-YYYY"),
       };
 
-      API.updateUserDetail(userParams)
+      const formData = new FormData();
+
+      for (const key in userParams) {
+        formData.append(`user[${key}]`, userParams[key]);
+      }
+
+      if (userDetail.avatarImage) {
+        formData.append("user[avatar_image]", userDetail.avatarImage);
+      }
+
+      formData.append("user[dob]", dateOfBirth?.format("DD-MM-YYYY") || "");
+
+      API.updateUserDetail(formData)
         .then((response) => {
           console.log("response", response);
           const updatedUser = {
@@ -128,7 +141,10 @@ const UpdateUserDetail = ({ open, onClose }) => {
           login(updatedUser);
           onClose();
         })
-        .catch((error) => {})
+        .catch((error) => {
+          setAlert({ message: "Failed to update user details", type: "error" });
+          console.error("Update user error:", error);
+        })
         .finally(() => {
           setOpenBackdrop(false);
         });
@@ -143,6 +159,14 @@ const UpdateUserDetail = ({ open, onClose }) => {
     });
 
     return fieldErrors;
+  };
+
+  const handleImageUpload = (imageData) => {
+    console.log("Image data to upload:", imageData);
+    setUserDetail((prevState) => ({
+      ...prevState,
+      avatarImage: imageData,
+    }));
   };
 
   return (
@@ -163,13 +187,19 @@ const UpdateUserDetail = ({ open, onClose }) => {
           position: "absolute",
           right: 8,
           top: 8,
-          color: theme.palette.grey[500],
         })}
       >
         <CloseIcon />
       </IconButton>
+      <Divider />
       <DialogContent>
         <Grid container spacing={2} direction="column">
+          <Grid item>
+            <AvatarUpload
+              avatarImageUrl={user.avatar_image_url}
+              onImageUpload={handleImageUpload}
+            />
+          </Grid>
           <Grid item md={12}>
             <TextField
               label="Name"
@@ -201,42 +231,24 @@ const UpdateUserDetail = ({ open, onClose }) => {
             />
           </Grid>
           <Grid item>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker
-                label="Date of Birth"
-                value={dateOfBirth}
-                onChange={(newValue) => {
-                  setDateOfBirth(newValue);
-                  setHasChanges(true);
-                }}
-                disableFuture
-                format="DD-MM-YYYY"
-                sx={{ width: "100%" }}
-                onError={(newError) => setDobError(newError)}
-                slotProps={{
-                  textField: {
-                    helperText: dobErrorMessage,
-                  },
-                }}
-              />
-            </LocalizationProvider>
-          </Grid>
-          {/* <Grid item>
-            <TextField
+            <DatePicker
               label="Date of Birth"
-              name="dateOfBirth"
-              type="date"
-              size="small"
-              fullWidth
-              InputLabelProps={{ shrink: true }}
-              value={dayjs("2022-04-17")}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              error={Boolean(errors.dateOfBirth)}
-              helperText={errors.dateOfBirth}
-              margin="dense"
+              value={dateOfBirth}
+              onChange={(newValue) => {
+                setDateOfBirth(newValue);
+                setHasChanges(true);
+              }}
+              disableFuture
+              format="DD-MM-YYYY"
+              sx={{ width: "100%" }}
+              onError={(newError) => setDobError(newError)}
+              slotProps={{
+                textField: {
+                  helperText: dobErrorMessage,
+                },
+              }}
             />
-          </Grid> */}
+          </Grid>
           <Grid item>
             <TextField
               label="Mobile"
@@ -284,12 +296,13 @@ const UpdateUserDetail = ({ open, onClose }) => {
           </Grid>
         </Grid>
       </DialogContent>
-      <DialogActions sx={{ paddingBottom: 3 }}>
+      <Divider />
+      <DialogActions sx={{ padding: 2 }}>
         <Grid container spacing={2} direction="row">
           <Grid item>
             <Button onClick={onClose}>Cancel</Button>
           </Grid>
-          <Grid item sx={{ marginRight: 2 }}>
+          <Grid item sx={{ marginRight: 1 }}>
             <Button
               type="submit"
               color="primary"

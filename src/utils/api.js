@@ -64,11 +64,13 @@ export const makeDefaulsShippingAddress = (id) => {
   return axios.patch(`/shipping_addresses/${id}/mark_default`);
 }
 
-
-// user
-export const updateUserDetail = (params) => {
-  return axios.put("/update_user_details", {user:params})
-}
+export const updateUserDetail = (formData) => {
+  return axios.put("/update_user_details", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+};
 
 export const getUserDetail = (id) => {
   return axios.get("/get_user_details", id)
