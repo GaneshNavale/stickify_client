@@ -9,7 +9,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import * as API from "../../../utils/api";
 
-const UpdateBillingAddress = ({ open, onClose, address }) => {
+const CreateBillingAddress = ({ open, onClose }) => {
   const [billingAddress, setBillingAddress] = useState({
     full_name: "",
     mobile: "",
@@ -26,21 +26,6 @@ const UpdateBillingAddress = ({ open, onClose, address }) => {
 
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
-
-  useEffect(() => {
-    if (address) {
-      setBillingAddress({
-        full_name: address.full_name || "",
-        mobile: address.mobile || "",
-        address_line_1: address.address_line_1 || "",
-        address_line_2: address.address_line_2 || "",
-        landmark: address.landmark || "",
-        city: address.city || "",
-        state: address.state || "",
-        zip_code: address.zip_code || "",
-      });
-    }
-  }, [address]);
 
   useEffect(() => {
     const {
@@ -82,9 +67,9 @@ const UpdateBillingAddress = ({ open, onClose, address }) => {
     };
 
     if (isFormValid) {
-      API.updateBillingAddress(address.id, userParams)
+      API.createBillingAddress(userParams)
         .then((response) => {
-          console.log("Billing Address Updated Successfully:", response);
+          console.log("Billing Address Created Successfully:", response);
         })
         .catch((error) => {
           console.error("Error occurred:", error);
@@ -98,10 +83,10 @@ const UpdateBillingAddress = ({ open, onClose, address }) => {
       fullScreen={fullScreen}
       open={open}
       onClose={onClose}
-      aria-labelledby="update-billing-address-title"
+      aria-labelledby="create-billing-address-title"
     >
-      <DialogTitle id="update-billing-address-title">
-        Update Billing Address
+      <DialogTitle id="create-billing-address-title">
+        Create New Billing Address
       </DialogTitle>
       <DialogContent>
         <TextField
@@ -193,4 +178,4 @@ const UpdateBillingAddress = ({ open, onClose, address }) => {
   );
 };
 
-export default UpdateBillingAddress;
+export default CreateBillingAddress;

@@ -3,13 +3,13 @@ import {
   Dialog,
   TextField,
   Button,
-  FormControl,
-  FormLabel,
-  Typography,
-  Box,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
+
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
 import * as API from "../../../utils/api";
 import { useAuth } from "../../../hooks/useAuth";
 
@@ -165,144 +165,104 @@ const UpdateUserDetail = ({ open, onClose }) => {
       fullScreen={fullScreen}
       open={open}
       onClose={onClose}
-      aria-labelledby="responsive-dialog-title"
-      sx={{
-        padding: 4,
-        display: "flex",
-        flexDirection: "column",
-        gap: 2,
-      }}
+      aria-labelledby="update-user-details-title"
     >
-      <Box
-        component="form"
-        onSubmit={handleUserDetailUpdateSubmit}
-        sx={{
-          padding: 4,
-          gap: 2,
-        }}
-      >
-        <Typography variant="h5">Update User Details</Typography>
-
-        <FormControl fullWidth>
-          <FormLabel htmlFor="name" sx={{ marginTop: 2, marginBottom: 1 }}>
-            Name
-          </FormLabel>
-          <TextField
-            id="name"
-            name="name"
-            type="text"
-            size="small"
-            value={userDetail.name}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            error={Boolean(errors.name)}
-            helperText={errors.name}
-          />
-        </FormControl>
-
-        <FormControl fullWidth>
-          <FormLabel htmlFor="email" sx={{ marginTop: 2, marginBottom: 1 }}>
-            Email
-          </FormLabel>
-          <TextField
-            id="email"
-            name="email"
-            type="email"
-            size="small"
-            value={userDetail.email}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            error={Boolean(errors.email)}
-            helperText={errors.email}
-          />
-        </FormControl>
-
-        <FormControl fullWidth>
-          <FormLabel
-            htmlFor="dateOfBirth"
-            sx={{ marginTop: 2, marginBottom: 1 }}
-          >
-            Date of Birth
-          </FormLabel>
-          <TextField
-            id="dateOfBirth"
-            name="dateOfBirth"
-            type="date"
-            size="small"
-            InputLabelProps={{ shrink: true }}
-            value={userDetail.dateOfBirth}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            error={Boolean(errors.dateOfBirth)}
-            helperText={errors.dateOfBirth}
-          />
-        </FormControl>
-
-        <FormControl fullWidth>
-          <FormLabel htmlFor="mobile" sx={{ marginTop: 2, marginBottom: 1 }}>
-            Mobile
-          </FormLabel>
-          <TextField
-            id="mobile"
-            name="mobile"
-            type="tel"
-            size="small"
-            value={userDetail.mobile}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            error={Boolean(errors.mobile)}
-            helperText={errors.mobile}
-          />
-        </FormControl>
-
-        <FormControl fullWidth>
-          <FormLabel htmlFor="website" sx={{ marginTop: 2, marginBottom: 1 }}>
-            Website
-          </FormLabel>
-          <TextField
-            id="website"
-            name="website"
-            type="url"
-            size="small"
-            value={userDetail.website}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            error={Boolean(errors.website)}
-            helperText={errors.website}
-          />
-        </FormControl>
-
-        <FormControl fullWidth>
-          <FormLabel htmlFor="bio" sx={{ marginTop: 2, marginBottom: 1 }}>
-            Bio
-          </FormLabel>
-          <TextField
-            id="bio"
-            name="bio"
-            multiline
-            size="small"
-            rows={3}
-            value={userDetail.bio}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            placeholder="Enter your bio"
-          />
-        </FormControl>
-
-        <Box sx={{ textAlign: "right", marginTop: 2 }}>
-          <Button onClick={onClose} variant="text" sx={{ marginRight: 2 }}>
-            Cancel
-          </Button>
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            disabled={!change}
-          >
-            Save Changes
-          </Button>
-        </Box>
-      </Box>
+      <DialogTitle id="update-user-details-title">
+        Update User Details
+      </DialogTitle>
+      <DialogContent>
+        <TextField
+          label="Name"
+          name="name"
+          type="text"
+          size="small"
+          fullWidth
+          value={userDetail.name}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          error={Boolean(errors.name)}
+          helperText={errors.name}
+          margin="dense"
+        />
+        <TextField
+          label="Email"
+          name="email"
+          type="email"
+          size="small"
+          fullWidth
+          value={userDetail.email}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          error={Boolean(errors.email)}
+          helperText={errors.email}
+          margin="dense"
+        />
+        <TextField
+          label="Date of Birth"
+          name="dateOfBirth"
+          type="date"
+          size="small"
+          fullWidth
+          InputLabelProps={{ shrink: true }}
+          value={userDetail.dateOfBirth}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          error={Boolean(errors.dateOfBirth)}
+          helperText={errors.dateOfBirth}
+          margin="dense"
+        />
+        <TextField
+          label="Mobile"
+          name="mobile"
+          type="tel"
+          size="small"
+          fullWidth
+          value={userDetail.mobile}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          error={Boolean(errors.mobile)}
+          helperText={errors.mobile}
+          margin="dense"
+        />
+        <TextField
+          label="Website"
+          name="website"
+          type="url"
+          size="small"
+          fullWidth
+          value={userDetail.website}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          error={Boolean(errors.website)}
+          helperText={errors.website}
+          margin="dense"
+        />
+        <TextField
+          label="Bio"
+          name="bio"
+          multiline
+          size="small"
+          rows={3}
+          fullWidth
+          value={userDetail.bio}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          placeholder="Enter your bio"
+          margin="dense"
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose}>Cancel</Button>
+        <Button
+          type="submit"
+          color="primary"
+          variant="contained"
+          disabled={!change}
+          onClick={handleUserDetailUpdateSubmit}
+        >
+          Save Changes
+        </Button>
+      </DialogActions>
     </Dialog>
   );
 };
