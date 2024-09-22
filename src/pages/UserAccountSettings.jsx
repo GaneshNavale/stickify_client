@@ -89,6 +89,12 @@ const UserAccountSettings = () => {
     setIsPasswordDialogOpen(false);
   };
 
+  const [value, setValue] = useState(0);
+
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
+
   return (
     <>
       {/* navbar */}
@@ -99,7 +105,7 @@ const UserAccountSettings = () => {
         sx={{ display: "flex", alignItems: "center" }}
       >
         <Tabs
-          // value={value}
+          value={value}
           onChange={handleChange}
           centered
           variant="scrollable"
@@ -182,7 +188,7 @@ const UserAccountSettings = () => {
               primary="Bio"
               secondary={
                 <Typography variant="body2" color="text.secondary">
-                  {bio}
+                  {user.bio}
                 </Typography>
               }
             />

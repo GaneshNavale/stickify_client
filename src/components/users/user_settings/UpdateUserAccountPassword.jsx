@@ -55,8 +55,13 @@ const UpdateUserAccountPassword = ({ open, onClose }) => {
     });
   }, [user.id]);
 
+  const [newPasswordErrorMessage, setNewPasswordErrorMessage] = useState("");
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (newPassword.length < 6) {
+      setNewPasswordErrorMessage("Password Must Contain Atleast 6 Letters.");
+      return;
+    }
     if (newPassword !== confirmNewPassword) {
       setErrorMessage("New password and confirmation do not match.");
       return;
@@ -132,6 +137,11 @@ const UpdateUserAccountPassword = ({ open, onClose }) => {
             required
           />
 
+          {newPasswordErrorMessage && (
+            <Typography variant="body2" color="error" sx={{ mt: 1 }}>
+              {newPasswordErrorMessage}
+            </Typography>
+          )}
           <TextField
             label="Confirm New Password"
             type="password"

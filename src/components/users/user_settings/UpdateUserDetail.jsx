@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Dialog,
   TextField,
@@ -19,17 +19,11 @@ import AvatarUpload from "./AvatarUpload";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 import dayjs from "dayjs";
-
-import * as API from "../../../utils/api";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import enGB from "date-fns/locale/en-GB"; // Import the English (UK) locale
 
-import { IconButton, Avatar, Box, Typography } from "@mui/material";
-import CameraAltIcon from "@mui/icons-material/CameraAlt";
+import { IconButton } from "@mui/material";
 import { useAuth } from "../../../hooks/useAuth";
-import { LocalizationProvider } from "@mui/x-date-pickers";
 
 const UpdateUserDetail = ({ open, onClose }) => {
   const { user, login } = useAuth();

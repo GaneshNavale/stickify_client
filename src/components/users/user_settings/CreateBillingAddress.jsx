@@ -8,8 +8,9 @@ import Button from "@mui/material/Button";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import * as API from "../../../utils/api";
-import { IconButton } from "@mui/material";
+import { Grid2 as Grid, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+
 const CreateBillingAddress = ({ open, onClose }) => {
   const [billingAddress, setBillingAddress] = useState({
     full_name: "",
@@ -83,6 +84,8 @@ const CreateBillingAddress = ({ open, onClose }) => {
     <Dialog
       fullScreen={fullScreen}
       open={open}
+      maxWidth="sm"
+      fullWidth
       onClose={onClose}
       aria-labelledby="create-billing-address-title"
     >
@@ -103,84 +106,102 @@ const CreateBillingAddress = ({ open, onClose }) => {
         <CloseIcon />
       </IconButton>
       <DialogContent>
-        <TextField
-          label="Full Name"
-          name="full_name"
-          size="small"
-          fullWidth
-          value={billingAddress.full_name}
-          onChange={handleInputChange}
-          required
-          margin="dense"
-        />
-        <TextField
-          label="Mobile"
-          name="mobile"
-          size="small"
-          fullWidth
-          value={billingAddress.mobile}
-          onChange={handleInputChange}
-          required
-          margin="dense"
-        />
-        <TextField
-          label="Address Line 1"
-          name="address_line_1"
-          size="small"
-          fullWidth
-          value={billingAddress.address_line_1}
-          onChange={handleInputChange}
-          required
-          margin="dense"
-        />
-        <TextField
-          label="Address Line 2"
-          name="address_line_2"
-          size="small"
-          fullWidth
-          value={billingAddress.address_line_2}
-          onChange={handleInputChange}
-          margin="dense"
-        />
-        <TextField
-          label="Landmark"
-          name="landmark"
-          size="small"
-          fullWidth
-          value={billingAddress.landmark}
-          onChange={handleInputChange}
-          margin="dense"
-        />
-        <TextField
-          label="City"
-          name="city"
-          size="small"
-          fullWidth
-          value={billingAddress.city}
-          onChange={handleInputChange}
-          required
-          margin="dense"
-        />
-        <TextField
-          label="State"
-          name="state"
-          size="small"
-          fullWidth
-          value={billingAddress.state}
-          onChange={handleInputChange}
-          required
-          margin="dense"
-        />
-        <TextField
-          label="Zip Code"
-          name="zip_code"
-          size="small"
-          fullWidth
-          value={billingAddress.zip_code}
-          onChange={handleInputChange}
-          required
-          margin="dense"
-        />
+        <Grid container spacing={2} direction="column">
+          <Grid item md={12}>
+            <TextField
+              label="Full Name"
+              name="full_name"
+              size="small"
+              fullWidth
+              value={billingAddress.full_name}
+              onChange={handleInputChange}
+              required
+              margin="dense"
+            />
+          </Grid>
+          <Grid item md={12}>
+            <TextField
+              label="Mobile"
+              name="mobile"
+              size="small"
+              fullWidth
+              value={billingAddress.mobile}
+              onChange={handleInputChange}
+              required
+              margin="dense"
+            />
+          </Grid>
+          <Grid item md={12}>
+            <TextField
+              label="Address Line 1"
+              name="address_line_1"
+              size="small"
+              fullWidth
+              value={billingAddress.address_line_1}
+              onChange={handleInputChange}
+              required
+              margin="dense"
+            />
+          </Grid>
+          <Grid item md={12}>
+            <TextField
+              label="Address Line 2"
+              name="address_line_2"
+              size="small"
+              fullWidth
+              value={billingAddress.address_line_2}
+              onChange={handleInputChange}
+              margin="dense"
+            />
+          </Grid>
+          <Grid item md={12}>
+            <TextField
+              label="Landmark"
+              name="landmark"
+              size="small"
+              fullWidth
+              value={billingAddress.landmark}
+              onChange={handleInputChange}
+              margin="dense"
+            />
+          </Grid>
+          <Grid item md={12}>
+            <TextField
+              label="City"
+              name="city"
+              size="small"
+              fullWidth
+              value={billingAddress.city}
+              onChange={handleInputChange}
+              required
+              margin="dense"
+            />
+          </Grid>
+          <Grid item md={12}>
+            <TextField
+              label="State"
+              name="state"
+              size="small"
+              fullWidth
+              value={billingAddress.state}
+              onChange={handleInputChange}
+              required
+              margin="dense"
+            />
+          </Grid>
+          <Grid item md={12}>
+            <TextField
+              label="Zip Code"
+              name="zip_code"
+              size="small"
+              fullWidth
+              value={billingAddress.zip_code}
+              onChange={handleInputChange}
+              required
+              margin="dense"
+            />
+          </Grid>
+        </Grid>
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
