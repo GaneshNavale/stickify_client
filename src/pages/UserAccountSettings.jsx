@@ -21,10 +21,6 @@ import { AppBar, Tabs, Tab } from "@mui/material";
 const UserAccountSettings = () => {
   const { user } = useAuth();
 
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [bio, setBio] = useState("");
-
   const [isUserDetailDialogOpen, setIsUserDetailDialogOpen] = useState(false);
   const [isBillingAddressDialogOpen, setIsBillingAddressDialogOpen] = useState(
     false
@@ -38,26 +34,6 @@ const UserAccountSettings = () => {
   const [billingAddress, setBillingAddress] = useState([]);
   const [shippingAddresses, setShippingAddresses] = useState([]);
 
-  const [value, setValue] = React.useState(0);
-
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
-
-  // Fetch user details
-  useEffect(() => {
-    API.getUserDetail(user.id)
-      .then((response) => {
-        setBio(response.data.user.bio);
-        setEmail(response.data.user.email);
-        setName(response.data.user.name);
-      })
-      .catch((error) => {
-        console.log("User detail error", error);
-      });
-  }, [user.id]);
-
-  // Fetch billing addresses
   useEffect(() => {
     API.listAllBillingAddress()
       .then((response) => {
@@ -68,7 +44,6 @@ const UserAccountSettings = () => {
       });
   }, []);
 
-  // Fetch shipping addresses
   useEffect(() => {
     API.listAllShippingAddress()
       .then((response) => {
@@ -124,7 +99,7 @@ const UserAccountSettings = () => {
         sx={{ display: "flex", alignItems: "center" }}
       >
         <Tabs
-          value={value}
+          // value={value}
           onChange={handleChange}
           centered
           variant="scrollable"
@@ -159,10 +134,10 @@ const UserAccountSettings = () => {
         </Grid>
         <Grid item>
           <ListItemText
-            primary={name}
+            primary={user.name}
             secondary={
               <Typography variant="body2" color="text.secondary">
-                {email}
+                {user.email}
               </Typography>
             }
           />
@@ -187,7 +162,7 @@ const UserAccountSettings = () => {
               primary="Display Name"
               secondary={
                 <Typography variant="body2" color="text.secondary">
-                  {name}
+                  {user.email}
                 </Typography>
               }
             />
@@ -200,35 +175,19 @@ const UserAccountSettings = () => {
             </Button>
           </ListItem>
         </Grid>
-        {email && (
-          <Grid item xs={12}>
-            <ListItem>
-              <ListItemText
-                primary="Display Email"
-                secondary={
-                  <Typography variant="body2" color="text.secondary">
-                    {email}
-                  </Typography>
-                }
-              />
-            </ListItem>
-          </Grid>
-        )}
 
-        {bio && (
-          <Grid item xs={12}>
-            <ListItem>
-              <ListItemText
-                primary="Display Bio"
-                secondary={
-                  <Typography variant="body2" color="text.secondary">
-                    {bio}
-                  </Typography>
-                }
-              />
-            </ListItem>
-          </Grid>
-        )}
+        <Grid item xs={12}>
+          <ListItem>
+            <ListItemText
+              primary="Bio"
+              secondary={
+                <Typography variant="body2" color="text.secondary">
+                  {bio}
+                </Typography>
+              }
+            />
+          </ListItem>
+        </Grid>
       </Grid>
 
       <UpdateUserDetail

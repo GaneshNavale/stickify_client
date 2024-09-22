@@ -13,22 +13,27 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import { AdminAuthProvider } from "./hooks/useAdminAuth";
 import AdminApp from "./AdminApp";
 
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
 root.render(
   <BrowserRouter>
-    {window.location.pathname.startsWith("/admin") && (
-      <AdminAuthProvider>
-        <AdminApp />
-      </AdminAuthProvider>
-    )}
-    {!window.location.pathname.startsWith("/admin") && (
-      <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
-        <AuthProvider>
-          <App />
-        </AuthProvider>
-      </GoogleOAuthProvider>
-    )}
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      {window.location.pathname.startsWith("/admin") && (
+        <AdminAuthProvider>
+          <AdminApp />
+        </AdminAuthProvider>
+      )}
+      {!window.location.pathname.startsWith("/admin") && (
+        <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
+          <AuthProvider>
+            <App />
+          </AuthProvider>
+        </GoogleOAuthProvider>
+      )}
+    </LocalizationProvider>
   </BrowserRouter>
 );
 

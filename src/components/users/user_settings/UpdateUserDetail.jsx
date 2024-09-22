@@ -6,14 +6,18 @@ import {
   Grid2 as Grid,
   Backdrop,
   CircularProgress,
+  Divider,
 } from "@mui/material";
+
+import * as API from "../../../utils/api";
 
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import CloseIcon from "@mui/icons-material/Close";
-
+import AvatarUpload from "./AvatarUpload";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+
 import dayjs from "dayjs";
 
 import * as API from "../../../utils/api";
@@ -25,12 +29,16 @@ import enGB from "date-fns/locale/en-GB"; // Import the English (UK) locale
 import { IconButton, Avatar, Box, Typography } from "@mui/material";
 import CameraAltIcon from "@mui/icons-material/CameraAlt";
 import { useAuth } from "../../../hooks/useAuth";
+import { LocalizationProvider } from "@mui/x-date-pickers";
 
 const UpdateUserDetail = ({ open, onClose }) => {
   const { user, login } = useAuth();
   const [alert, setAlert] = useState({ message: "", type: "" });
   const [openBackdrop, setOpenBackdrop] = useState(false);
-  const [dateOfBirth, setDateOfBirth] = useState(dayjs(user.dob || ""));
+  const [dateOfBirth, setDateOfBirth] = useState(
+    user.dob ? dayjs(user.dob, "DD-MM-YYYY") : null
+  );
+
   const [dobError, setDobError] = useState(null);
   const [userDetail, setUserDetail] = useState({
     name: user.name,
@@ -38,6 +46,7 @@ const UpdateUserDetail = ({ open, onClose }) => {
     mobile: user.mobile,
     website: user.website,
     bio: user.bio,
+    avatarImage: null,
   });
 
   const dobErrorMessage = React.useMemo(() => {
@@ -112,17 +121,26 @@ const UpdateUserDetail = ({ open, onClose }) => {
     );
     if (hasChanges && isFormValid && !dobError) {
       setOpenBackdrop(true);
-      console.log("U are in handle update");
-      const userParams = {
+      let userParams = {
         name: userDetail.name,
         bio: userDetail.bio,
         mobile: userDetail.mobile,
         website: userDetail.website,
-        avatar_image: userDetail.avatar,
-        dob: dateOfBirth?.format("DD-MM-YYYY"),
       };
 
-      API.updateUserDetail(userParams)
+      const formData = new FormData();
+
+      for (const key in userParams) {
+        formData.append(`user[${key}]`, userParams[key]);
+      }
+
+      if (userDetail.avatarImage) {
+        formData.append("user[avatar_image]", userDetail.avatarImage);
+      }
+
+      formData.append("user[dob]", dateOfBirth?.format("DD-MM-YYYY") || "");
+
+      API.updateUserDetail(formData)
         .then((response) => {
           console.log("response", response);
           const updatedUser = {
@@ -132,7 +150,10 @@ const UpdateUserDetail = ({ open, onClose }) => {
           login(updatedUser);
           onClose();
         })
-        .catch((error) => {})
+        .catch((error) => {
+          setAlert({ message: "Failed to update user details", type: "error" });
+          console.error("Update user error:", error);
+        })
         .finally(() => {
           setOpenBackdrop(false);
         });
@@ -149,17 +170,12 @@ const UpdateUserDetail = ({ open, onClose }) => {
     return fieldErrors;
   };
 
-  const [image, setImage] = useState(null);
-
-  const handleImageChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImage(reader.result); // Update the image state
-      };
-      reader.readAsDataURL(file);
-    }
+  const handleImageUpload = (imageData) => {
+    console.log("Image data to upload:", imageData);
+    setUserDetail((prevState) => ({
+      ...prevState,
+      avatarImage: imageData,
+    }));
   };
 
   return (
@@ -182,13 +198,19 @@ const UpdateUserDetail = ({ open, onClose }) => {
           position: "absolute",
           right: 8,
           top: 8,
-          color: theme.palette.grey[500],
         })}
       >
         <CloseIcon />
       </IconButton>
+      <Divider />
       <DialogContent>
         <Grid container spacing={2} direction="column">
+          <Grid item>
+            <AvatarUpload
+              avatarImageUrl={user.avatar_image_url}
+              onImageUpload={handleImageUpload}
+            />
+          </Grid>
           <Grid item md={12}>
             <TextField
               label="Name"
@@ -219,6 +241,7 @@ const UpdateUserDetail = ({ open, onClose }) => {
               margin="dense"
             />
           </Grid>
+
           <Grid item>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
@@ -233,7 +256,7 @@ const UpdateUserDetail = ({ open, onClose }) => {
                 sx={{
                   width: "100%",
                   "& .MuiInputBase-root": {
-                    height: "40px",
+                    height: "38px",
                   },
                 }}
                 onError={(newError) => setDobError(newError)}
@@ -245,23 +268,6 @@ const UpdateUserDetail = ({ open, onClose }) => {
               />
             </LocalizationProvider>
           </Grid>
-
-          {/* <Grid item>
-            <TextField
-              label="Date of Birth"
-              name="dateOfBirth"
-              type="date"
-              size="small"
-              fullWidth
-              InputLabelProps={{ shrink: true }}
-              value={dayjs("2022-04-17")}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              error={Boolean(errors.dateOfBirth)}
-              helperText={errors.dateOfBirth}
-              margin="dense"
-            />
-          </Grid> */}
           <Grid item>
             <TextField
               label="Mobile"
@@ -309,12 +315,13 @@ const UpdateUserDetail = ({ open, onClose }) => {
           </Grid>
         </Grid>
       </DialogContent>
-      <DialogActions sx={{ paddingBottom: 3 }}>
+      <Divider />
+      <DialogActions sx={{ padding: 2 }}>
         <Grid container spacing={2} direction="row">
           <Grid item>
             <Button onClick={onClose}>Cancel</Button>
           </Grid>
-          <Grid item sx={{ marginRight: 2 }}>
+          <Grid item sx={{ marginRight: 1 }}>
             <Button
               type="submit"
               color="primary"
