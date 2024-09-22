@@ -1,6 +1,6 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Notification from "../utils/notification";
 
 const Home = () => {
@@ -9,6 +9,11 @@ const Home = () => {
     message: location.state?.alert?.message,
     type: location.state?.alert?.type,
   });
+
+  useEffect(() => {
+    // removing persisted state to remove alert on page refresh
+    window.history.replaceState({}, "");
+  }, []);
 
   return (
     <div>

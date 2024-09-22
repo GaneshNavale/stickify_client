@@ -6,9 +6,11 @@ import {
   TextField,
   DialogActions,
   Button,
+  IconButton,
   Typography,
 } from "@mui/material";
 import * as API from "../../../utils/api";
+import CloseIcon from "@mui/icons-material/Close";
 import { useAuth } from "../../../hooks/useAuth";
 
 const UpdateUserAccountPassword = ({ open, onClose }) => {
@@ -94,6 +96,18 @@ const UpdateUserAccountPassword = ({ open, onClose }) => {
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
       <DialogTitle>Update Password</DialogTitle>
+      <IconButton
+        aria-label="close"
+        onClick={onClose}
+        sx={(theme) => ({
+          position: "absolute",
+          right: 8,
+          top: 8,
+          color: theme.palette.grey[500],
+        })}
+      >
+        <CloseIcon />
+      </IconButton>
       <DialogContent>
         <form onSubmit={handleSubmit}>
           <TextField

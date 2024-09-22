@@ -7,7 +7,8 @@ import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
 import { useTheme } from "@mui/material/styles";
-import { ListItem, ListItemText, Grid, Box } from "@mui/material";
+import { ListItem, ListItemText, Grid, Box, IconButton } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import * as API from "../../../utils/api";
 import UpdateShippingAddress from "./updateShippingAddress";
@@ -66,6 +67,19 @@ const ListOfAllShippingAddressCard = ({ open, onClose }) => {
         <DialogTitle id="list-shipping-address-title">
           List of All Shipping Addresses
         </DialogTitle>
+
+        <IconButton
+          aria-label="close"
+          onClick={onClose}
+          sx={(theme) => ({
+            position: "absolute",
+            right: 8,
+            top: 8,
+            color: theme.palette.grey[500],
+          })}
+        >
+          <CloseIcon />
+        </IconButton>
         <Divider style={{ margin: "6px 0" }} />
         <DialogContent>
           {shippingAddresses.length > 0 ? (

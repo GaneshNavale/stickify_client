@@ -8,6 +8,8 @@ import Button from "@mui/material/Button";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import * as API from "../../../utils/api";
+import CloseIcon from "@mui/icons-material/Close";
+import { IconButton } from "@mui/material";
 
 const UpdateBillingAddress = ({ open, onClose, address }) => {
   const [billingAddress, setBillingAddress] = useState({
@@ -103,6 +105,19 @@ const UpdateBillingAddress = ({ open, onClose, address }) => {
       <DialogTitle id="update-billing-address-title">
         Update Billing Address
       </DialogTitle>
+
+      <IconButton
+        aria-label="close"
+        onClick={onClose}
+        sx={(theme) => ({
+          position: "absolute",
+          right: 8,
+          top: 8,
+          color: theme.palette.grey[500],
+        })}
+      >
+        <CloseIcon />
+      </IconButton>
       <DialogContent>
         <TextField
           label="Full Name"

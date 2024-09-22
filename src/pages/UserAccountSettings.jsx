@@ -16,7 +16,7 @@ import ListOfAllBillingAddressCard from "../components/users/user_settings/ListO
 import ListOfAllShippingAddressCard from "../components/users/user_settings/ListOfAllShippingAddressCard";
 import UpdateUserAccountPassword from "../components/users/user_settings/UpdateUserAccountPassword";
 import * as API from "../utils/api";
-import { AppBar, Tabs, Tab, Box } from "@mui/material";
+import { AppBar, Tabs, Tab } from "@mui/material";
 
 const UserAccountSettings = () => {
   const { user } = useAuth();
@@ -81,20 +81,38 @@ const UserAccountSettings = () => {
 
   // Dialog handlers
   const handleOpenUserDetailDialog = () => setIsUserDetailDialogOpen(true);
-  const handleCloseUserDetailDialog = () => setIsUserDetailDialogOpen(false);
+  const handleCloseUserDetailDialog = (event, reason) => {
+    if (reason === "backdropClick") {
+      return;
+    }
+    setIsUserDetailDialogOpen(false);
+  };
 
   const handleOpenBillingAddressDialog = () =>
     setIsBillingAddressDialogOpen(true);
-  const handleCloseBillingAddressDialog = () =>
+  const handleCloseBillingAddressDialog = (event, reason) => {
+    if (reason === "backdropClick") {
+      return;
+    }
     setIsBillingAddressDialogOpen(false);
+  };
 
   const handleOpenShippingAddressDialog = () =>
     setIsShippingAddressDialogOpen(true);
-  const handleCloseShippingAddressDialog = () =>
+  const handleCloseShippingAddressDialog = (event, reason) => {
+    if (reason === "backdropClick") {
+      return;
+    }
     setIsShippingAddressDialogOpen(false);
+  };
 
   const handleOpenPasswordDialog = () => setIsPasswordDialogOpen(true);
-  const handleClosePasswordDialog = () => setIsPasswordDialogOpen(false);
+  const handleClosePasswordDialog = (event, reason) => {
+    if (reason === "backdropClick") {
+      return;
+    }
+    setIsPasswordDialogOpen(false);
+  };
 
   return (
     <>
@@ -174,7 +192,7 @@ const UserAccountSettings = () => {
               }
             />
             <Button
-              variant="text"
+              variant="outlined"
               color="primary"
               onClick={handleOpenUserDetailDialog}
             >
@@ -182,32 +200,35 @@ const UserAccountSettings = () => {
             </Button>
           </ListItem>
         </Grid>
+        {email && (
+          <Grid item xs={12}>
+            <ListItem>
+              <ListItemText
+                primary="Display Email"
+                secondary={
+                  <Typography variant="body2" color="text.secondary">
+                    {email}
+                  </Typography>
+                }
+              />
+            </ListItem>
+          </Grid>
+        )}
 
-        <Grid item xs={12}>
-          <ListItem>
-            <ListItemText
-              primary="Display Email"
-              secondary={
-                <Typography variant="body2" color="text.secondary">
-                  {email}
-                </Typography>
-              }
-            />
-          </ListItem>
-        </Grid>
-
-        <Grid item xs={12}>
-          <ListItem>
-            <ListItemText
-              primary="Display Bio"
-              secondary={
-                <Typography variant="body2" color="text.secondary">
-                  {bio}
-                </Typography>
-              }
-            />
-          </ListItem>
-        </Grid>
+        {bio && (
+          <Grid item xs={12}>
+            <ListItem>
+              <ListItemText
+                primary="Display Bio"
+                secondary={
+                  <Typography variant="body2" color="text.secondary">
+                    {bio}
+                  </Typography>
+                }
+              />
+            </ListItem>
+          </Grid>
+        )}
       </Grid>
 
       <UpdateUserDetail
@@ -221,11 +242,11 @@ const UserAccountSettings = () => {
         <ListItem
           secondaryAction={
             <Button
-              variant="text"
+              variant="outlined"
               color="primary"
               onClick={handleOpenPasswordDialog}
             >
-              Reset
+              Edit
             </Button>
           }
         >
@@ -250,7 +271,7 @@ const UserAccountSettings = () => {
         <ListItem
           secondaryAction={
             <Button
-              variant="text"
+              variant="outlined"
               color="primary"
               onClick={handleOpenShippingAddressDialog}
             >
@@ -281,7 +302,7 @@ const UserAccountSettings = () => {
         <ListItem
           secondaryAction={
             <Button
-              variant="text"
+              variant="outlined"
               color="primary"
               onClick={handleOpenBillingAddressDialog}
             >
@@ -305,30 +326,6 @@ const UserAccountSettings = () => {
         onClose={handleCloseBillingAddressDialog}
       />
       <Divider />
-
-      {/* Payment Method */}
-      <Grid item>
-        <ListItem
-          secondaryAction={
-            <Button variant="text" color="primary">
-              Edit
-            </Button>
-          }
-        >
-          <ListItemText
-            primary="Payment Method"
-            secondary={
-              <Typography variant="body2" color="text.secondary">
-                **** **** **** 1234
-              </Typography>
-            }
-          />
-        </ListItem>
-      </Grid>
-      {/* <UpdateShippingAddress
-        open={isShippingAddressDialogOpen}
-        onClose={handleCloseShippingAddressDialog}
-      /> */}
     </>
   );
 };
