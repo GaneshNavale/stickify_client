@@ -16,6 +16,7 @@ import ListOfAllBillingAddressCard from "../components/users/user_settings/ListO
 import ListOfAllShippingAddressCard from "../components/users/user_settings/ListOfAllShippingAddressCard";
 import UpdateUserAccountPassword from "../components/users/user_settings/UpdateUserAccountPassword";
 import * as API from "../utils/api";
+import { AppBar, Tabs, Tab, Box } from "@mui/material";
 
 const UserAccountSettings = () => {
   const { user } = useAuth();
@@ -25,14 +26,23 @@ const UserAccountSettings = () => {
   const [bio, setBio] = useState("");
 
   const [isUserDetailDialogOpen, setIsUserDetailDialogOpen] = useState(false);
-  const [isBillingAddressDialogOpen, setIsBillingAddressDialogOpen] =
-    useState(false);
-  const [isShippingAddressDialogOpen, setIsShippingAddressDialogOpen] =
-    useState(false);
+  const [isBillingAddressDialogOpen, setIsBillingAddressDialogOpen] = useState(
+    false
+  );
+  const [
+    isShippingAddressDialogOpen,
+    setIsShippingAddressDialogOpen,
+  ] = useState(false);
   const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
 
   const [billingAddress, setBillingAddress] = useState([]);
   const [shippingAddresses, setShippingAddresses] = useState([]);
+
+  const [value, setValue] = React.useState(0);
+
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
 
   // Fetch user details
   useEffect(() => {
@@ -88,6 +98,34 @@ const UserAccountSettings = () => {
 
   return (
     <>
+      {/* navbar */}
+
+      <AppBar
+        position="static"
+        color="default"
+        sx={{ display: "flex", alignItems: "center" }}
+      >
+        <Tabs
+          value={value}
+          onChange={handleChange}
+          centered
+          variant="scrollable"
+          scrollButtons="auto"
+          aria-label="centered tabs"
+          textColor="primary"
+          indicatorColor="primary"
+        >
+          <Tab label="Summary" />
+          <Tab label="Orders" />
+          <Tab label="Reorder" />
+          <Tab label="Reviews" />
+          <Tab label="Artworks" />
+          <Tab label="CommissionsNEW" />
+          <Tab label="Notifications" />
+          <Tab label="Tax Exemptions" />
+        </Tabs>
+      </AppBar>
+
       <Grid
         container
         alignItems="center"
@@ -124,14 +162,14 @@ const UserAccountSettings = () => {
       <Divider />
 
       {/* User Details */}
-      <Grid container spacing={2}>
+      <Grid container>
         <Grid item xs={12}>
           <ListItem>
             <ListItemText
-              primary={name}
+              primary="Display Name"
               secondary={
                 <Typography variant="body2" color="text.secondary">
-                  {email}
+                  {name}
                 </Typography>
               }
             />
@@ -148,7 +186,20 @@ const UserAccountSettings = () => {
         <Grid item xs={12}>
           <ListItem>
             <ListItemText
-              primary="Bio"
+              primary="Display Email"
+              secondary={
+                <Typography variant="body2" color="text.secondary">
+                  {email}
+                </Typography>
+              }
+            />
+          </ListItem>
+        </Grid>
+
+        <Grid item xs={12}>
+          <ListItem>
+            <ListItemText
+              primary="Display Bio"
               secondary={
                 <Typography variant="body2" color="text.secondary">
                   {bio}
@@ -174,7 +225,7 @@ const UserAccountSettings = () => {
               color="primary"
               onClick={handleOpenPasswordDialog}
             >
-              Edit
+              Reset
             </Button>
           }
         >

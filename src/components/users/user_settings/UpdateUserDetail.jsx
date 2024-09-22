@@ -11,12 +11,21 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import * as API from "../../../utils/api";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import enGB from "date-fns/locale/en-GB"; // Import the English (UK) locale
+
+import { IconButton, Avatar, Box, Typography } from "@mui/material";
+import CameraAltIcon from "@mui/icons-material/CameraAlt";
 import { useAuth } from "../../../hooks/useAuth";
 
 const UpdateUserDetail = ({ open, onClose }) => {
   const { user } = useAuth();
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
+
+  const [selectedDate, setSelectedDate] = useState(null);
 
   const [userDetail, setUserDetail] = useState({
     name: "",
@@ -160,13 +169,73 @@ const UpdateUserDetail = ({ open, onClose }) => {
     return fieldErrors;
   };
 
+  const [image, setImage] = useState(null);
+
+  const handleImageChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImage(reader.result); // Update the image state
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   return (
     <Dialog
-      fullScreen={fullScreen}
       open={open}
       onClose={onClose}
       aria-labelledby="update-user-details-title"
+      disableBackdropClick
+      disableEscapeKeyDown
     >
+      <Box position="relative" display="inline-block">
+        <Avatar
+          src={image || "default-image-url.jpg"} // Replace with your default image URL
+          sx={{
+            width: 100,
+            height: 100,
+            opacity: 0.7, // Reduced opacity
+          }}
+        />
+        <IconButton
+          component="label"
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            bgcolor: "white",
+            borderRadius: "50%",
+            zIndex: 1,
+          }}
+        >
+          <input
+            type="file"
+            hidden
+            accept="image/*"
+            onChange={handleImageChange}
+          />
+          <CameraAltIcon />
+        </IconButton>
+        <Typography
+          variant="caption"
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            color: "white",
+            textAlign: "center",
+            zIndex: 0, // Place text behind the button
+            fontWeight: "bold",
+          }}
+        >
+          Update
+        </Typography>
+      </Box>
+
       <DialogTitle id="update-user-details-title">
         Update User Details
       </DialogTitle>
@@ -183,6 +252,7 @@ const UpdateUserDetail = ({ open, onClose }) => {
           error={Boolean(errors.name)}
           helperText={errors.name}
           margin="dense"
+          sx={{ marginTop: 3 }}
         />
         <TextField
           label="Email"
@@ -196,21 +266,22 @@ const UpdateUserDetail = ({ open, onClose }) => {
           error={Boolean(errors.email)}
           helperText={errors.email}
           margin="dense"
+          sx={{ marginTop: 3 }}
         />
-        <TextField
-          label="Date of Birth"
-          name="dateOfBirth"
-          type="date"
-          size="small"
-          fullWidth
-          InputLabelProps={{ shrink: true }}
-          value={userDetail.dateOfBirth}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          error={Boolean(errors.dateOfBirth)}
-          helperText={errors.dateOfBirth}
-          margin="dense"
-        />
+        <LocalizationProvider dateAdapter={AdapterDateFns} locale={enGB}>
+          <DatePicker
+            label="Select Date"
+            value={userDetail.dateOfBirth}
+            onChange={(date) => setSelectedDate(date)}
+            inputFormat="dd-MM-yy"
+            sx={{
+              padding: -1,
+              width: "100%",
+              marginTop: 3,
+              size: "small",
+            }}
+          />
+        </LocalizationProvider>
         <TextField
           label="Mobile"
           name="mobile"
@@ -223,6 +294,7 @@ const UpdateUserDetail = ({ open, onClose }) => {
           error={Boolean(errors.mobile)}
           helperText={errors.mobile}
           margin="dense"
+          sx={{ marginTop: 3 }}
         />
         <TextField
           label="Website"
@@ -236,6 +308,7 @@ const UpdateUserDetail = ({ open, onClose }) => {
           error={Boolean(errors.website)}
           helperText={errors.website}
           margin="dense"
+          sx={{ marginTop: 3 }}
         />
         <TextField
           label="Bio"
@@ -249,9 +322,10 @@ const UpdateUserDetail = ({ open, onClose }) => {
           onBlur={handleBlur}
           placeholder="Enter your bio"
           margin="dense"
+          sx={{ marginTop: 3 }}
         />
       </DialogContent>
-      <DialogActions>
+      <DialogActions sx={{ marginTop: 3, marginRight: 2 }}>
         <Button onClick={onClose}>Cancel</Button>
         <Button
           type="submit"
