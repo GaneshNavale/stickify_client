@@ -255,6 +255,7 @@ const SignIn = () => {
             <Box sx={{ display: "flex", justifyContent: "space-between" }}>
               <FormLabel htmlFor="password">Password</FormLabel>
               <Link
+                as={NavLink}
                 component="button"
                 onClick={handleClickOpen}
                 variant="body2"

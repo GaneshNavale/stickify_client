@@ -4,12 +4,14 @@ import Grid from "@mui/material/Grid2";
 import { Container } from "@mui/material";
 import * as API from "../../utils/adminApi";
 import { DataGrid } from "@mui/x-data-grid";
+import { TextField, Input, InputAdornment } from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
 
 const Users = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [paginationModel, setPaginationModel] = useState({
-    pageSize: 2,
+    pageSize: 25,
     page: 0,
   });
 
@@ -38,6 +40,7 @@ const Users = () => {
       per_page: paginationModel.pageSize,
       sort_by: queryOptions?.field || "created_at",
       sort_order: queryOptions?.sort || "desc",
+      search: searchTerm,
     })
       .then((response) => response.data)
       .then((data) => {
@@ -55,6 +58,7 @@ const Users = () => {
     paginationModel.pageSize,
     queryOptions?.field,
     queryOptions?.sort,
+    searchTerm,
   ]);
 
   const columns = [
@@ -116,31 +120,60 @@ const Users = () => {
 
   return (
     <Container maxWidth="xl">
-      <DataGrid
-        initialState={{
-          sorting: {
-            sortModel: [sortModel],
-          },
-        }}
-        rows={state.users}
-        columns={columns}
-        loading={isLoading}
-        rowCount={state.totalItems}
-        sortingMode="server"
-        sortModel={sortModel}
-        onSortModelChange={handleOnSortModelChange}
-        paginationMode="server"
-        pageSizeOptions={[1, 2, 3]}
-        paginationModel={paginationModel}
-        onPaginationModelChange={setPaginationModel}
-        disableColumnFilter
-        slotProps={{
-          loadingOverlay: {
-            variant: "skeleton",
-            noRowsVariant: "circular-progress",
-          },
-        }}
-      />
+      <Box sx={{ flexGrow: 1 }}>
+        <Grid container spacing={2} direction="column">
+          <Grid container spacing={2}>
+            <Grid size={{ sm: 6, md: 4 }}>
+              <TextField
+                fullWidth
+                size="small"
+                minWidth="100px"
+                placeholder="Search..."
+                value={searchTerm}
+                onChange={(event) => {
+                  setSearchTerm(event.target.value);
+                }}
+                slotProps={{
+                  input: {
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <SearchIcon />
+                      </InputAdornment>
+                    ),
+                  },
+                }}
+              />
+            </Grid>
+          </Grid>
+          <Grid size={{ xs: 12 }}>
+            <DataGrid
+              initialState={{
+                sorting: {
+                  sortModel: sortModel,
+                },
+              }}
+              rows={state.users}
+              columns={columns}
+              loading={isLoading}
+              rowCount={state.totalItems}
+              sortingMode="server"
+              paginationMode="server"
+              sortModel={sortModel}
+              onSortModelChange={handleOnSortModelChange}
+              pageSizeOptions={[5, 10, 25, 50]}
+              paginationModel={paginationModel}
+              onPaginationModelChange={setPaginationModel}
+              disableColumnFilter
+              slotProps={{
+                loadingOverlay: {
+                  variant: "skeleton",
+                  noRowsVariant: "circular-progress",
+                },
+              }}
+            />
+          </Grid>
+        </Grid>
+      </Box>
     </Container>
   );
 };
