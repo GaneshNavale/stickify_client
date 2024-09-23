@@ -13,9 +13,11 @@ import {
   TextField,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import * as API from "../../utils/api";
+import * as UserAPI from "../../utils/api";
+import * as AdminAPI from "../../utils/adminApi";
 
-const ForgotPassword = ({ open, handleClose }) => {
+const ForgotPassword = ({ open, handleClose, setAlert, isAdmin }) => {
+  console.log("isAdmin", isAdmin);
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [openBackdrop, setOpenBackdrop] = useState(false);
@@ -50,29 +52,27 @@ const ForgotPassword = ({ open, handleClose }) => {
   const sendPasswordReset = async () => {
     try {
       handleBackdropOpen();
+      const API = isAdmin ? AdminAPI : UserAPI;
       await API.sendResetPasswordInstruction({
         email,
-        redirect_url: `${process.env.REACT_APP_DOMAIN}/reset_user_password`,
-      });
-      navigate("/", {
-        state: {
-          alert: {
-            message: `We emailed ${email} with a link to reset your password`,
-            type: "success",
-          },
-        },
+        redirect_url: `${process.env.REACT_APP_DOMAIN}/${isAdmin ? "admin/reset_user_password" : "reset_user_password"}`,
       });
     } catch (error) {
       console.error("Password Reset Error:", error.response);
-      navigate("/", {
-        state: {
-          alert: {
-            message: `We emailed ${email} with a link to reset your password`,
-            type: "success",
-          },
-        },
-      });
     } finally {
+      const message = `We emailed ${email} with a link to reset your password`;
+      const messageType = "success";
+      isAdmin
+        ? setAlert({ message: message, type: messageType })
+        : navigate(isAdmin ? "/admin/dashboard" : "/", {
+            state: {
+              alert: {
+                message: message,
+                type: messageType,
+              },
+            },
+          });
+      handleClose();
       handleBackdropClose();
     }
   };

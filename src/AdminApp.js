@@ -19,6 +19,7 @@ import Orders from "./orders";
 import AdminSignIn from "./components/users/AdminSignIn";
 import Users from "./components/user_management/Users";
 import AdminUsers from "./components/user_management/AdminUsers";
+import ResetUserPassword from "./components/users/ResetUserPassword";
 
 const NAVIGATION = [
   {
@@ -115,7 +116,15 @@ function AdminApp(props) {
   return (
     <ThemeProvider theme={main}>
       <CssBaseline />
-      {!user && <AdminSignIn />}
+      {!user && (
+        <Routes>
+          <Route
+            path="/admin/reset_user_password"
+            element={<ResetUserPassword isAdmin />}
+          />
+          <Route path="/admin/*" element={<AdminSignIn />} />
+        </Routes>
+      )}
       {user && (
         <AppProvider
           session={userDetails}

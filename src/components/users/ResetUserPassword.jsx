@@ -12,10 +12,13 @@ import {
 } from "@mui/material";
 import Card from "@mui/material/Card";
 import { useNavigate, useLocation } from "react-router-dom";
-import * as API from "../../utils/api";
+import * as UserAPI from "../../utils/api";
+import * as AdminAPI from "../../utils/adminApi";
 import Notification from "../../utils/notification";
 
 const ResetUserPassword = (props) => {
+  const { isAdmin } = props;
+  console.log("isAdmin", isAdmin);
   const [user, setUser] = useState("");
   const [errors, setErrors] = useState("");
   const [alert, setAlert] = useState({ message: "", type: "" });
@@ -44,6 +47,7 @@ const ResetUserPassword = (props) => {
 
     if (isFormValid) {
       setOpenBackdrop(true);
+      const API = isAdmin ? AdminAPI : UserAPI;
       API.resetUserPassword(
         {
           password: user.password,
@@ -58,7 +62,7 @@ const ResetUserPassword = (props) => {
         }
       )
         .then((response) => {
-          navigate("/sign_in", {
+          navigate(isAdmin ? "/admin/dashboard" : "/sign_in", {
             replace: true,
             state: {
               alert: {
