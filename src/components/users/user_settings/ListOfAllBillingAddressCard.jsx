@@ -46,6 +46,7 @@ const ListOfAllBillingAddressCard = ({ open, onClose }) => {
   const handleEditClick = (address) => {
     setSelectedAddress(address);
     setIsUpdateDialogOpen(true);
+    onClose();
   };
 
   const handleCloseUpdateDialog = () => {

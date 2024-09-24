@@ -37,10 +37,10 @@ const UpdateUserDetail = ({ open, onClose }) => {
   const [userDetail, setUserDetail] = useState({
     name: user.name,
     email: user.email,
-    mobile: user.mobile,
-    website: user.website,
-    bio: user.bio,
-    avatarImage: null,
+    mobile: user.mobile || "",
+    website: user.website || "",
+    bio: user.bio || "",
+    avatarImage: user.avatar_image_url || "",
   });
 
   const dobErrorMessage = React.useMemo(() => {

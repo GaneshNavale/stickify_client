@@ -9,8 +9,12 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import * as API from "../../../utils/api";
 import { Grid2 as Grid } from "@mui/material";
+import { useLocation, useNavigate } from "react-router-dom";
+import Notification from "../../../utils/notification";
 
 const UpdateShippingAddress = ({ open, onClose, address }) => {
+  const navigate = useNavigate();
+
   const [shippingAddress, setShippingAddress] = useState({
     full_name: "",
     mobile: "",
@@ -67,7 +71,7 @@ const UpdateShippingAddress = ({ open, onClose, address }) => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setShippingAddress((prev) => ({ ...prev, [name]: value }));
-    setChange(true); // Set to true when any field is changed
+    setChange(true);
   };
 
   const handleSubmit = () => {
@@ -81,18 +85,42 @@ const UpdateShippingAddress = ({ open, onClose, address }) => {
       state: shippingAddress.state,
       zip_code: shippingAddress.zip_code,
     };
-
     if (isFormValid) {
-      API.updateShippingAddress(address.id, userParams) // Use correct API function
+      API.updateShippingAddress(address.id, userParams)
         .then((response) => {
           console.log("Shipping Address Updated Successfully:", response);
-          onClose(); // Close the dialog after successful update
+          onClose();
+          navigate("/user_account_settings", {
+            state: {
+              alert: {
+                message: "Shipping address updated successfully!",
+                type: "success",
+              },
+            },
+          });
         })
         .catch((error) => {
           console.error("Error occurred:", error);
+          navigate("/user_account_settings", {
+            state: {
+              alert: {
+                message: "Failed to update shipping address. Please try again.",
+                type: "error",
+              },
+            },
+          });
         });
     }
   };
+  const location = useLocation();
+  const [alert, setAlert] = useState({
+    message: location.state?.alert?.message,
+    type: location.state?.alert?.type,
+  });
+
+  useEffect(() => {
+    window.history.replaceState({}, "");
+  }, []);
 
   return (
     <Dialog
@@ -103,6 +131,7 @@ const UpdateShippingAddress = ({ open, onClose, address }) => {
       onClose={onClose}
       aria-labelledby="update-shipping-address-title"
     >
+      <Notification alert={alert} setAlert={setAlert} />
       <DialogTitle id="update-shipping-address-title">
         Update Shipping Address
       </DialogTitle>

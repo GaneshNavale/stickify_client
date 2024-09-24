@@ -40,6 +40,7 @@ const ListOfAllShippingAddressCard = ({ open, onClose }) => {
   const handleEditClick = (address) => {
     setSelectedShippingAddress(address);
     setIsUpdateDialogOpen(true);
+    onClose();
   };
 
   const handleCloseUpdateDialog = () => {

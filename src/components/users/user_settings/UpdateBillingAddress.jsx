@@ -10,8 +10,10 @@ import { useTheme } from "@mui/material/styles";
 import * as API from "../../../utils/api";
 import CloseIcon from "@mui/icons-material/Close";
 import { Grid2 as Grid, IconButton } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 const UpdateBillingAddress = ({ open, onClose, address }) => {
+  const navigate = useNavigate();
   const [billingAddress, setBillingAddress] = useState({
     full_name: "",
     mobile: "",
@@ -87,11 +89,19 @@ const UpdateBillingAddress = ({ open, onClose, address }) => {
       API.updateBillingAddress(address.id, userParams)
         .then((response) => {
           console.log("Billing Address Updated Successfully:", response);
+          onClose();
+          navigate("/user_account_settings", {
+            state: {
+              alert: {
+                message: "Billing address updated successfully!",
+                type: "success",
+              },
+            },
+          });
         })
         .catch((error) => {
           console.error("Error occurred:", error);
         });
-      onClose();
     }
   };
 
