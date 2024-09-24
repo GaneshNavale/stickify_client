@@ -24,8 +24,11 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
 import { IconButton } from "@mui/material";
 import { useAuth } from "../../../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 const UpdateUserDetail = ({ open, onClose }) => {
+  const navigate = useNavigate();
+
   const { user, login } = useAuth();
   const [alert, setAlert] = useState({ message: "", type: "" });
   const [openBackdrop, setOpenBackdrop] = useState(false);
@@ -143,6 +146,14 @@ const UpdateUserDetail = ({ open, onClose }) => {
           };
           login(updatedUser);
           onClose();
+          navigate("/user_account_settings", {
+            state: {
+              alert: {
+                message: "Shipping address updated successfully!",
+                type: "success",
+              },
+            },
+          });
         })
         .catch((error) => {
           setAlert({ message: "Failed to update user details", type: "error" });
