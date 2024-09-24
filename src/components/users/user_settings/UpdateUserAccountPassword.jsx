@@ -6,9 +6,11 @@ import {
   TextField,
   DialogActions,
   Button,
+  IconButton,
   Typography,
 } from "@mui/material";
 import * as API from "../../../utils/api";
+import CloseIcon from "@mui/icons-material/Close";
 import { useAuth } from "../../../hooks/useAuth";
 
 const UpdateUserAccountPassword = ({ open, onClose }) => {
@@ -53,8 +55,13 @@ const UpdateUserAccountPassword = ({ open, onClose }) => {
     });
   }, [user.id]);
 
+  const [newPasswordErrorMessage, setNewPasswordErrorMessage] = useState("");
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (newPassword.length < 6) {
+      setNewPasswordErrorMessage("Password Must Contain Atleast 6 Letters.");
+      return;
+    }
     if (newPassword !== confirmNewPassword) {
       setErrorMessage("New password and confirmation do not match.");
       return;
@@ -94,6 +101,18 @@ const UpdateUserAccountPassword = ({ open, onClose }) => {
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
       <DialogTitle>Update Password</DialogTitle>
+      <IconButton
+        aria-label="close"
+        onClick={onClose}
+        sx={(theme) => ({
+          position: "absolute",
+          right: 8,
+          top: 8,
+          color: theme.palette.grey[500],
+        })}
+      >
+        <CloseIcon />
+      </IconButton>
       <DialogContent>
         <form onSubmit={handleSubmit}>
           <TextField
@@ -118,6 +137,11 @@ const UpdateUserAccountPassword = ({ open, onClose }) => {
             required
           />
 
+          {newPasswordErrorMessage && (
+            <Typography variant="body2" color="error" sx={{ mt: 1 }}>
+              {newPasswordErrorMessage}
+            </Typography>
+          )}
           <TextField
             label="Confirm New Password"
             type="password"

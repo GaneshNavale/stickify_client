@@ -8,8 +8,13 @@ import Button from "@mui/material/Button";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import * as API from "../../../utils/api";
+import { Grid2 as Grid } from "@mui/material";
+import { useLocation, useNavigate } from "react-router-dom";
+import Notification from "../../../utils/notification";
 
 const UpdateShippingAddress = ({ open, onClose, address }) => {
+  const navigate = useNavigate();
+
   const [shippingAddress, setShippingAddress] = useState({
     full_name: "",
     mobile: "",
@@ -43,8 +48,14 @@ const UpdateShippingAddress = ({ open, onClose, address }) => {
   }, [address]);
 
   useEffect(() => {
-    const { full_name, mobile, address_line_1, city, state, zip_code } =
-      shippingAddress;
+    const {
+      full_name,
+      mobile,
+      address_line_1,
+      city,
+      state,
+      zip_code,
+    } = shippingAddress;
 
     const isValid =
       full_name !== "" &&
@@ -60,7 +71,7 @@ const UpdateShippingAddress = ({ open, onClose, address }) => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setShippingAddress((prev) => ({ ...prev, [name]: value }));
-    setChange(true); // Set to true when any field is changed
+    setChange(true);
   };
 
   const handleSubmit = () => {
@@ -74,108 +85,153 @@ const UpdateShippingAddress = ({ open, onClose, address }) => {
       state: shippingAddress.state,
       zip_code: shippingAddress.zip_code,
     };
-
     if (isFormValid) {
-      API.updateShippingAddress(address.id, userParams) // Use correct API function
+      API.updateShippingAddress(address.id, userParams)
         .then((response) => {
           console.log("Shipping Address Updated Successfully:", response);
-          onClose(); // Close the dialog after successful update
+          onClose();
+          navigate("/user_account_settings", {
+            state: {
+              alert: {
+                message: "Shipping address updated successfully!",
+                type: "success",
+              },
+            },
+          });
         })
         .catch((error) => {
           console.error("Error occurred:", error);
+          navigate("/user_account_settings", {
+            state: {
+              alert: {
+                message: "Failed to update shipping address. Please try again.",
+                type: "error",
+              },
+            },
+          });
         });
     }
   };
+  const location = useLocation();
+  const [alert, setAlert] = useState({
+    message: location.state?.alert?.message,
+    type: location.state?.alert?.type,
+  });
+
+  useEffect(() => {
+    window.history.replaceState({}, "");
+  }, []);
 
   return (
     <Dialog
       fullScreen={fullScreen}
       open={open}
+      maxWidth="sm"
+      fullWidth
       onClose={onClose}
       aria-labelledby="update-shipping-address-title"
     >
+      <Notification alert={alert} setAlert={setAlert} />
       <DialogTitle id="update-shipping-address-title">
         Update Shipping Address
       </DialogTitle>
       <DialogContent>
-        <TextField
-          label="Full Name"
-          name="full_name"
-          size="small"
-          fullWidth
-          value={shippingAddress.full_name}
-          onChange={handleInputChange}
-          required
-          margin="dense"
-        />
-        <TextField
-          label="Mobile"
-          name="mobile"
-          size="small"
-          fullWidth
-          value={shippingAddress.mobile}
-          onChange={handleInputChange}
-          required
-          margin="dense"
-        />
-        <TextField
-          label="Address Line 1"
-          name="address_line_1"
-          size="small"
-          fullWidth
-          value={shippingAddress.address_line_1}
-          onChange={handleInputChange}
-          required
-          margin="dense"
-        />
-        <TextField
-          label="Address Line 2"
-          name="address_line_2"
-          size="small"
-          fullWidth
-          value={shippingAddress.address_line_2}
-          onChange={handleInputChange}
-          margin="dense"
-        />
-        <TextField
-          label="Landmark"
-          name="landmark"
-          size="small"
-          fullWidth
-          value={shippingAddress.landmark}
-          onChange={handleInputChange}
-          margin="dense"
-        />
-        <TextField
-          label="City"
-          name="city"
-          size="small"
-          fullWidth
-          value={shippingAddress.city}
-          onChange={handleInputChange}
-          required
-          margin="dense"
-        />
-        <TextField
-          label="State"
-          name="state"
-          size="small"
-          fullWidth
-          value={shippingAddress.state}
-          onChange={handleInputChange}
-          required
-          margin="dense"
-        />
-        <TextField
-          label="Zip Code"
-          name="zip_code"
-          size="small"
-          fullWidth
-          value={shippingAddress.zip_code}
-          onChange={handleInputChange}
-          required
-          margin="dense"
-        />
+        <Grid container spacing={2} direction="column">
+          <Grid item md={12}>
+            <TextField
+              label="Full Name"
+              name="full_name"
+              size="small"
+              fullWidth
+              value={shippingAddress.full_name}
+              onChange={handleInputChange}
+              required
+              margin="dense"
+            />
+          </Grid>
+          <Grid item md={12}>
+            <TextField
+              label="Mobile"
+              name="mobile"
+              size="small"
+              fullWidth
+              value={shippingAddress.mobile}
+              onChange={handleInputChange}
+              required
+              margin="dense"
+            />
+          </Grid>
+          <Grid item md={12}>
+            <TextField
+              label="Address Line 1"
+              name="address_line_1"
+              size="small"
+              fullWidth
+              value={shippingAddress.address_line_1}
+              onChange={handleInputChange}
+              required
+              margin="dense"
+            />
+          </Grid>
+          <Grid item md={12}>
+            <TextField
+              label="Address Line 2"
+              name="address_line_2"
+              size="small"
+              fullWidth
+              value={shippingAddress.address_line_2}
+              onChange={handleInputChange}
+              margin="dense"
+            />
+          </Grid>
+          <Grid item md={12}>
+            <TextField
+              label="Landmark"
+              name="landmark"
+              size="small"
+              fullWidth
+              value={shippingAddress.landmark}
+              onChange={handleInputChange}
+              margin="dense"
+            />
+          </Grid>
+          <Grid item md={12}>
+            <TextField
+              label="City"
+              name="city"
+              size="small"
+              fullWidth
+              value={shippingAddress.city}
+              onChange={handleInputChange}
+              required
+              margin="dense"
+            />
+          </Grid>
+          <Grid item md={12}>
+            <TextField
+              label="State"
+              name="state"
+              size="small"
+              fullWidth
+              value={shippingAddress.state}
+              onChange={handleInputChange}
+              required
+              margin="dense"
+            />
+          </Grid>
+          <Grid item md={12}>
+            <TextField
+              label="Zip Code"
+              name="zip_code"
+              size="small"
+              fullWidth
+              value={shippingAddress.zip_code}
+              onChange={handleInputChange}
+              required
+              margin="dense"
+            />
+          </Grid>
+        </Grid>
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>

@@ -6,8 +6,16 @@ import DialogTitle from "@mui/material/DialogTitle";
 import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
+import CloseIcon from "@mui/icons-material/Close";
 import { useTheme } from "@mui/material/styles";
-import { ListItem, ListItemText, Grid, Box, Link } from "@mui/material";
+import {
+  ListItem,
+  ListItemText,
+  Grid,
+  Box,
+  Link,
+  IconButton,
+} from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import * as API from "../../../utils/api";
 import UpdateBillingAddress from "./UpdateBillingAddress";
@@ -38,6 +46,7 @@ const ListOfAllBillingAddressCard = ({ open, onClose }) => {
   const handleEditClick = (address) => {
     setSelectedAddress(address);
     setIsUpdateDialogOpen(true);
+    onClose();
   };
 
   const handleCloseUpdateDialog = () => {
@@ -65,6 +74,19 @@ const ListOfAllBillingAddressCard = ({ open, onClose }) => {
         <DialogTitle id="list-billing-address-title">
           List of All Billing Addresses
         </DialogTitle>
+        <IconButton
+          aria-label="close"
+          onClick={onClose}
+          sx={(theme) => ({
+            position: "absolute",
+            right: 8,
+            top: 8,
+            color: theme.palette.grey[500],
+          })}
+        >
+          <CloseIcon />
+        </IconButton>
+
         <Divider style={{ margin: "6px 0" }} />
         <DialogContent>
           {billingAddresses.length > 0 ? (

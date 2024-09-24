@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Dialog,
   TextField,
@@ -9,20 +9,26 @@ import {
   Divider,
 } from "@mui/material";
 
+import * as API from "../../../utils/api";
+
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
-import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import AvatarUpload from "./AvatarUpload";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 import dayjs from "dayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
-import * as API from "../../../utils/api";
+import { IconButton } from "@mui/material";
 import { useAuth } from "../../../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 const UpdateUserDetail = ({ open, onClose }) => {
+  const navigate = useNavigate();
+
   const { user, login } = useAuth();
   const [alert, setAlert] = useState({ message: "", type: "" });
   const [openBackdrop, setOpenBackdrop] = useState(false);
@@ -34,10 +40,10 @@ const UpdateUserDetail = ({ open, onClose }) => {
   const [userDetail, setUserDetail] = useState({
     name: user.name,
     email: user.email,
-    mobile: user.mobile,
-    website: user.website,
-    bio: user.bio,
-    avatarImage: null,
+    mobile: user.mobile || "",
+    website: user.website || "",
+    bio: user.bio || "",
+    avatarImage: user.avatar_image_url || "",
   });
 
   const dobErrorMessage = React.useMemo(() => {
@@ -140,6 +146,14 @@ const UpdateUserDetail = ({ open, onClose }) => {
           };
           login(updatedUser);
           onClose();
+          navigate("/user_account_settings", {
+            state: {
+              alert: {
+                message: "Shipping address updated successfully!",
+                type: "success",
+              },
+            },
+          });
         })
         .catch((error) => {
           setAlert({ message: "Failed to update user details", type: "error" });
@@ -176,6 +190,8 @@ const UpdateUserDetail = ({ open, onClose }) => {
       maxWidth="sm"
       fullWidth
       aria-labelledby="update-user-details-title"
+      disableBackdropClick
+      disableEscapeKeyDown
     >
       <DialogTitle id="update-user-details-title">
         Update User Details
@@ -230,24 +246,32 @@ const UpdateUserDetail = ({ open, onClose }) => {
               margin="dense"
             />
           </Grid>
+
           <Grid item>
-            <DatePicker
-              label="Date of Birth"
-              value={dateOfBirth}
-              onChange={(newValue) => {
-                setDateOfBirth(newValue);
-                setHasChanges(true);
-              }}
-              disableFuture
-              format="DD-MM-YYYY"
-              sx={{ width: "100%" }}
-              onError={(newError) => setDobError(newError)}
-              slotProps={{
-                textField: {
-                  helperText: dobErrorMessage,
-                },
-              }}
-            />
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DatePicker
+                label="Date of Birth"
+                value={dateOfBirth}
+                onChange={(newValue) => {
+                  setDateOfBirth(newValue);
+                  setHasChanges(true);
+                }}
+                disableFuture
+                format="DD-MM-YYYY"
+                sx={{
+                  width: "100%",
+                  "& .MuiInputBase-root": {
+                    height: "38px",
+                  },
+                }}
+                onError={(newError) => setDobError(newError)}
+                slotProps={{
+                  textField: {
+                    helperText: dobErrorMessage,
+                  },
+                }}
+              />
+            </LocalizationProvider>
           </Grid>
           <Grid item>
             <TextField

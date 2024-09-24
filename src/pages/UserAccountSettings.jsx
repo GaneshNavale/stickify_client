@@ -1,5 +1,3 @@
-// src/pages/UserAccountSettings.jsx
-
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../hooks/useAuth";
 import {
@@ -10,25 +8,69 @@ import {
   Divider,
   Button,
   ListItem,
+  AppBar,
+  Tabs,
+  Tab,
 } from "@mui/material";
 import UpdateUserDetail from "../components/users/user_settings/UpdateUserDetail";
 import ListOfAllBillingAddressCard from "../components/users/user_settings/ListOfAllBillingAddressCard";
 import ListOfAllShippingAddressCard from "../components/users/user_settings/ListOfAllShippingAddressCard";
 import UpdateUserAccountPassword from "../components/users/user_settings/UpdateUserAccountPassword";
 import * as API from "../utils/api";
+import Notification from "../utils/notification";
+import { useLocation } from "react-router-dom";
 
 const UserAccountSettings = () => {
   const { user } = useAuth();
 
   const [isUserDetailDialogOpen, setIsUserDetailDialogOpen] = useState(false);
-  const [isBillingAddressDialogOpen, setIsBillingAddressDialogOpen] =
-    useState(false);
-  const [isShippingAddressDialogOpen, setIsShippingAddressDialogOpen] =
-    useState(false);
+  const [isBillingAddressDialogOpen, setIsBillingAddressDialogOpen] = useState(
+    false
+  );
+  const [
+    isShippingAddressDialogOpen,
+    setIsShippingAddressDialogOpen,
+  ] = useState(false);
   const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
 
   const [billingAddress, setBillingAddress] = useState([]);
   const [shippingAddresses, setShippingAddresses] = useState([]);
+
+  const location = useLocation();
+  const [alert, setAlert] = useState({ message: "", type: "" });
+  console.log("abcd");
+  useEffect(() => {
+    setAlert({
+      message: location.state?.alert?.message || "",
+      type: location.state?.alert?.type || "",
+    });
+  }, [location.state]);
+
+  const handleOpenUserDetailDialog = () => setIsUserDetailDialogOpen(true);
+  const handleCloseUserDetailDialog = (event, reason) => {
+    if (reason === "backdropClick") return;
+    setIsUserDetailDialogOpen(false);
+  };
+
+  const handleOpenBillingAddressDialog = () =>
+    setIsBillingAddressDialogOpen(true);
+  const handleCloseBillingAddressDialog = (event, reason) => {
+    if (reason === "backdropClick") return;
+    setIsBillingAddressDialogOpen(false);
+  };
+
+  const handleOpenShippingAddressDialog = () =>
+    setIsShippingAddressDialogOpen(true);
+  const handleCloseShippingAddressDialog = (event, reason) => {
+    if (reason === "backdropClick") return;
+    setIsShippingAddressDialogOpen(false);
+  };
+
+  const handleOpenPasswordDialog = () => setIsPasswordDialogOpen(true);
+  const handleClosePasswordDialog = (event, reason) => {
+    if (reason === "backdropClick") return;
+    setIsPasswordDialogOpen(false);
+  };
 
   useEffect(() => {
     API.listAllBillingAddress()
@@ -36,7 +78,7 @@ const UserAccountSettings = () => {
         setBillingAddress(response.data);
       })
       .catch((error) => {
-        console.log("Billing address error", error);
+        console.error("Billing address error", error);
       });
   }, []);
 
@@ -46,34 +88,56 @@ const UserAccountSettings = () => {
         setShippingAddresses(response.data);
       })
       .catch((error) => {
-        console.log("Shipping address error", error);
+        console.error("Shipping address error", error);
       });
   }, []);
 
-  // Dialog handlers
-  const handleOpenUserDetailDialog = () => setIsUserDetailDialogOpen(true);
-  const handleCloseUserDetailDialog = (event, reason) => {
-    if (reason === "backdropClick") {
-      return;
-    }
-    setIsUserDetailDialogOpen(false);
+  const [value, setValue] = useState(0);
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
   };
 
-  const handleOpenBillingAddressDialog = () =>
-    setIsBillingAddressDialogOpen(true);
-  const handleCloseBillingAddressDialog = () =>
-    setIsBillingAddressDialogOpen(false);
+  const handleAlertClose = () => {
+    setAlert({ message: "", type: "" });
+  };
 
-  const handleOpenShippingAddressDialog = () =>
-    setIsShippingAddressDialogOpen(true);
-  const handleCloseShippingAddressDialog = () =>
-    setIsShippingAddressDialogOpen(false);
-
-  const handleOpenPasswordDialog = () => setIsPasswordDialogOpen(true);
-  const handleClosePasswordDialog = () => setIsPasswordDialogOpen(false);
+  // added but after reload ..... not working
+  useEffect(() => {
+    window.history.replaceState({}, "");
+  }, []);
 
   return (
     <>
+      <AppBar
+        position="static"
+        color="default"
+        sx={{ display: "flex", alignItems: "center" }}
+      >
+        <Tabs
+          value={value}
+          onChange={handleChange}
+          centered
+          variant="scrollable"
+          scrollButtons="auto"
+          aria-label="centered tabs"
+          textColor="primary"
+          indicatorColor="primary"
+        >
+          <Tab label="Summary" />
+          <Tab label="Orders" />
+          <Tab label="Reorder" />
+          <Tab label="Reviews" />
+          <Tab label="Artworks" />
+          <Tab label="CommissionsNEW" />
+          <Tab label="Notifications" />
+          <Tab label="Tax Exemptions" />
+        </Tabs>
+      </AppBar>
+
+      {alert.message && (
+        <Notification alert={alert} setAlert={handleAlertClose} />
+      )}
+
       <Grid
         container
         alignItems="center"
@@ -109,15 +173,14 @@ const UserAccountSettings = () => {
       </Grid>
       <Divider />
 
-      {/* User Details */}
-      <Grid container spacing={2}>
+      <Grid container>
         <Grid item xs={12}>
           <ListItem>
             <ListItemText
-              primary={user.name}
+              primary="Display Name"
               secondary={
                 <Typography variant="body2" color="text.secondary">
-                  {user.email}
+                  {user.name}
                 </Typography>
               }
             />
@@ -128,6 +191,19 @@ const UserAccountSettings = () => {
             >
               Edit
             </Button>
+          </ListItem>
+        </Grid>
+
+        <Grid item xs={12}>
+          <ListItem>
+            <ListItemText
+              primary="Display Email"
+              secondary={
+                <Typography variant="body2" color="text.secondary">
+                  {user.email}
+                </Typography>
+              }
+            />
           </ListItem>
         </Grid>
 
@@ -151,7 +227,6 @@ const UserAccountSettings = () => {
       />
       <Divider />
 
-      {/* Password */}
       <Grid item>
         <ListItem
           secondaryAction={
@@ -180,7 +255,7 @@ const UserAccountSettings = () => {
       />
       <Divider />
 
-      {/* Shipping Address */}
+      {/* Shipping Address Section */}
       <Grid item>
         <ListItem
           secondaryAction={
@@ -208,10 +283,8 @@ const UserAccountSettings = () => {
         open={isShippingAddressDialogOpen}
         onClose={handleCloseShippingAddressDialog}
       />
-
       <Divider />
 
-      {/* Billing Address */}
       <Grid item>
         <ListItem
           secondaryAction={
