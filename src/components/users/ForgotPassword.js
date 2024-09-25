@@ -17,7 +17,6 @@ import * as UserAPI from "../../utils/api";
 import * as AdminAPI from "../../utils/adminApi";
 
 const ForgotPassword = ({ open, handleClose, setAlert, isAdmin }) => {
-  console.log("isAdmin", isAdmin);
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [openBackdrop, setOpenBackdrop] = useState(false);

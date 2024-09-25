@@ -30,10 +30,6 @@ const Users = () => {
   });
 
   useEffect(() => {
-    console.log("users", state.users);
-  }, [state]);
-
-  useEffect(() => {
     setIsLoading(true);
     API.users({
       page: paginationModel.page,
@@ -113,7 +109,6 @@ const Users = () => {
     },
   ];
   const handleOnSortModelChange = (model) => {
-    console.log(model);
     setQueryOptions(model[0]);
     setSortModel(model);
   };
@@ -122,8 +117,8 @@ const Users = () => {
     <Container maxWidth="xl">
       <Box sx={{ flexGrow: 1 }}>
         <Grid container spacing={2} direction="column">
-          <Grid container spacing={2}>
-            <Grid size={{ sm: 6, md: 4 }}>
+          <Grid container spacing={2} justifyContent="space-between">
+            <Grid display="flex" size={{ sm: 6, md: 4 }}>
               <TextField
                 fullWidth
                 size="small"
@@ -160,7 +155,7 @@ const Users = () => {
               paginationMode="server"
               sortModel={sortModel}
               onSortModelChange={handleOnSortModelChange}
-              pageSizeOptions={[5, 10, 25, 50]}
+              pageSizeOptions={[10, 25, 50]}
               paginationModel={paginationModel}
               onPaginationModelChange={setPaginationModel}
               disableColumnFilter

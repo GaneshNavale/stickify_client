@@ -18,7 +18,6 @@ import Notification from "../../utils/notification";
 
 const ResetUserPassword = (props) => {
   const { isAdmin } = props;
-  console.log("isAdmin", isAdmin);
   const [user, setUser] = useState("");
   const [errors, setErrors] = useState("");
   const [alert, setAlert] = useState({ message: "", type: "" });
