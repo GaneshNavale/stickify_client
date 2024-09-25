@@ -44,6 +44,10 @@ const UserAccountSettings = () => {
       message: location.state?.alert?.message || "",
       type: location.state?.alert?.type || "",
     });
+    const timer = setTimeout(() => {
+      handleAlertClose();
+    }, 4500); // 4500 ms = 4.5 seconds
+    return () => clearTimeout(timer);
   }, [location.state]);
 
   const handleOpenUserDetailDialog = () => setIsUserDetailDialogOpen(true);
@@ -101,7 +105,6 @@ const UserAccountSettings = () => {
     setAlert({ message: "", type: "" });
   };
 
-  // added but after reload ..... not working
   useEffect(() => {
     window.history.replaceState({}, "");
   }, []);
@@ -134,10 +137,9 @@ const UserAccountSettings = () => {
         </Tabs>
       </AppBar>
 
-      {alert.message && (
+      {alert.message && alert.type === "success" && (
         <Notification alert={alert} setAlert={handleAlertClose} />
       )}
-
       <Grid
         container
         alignItems="center"
