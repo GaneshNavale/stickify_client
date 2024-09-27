@@ -14,6 +14,7 @@ const routes = [
     path: "/user_account_settings",
     component: <UserAccountSettings />,
     exact: true,
+    isProtected: true,
   },
   {
     path: "/reset_user_password",

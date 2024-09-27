@@ -1,15 +1,21 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid2";
-import { Container } from "@mui/material";
+import { Button, Container, TextField, InputAdornment } from "@mui/material";
 import * as API from "../../utils/adminApi";
-import { DataGrid } from "@mui/x-data-grid";
-import { TextField, Input, InputAdornment } from "@mui/material";
+import { DataGrid, GridActionsCellItem } from "@mui/x-data-grid";
 import SearchIcon from "@mui/icons-material/Search";
+import AddIcon from "@mui/icons-material/Add";
+import UserModal from "./UserModal";
+import EditIcon from "@mui/icons-material/Edit";
+import Notification from "../../utils/notification";
 
 const Users = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [alert, setAlert] = useState({ message: "", type: "" });
   const [isLoading, setIsLoading] = useState(true);
+  const [open, setOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState();
   const [paginationModel, setPaginationModel] = useState({
     pageSize: 25,
     page: 0,
@@ -29,7 +35,7 @@ const Users = () => {
     totalPages: 0,
   });
 
-  useEffect(() => {
+  const fetchUsers = useCallback(async () => {
     setIsLoading(true);
     API.users({
       page: paginationModel.page,
@@ -49,65 +55,94 @@ const Users = () => {
         }));
         setIsLoading(false);
       });
+  }, [paginationModel, queryOptions, searchTerm]);
+
+  const handleEdit = useCallback((params) => {
+    setSelectedUser(params.row);
+    setOpen(true);
+  }, []);
+
+  useEffect(() => {
+    fetchUsers();
   }, [
+    fetchUsers,
     paginationModel.page,
     paginationModel.pageSize,
-    queryOptions?.field,
-    queryOptions?.sort,
+    queryOptions.field,
+    queryOptions.sort,
     searchTerm,
   ]);
 
-  const columns = [
-    {
-      field: "id",
-      headerName: "ID",
-      maxWidth: 50,
-      flex: 0.35,
-      sortable: false,
-    },
-    {
-      field: "name",
-      headerName: "Full Name",
-      minWidth: 150,
-      flex: 1,
-      display: "flex",
-      sortable: false,
-    },
-    {
-      field: "email",
-      headerName: "Email",
-      minWidth: 150,
-      flex: 1,
-      sortable: false,
-    },
-    {
-      field: "mobile",
-      headerName: "Mobile",
-      sortable: false,
-      minWidth: 150,
-      flex: 1,
-    },
-    {
-      field: "is_confirmed",
-      headerName: "Confirmed",
-      sortable: false,
-      minWidth: 75,
-      flex: 0.5,
-    },
-    {
-      field: "created_at",
-      headerName: "Created On",
-      minWidth: 150,
-      flex: 1,
-    },
-    {
-      field: "sign_in_count",
-      headerName: "Sign In Count",
-      sortable: false,
-      minWidth: 75,
-      flex: 0.7,
-    },
-  ];
+  const columns = useMemo(
+    () => [
+      {
+        field: "id",
+        headerName: "ID",
+        maxWidth: 50,
+        flex: 0.35,
+        sortable: false,
+      },
+      {
+        field: "name",
+        headerName: "Full Name",
+        minWidth: 130,
+        flex: 0.9,
+        display: "flex",
+        sortable: false,
+      },
+      {
+        field: "email",
+        headerName: "Email",
+        minWidth: 150,
+        flex: 1.7,
+        sortable: false,
+      },
+      {
+        field: "mobile",
+        headerName: "Mobile",
+        sortable: false,
+        minWidth: 150,
+        flex: 0.7,
+      },
+      {
+        field: "is_confirmed",
+        headerName: "Confirmed",
+        sortable: false,
+        minWidth: 85,
+        flex: 0.6,
+      },
+      {
+        field: "created_at",
+        headerName: "Created On",
+        minWidth: 150,
+        flex: 0.7,
+      },
+      {
+        field: "sign_in_count",
+        headerName: "Sign In Count",
+        sortable: false,
+        minWidth: 75,
+        flex: 0.7,
+      },
+      {
+        field: "actions",
+        type: "actions",
+        minWidth: 20,
+        flex: 0.3,
+        getActions: (params) => [
+          <GridActionsCellItem
+            icon={<EditIcon />}
+            onClick={() => {
+              handleEdit(params);
+            }}
+            label="Edit"
+          />,
+        ],
+      },
+    ],
+    [handleEdit]
+  );
+
   const handleOnSortModelChange = (model) => {
     setQueryOptions(model[0]);
     setSortModel(model);
@@ -115,6 +150,16 @@ const Users = () => {
 
   return (
     <Container maxWidth="xl">
+      <UserModal
+        open={open}
+        setOpen={setOpen}
+        setAlert={setAlert}
+        fetchUsers={fetchUsers}
+        user={selectedUser}
+      />
+      <Grid>
+        <Notification alert={alert} setAlert={setAlert} />
+      </Grid>
       <Box sx={{ flexGrow: 1 }}>
         <Grid container spacing={2} direction="column">
           <Grid container spacing={2} justifyContent="space-between">
@@ -138,6 +183,18 @@ const Users = () => {
                   },
                 }}
               />
+            </Grid>
+            <Grid display="flex" size={{ sm: 6, md: 8 }} justifyContent="right">
+              <Button
+                variant="contained"
+                startIcon={<AddIcon />}
+                onClick={() => {
+                  setSelectedUser();
+                  setOpen(true);
+                }}
+              >
+                New User
+              </Button>
             </Grid>
           </Grid>
           <Grid size={{ xs: 12 }}>

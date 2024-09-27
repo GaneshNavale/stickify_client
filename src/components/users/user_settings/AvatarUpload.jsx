@@ -46,9 +46,9 @@ const AvatarUpload = ({ avatarImageUrl, onImageUpload }) => {
         <Tooltip title="Upload Avatar">
           <IconButton
             component="span"
-            style={{ position: "absolute", bottom: 14, right: 14 }}
+            style={{ position: "absolute", bottom: -10, right: -10 }}
           >
-            <PhotoCamera fontSize="large" sx={{ color: "#000" }} />
+            <PhotoCamera fontSize="large" sx={{ color: "#a3a0a0" }} />
           </IconButton>
         </Tooltip>
       </label>
