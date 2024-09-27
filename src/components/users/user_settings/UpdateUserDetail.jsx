@@ -256,16 +256,12 @@ const UpdateUserDetail = ({ open, onClose }) => {
                 }}
                 disableFuture
                 format="DD-MM-YYYY"
-                sx={{
-                  width: "100%",
-                  "& .MuiInputBase-root": {
-                    height: "38px",
-                  },
-                }}
                 onError={(newError) => setDobError(newError)}
                 slotProps={{
                   textField: {
+                    size: "small",
                     helperText: dobErrorMessage,
+                    fullWidth: true,
                   },
                 }}
               />

@@ -8,12 +8,11 @@ import Button from "@mui/material/Button";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import * as API from "../../../utils/api";
-import { Grid2 as Grid } from "@mui/material";
-import { useLocation } from "react-router-dom";
+import { Grid } from "@mui/material";
 import Notification from "../../../utils/notification";
 
-const CreateShippingAddress = ({ open, onClose }) => {
-  const navigate = useLocation();
+const CreateShippingAddress = ({ open, onClose, onUpdateAddress }) => {
+  const [alert, setAlert] = useState({ message: "", type: "" });
   const [shippingAddress, setShippingAddress] = useState({
     full_name: "",
     mobile: "",
@@ -25,161 +24,202 @@ const CreateShippingAddress = ({ open, onClose }) => {
     zip_code: "",
   });
 
-  const [isFormValid, setIsFormValid] = useState(false);
-
+  const [errors, setErrors] = useState({});
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
 
   useEffect(() => {
-    const {
-      full_name,
-      mobile,
-      address_line_1,
-      city,
-      state,
-      zip_code,
-    } = shippingAddress;
-
-    const isValid =
-      full_name !== "" &&
-      mobile !== "" &&
-      address_line_1 !== "" &&
-      city !== "" &&
-      state !== "" &&
-      zip_code !== "";
-
-    setIsFormValid(isValid);
-  }, [shippingAddress]);
+    // Reset form and errors when dialog opens
+    setShippingAddress({
+      full_name: "",
+      mobile: "",
+      address_line_1: "",
+      address_line_2: "",
+      landmark: "",
+      city: "",
+      state: "",
+      zip_code: "",
+    });
+    setErrors({});
+  }, [open]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setShippingAddress((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = () => {
-    const newAddress = {
-      full_name: shippingAddress.full_name,
-      mobile: shippingAddress.mobile,
-      address_line_1: shippingAddress.address_line_1,
-      address_line_2: shippingAddress.address_line_2,
-      landmark: shippingAddress.landmark,
-      city: shippingAddress.city,
-      state: shippingAddress.state,
-      zip_code: shippingAddress.zip_code,
-    };
+  const validateField = (fieldName, value) => {
+    let fieldErrors = { ...errors };
 
-    if (isFormValid) {
-      API.createShippingAddress(newAddress)
+    switch (fieldName) {
+      case "full_name":
+        if (!value) {
+          fieldErrors.full_name = "Full name is required.";
+        } else {
+          fieldErrors.full_name = "";
+        }
+        break;
+      case "mobile":
+        if (!/^\d{10}$/.test(value)) {
+          fieldErrors.mobile = "Mobile number must be 10 digits.";
+        } else {
+          fieldErrors.mobile = "";
+        }
+        break;
+      case "zip_code":
+        if (!/^\d{5,6}$/.test(value)) {
+          fieldErrors.zip_code =
+            "Zip code must be a valid 6-digit Indian PIN code.";
+        } else {
+          fieldErrors.zip_code = "";
+        }
+        break;
+      case "address_line_1":
+        if (!value) {
+          fieldErrors.address_line_1 = "Address Line 1 is required.";
+        } else {
+          fieldErrors.address_line_1 = "";
+        }
+        break;
+      case "city":
+        if (!value) {
+          fieldErrors.city = "City is required.";
+        } else {
+          fieldErrors.city = "";
+        }
+        break;
+      case "state":
+        if (!value) {
+          fieldErrors.state = "State is required.";
+        } else {
+          fieldErrors.state = "";
+        }
+        break;
+      default:
+        break;
+    }
+
+    setErrors(fieldErrors);
+    return fieldErrors;
+  };
+
+  const validateAllFields = () => {
+    const fieldErrors = {};
+    Object.keys(shippingAddress).forEach((key) => {
+      const errorsForField = validateField(key, shippingAddress[key]);
+      fieldErrors[key] = errorsForField[key] || "";
+    });
+    return fieldErrors;
+  };
+
+  const handleBlur = (event) => {
+    const { name, value } = event.target;
+    validateField(name, value);
+  };
+
+  // Handle form submission
+  const handleSubmit = () => {
+    const fieldErrors = validateAllFields();
+
+    if (Object.values(fieldErrors).every((error) => error === "")) {
+      const shippingParams = {
+        full_name: shippingAddress.full_name,
+        mobile: shippingAddress.mobile,
+        address_line_1: shippingAddress.address_line_1,
+        address_line_2: shippingAddress.address_line_2,
+        landmark: shippingAddress.landmark,
+        city: shippingAddress.city,
+        state: shippingAddress.state,
+        zip_code: shippingAddress.zip_code,
+      };
+
+      API.createShippingAddress(shippingParams)
         .then((response) => {
-          onClose();
-          navigate("/user_account_settings", {
-            state: {
-              alert: {
-                message: "Shipping Address Created successfully!",
-                type: "success",
-              },
-            },
+          console.log("Shipping Address Created Successfully:", response);
+          onUpdateAddress(shippingParams);
+
+          setAlert({
+            message: "New Address Created Shipping Successfully.",
+            type: "success",
           });
+          setTimeout(() => {
+            setAlert({ message: "", type: "" });
+          }, 3000);
+
+          onClose();
         })
         .catch((error) => {
-          let errorMessage = "An unknown error occurred";
-          if (
-            error?.response?.data?.errors &&
-            error.response.data.errors.length > 0
-          ) {
-            errorMessage = error.response.data.errors[0];
-          } else if (error?.response?.data?.message) {
-            errorMessage = error.response.data.message;
-          }
-          navigate("/user_account_settings", {
-            state: {
-              alert: {
-                message: errorMessage,
-                type: "error",
-              },
-            },
+          console.log("Error while creating shipping address:", error);
+          setAlert({
+            message: "Failed to create shipping address.",
+            type: "error",
           });
+
+          setTimeout(() => {
+            setAlert({ message: "", type: "" });
+          }, 3000);
         });
     }
   };
 
-  const location = useLocation();
-  const [alert, setAlert] = useState({ message: "", type: "" });
-  useEffect(() => {
-    setAlert({
-      message: location.state?.alert?.message || "",
-      type: location.state?.alert?.type || "",
-    });
-    const timer = setTimeout(() => {
-      handleAlertClose();
-    }, 4500); // 4500 ms = 4.5 seconds
-    return () => clearTimeout(timer);
-  }, [location.state]);
-
-  const handleAlertClose = () => {
-    setAlert({ message: "", type: "" });
-  };
-
-  useEffect(() => {
-    window.history.replaceState({}, "");
-  }, []);
-
   return (
     <Dialog
-      fullScreen={fullScreen}
       open={open}
-      maxWidth="sm"
-      fullWidth
       onClose={onClose}
+      fullScreen={fullScreen}
       aria-labelledby="create-shipping-address-title"
     >
       <DialogTitle id="create-shipping-address-title">
         Create New Shipping Address
       </DialogTitle>
 
-      {alert.message && alert.type === "error" && (
-        <Notification alert={alert} setAlert={handleAlertClose} />
-      )}
+      <Notification alert={alert} setAlert={setAlert} />
 
       <DialogContent>
-        <Grid container spacing={2} direction="column">
-          <Grid item md={12}>
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
             <TextField
-              label="Full Name"
+              label="Full Name *"
               name="full_name"
               size="small"
               fullWidth
               value={shippingAddress.full_name}
               onChange={handleInputChange}
-              required
+              onBlur={handleBlur}
+              error={Boolean(errors.full_name)}
+              helperText={errors.full_name}
               margin="dense"
             />
           </Grid>
-          <Grid item md={12}>
+          <Grid item xs={12}>
             <TextField
-              label="Mobile"
+              label="Mobile *"
               name="mobile"
               size="small"
               fullWidth
               value={shippingAddress.mobile}
               onChange={handleInputChange}
-              required
+              onBlur={handleBlur}
+              error={Boolean(errors.mobile)}
+              helperText={errors.mobile}
               margin="dense"
             />
           </Grid>
-          <Grid item md={12}>
+          <Grid item xs={12}>
             <TextField
-              label="Address Line 1"
+              label="Address Line 1 *"
               name="address_line_1"
               size="small"
               fullWidth
               value={shippingAddress.address_line_1}
               onChange={handleInputChange}
-              required
+              onBlur={handleBlur}
+              error={Boolean(errors.address_line_1)}
+              helperText={errors.address_line_1}
               margin="dense"
             />
           </Grid>
-          <Grid item md={12}>
+          <Grid item xs={12}>
             <TextField
               label="Address Line 2"
               name="address_line_2"
@@ -187,10 +227,13 @@ const CreateShippingAddress = ({ open, onClose }) => {
               fullWidth
               value={shippingAddress.address_line_2}
               onChange={handleInputChange}
+              onBlur={handleBlur}
+              error={Boolean(errors.address_line_2)}
+              helperText={errors.address_line_2}
               margin="dense"
             />
           </Grid>
-          <Grid item md={12}>
+          <Grid item xs={12}>
             <TextField
               label="Landmark"
               name="landmark"
@@ -198,51 +241,63 @@ const CreateShippingAddress = ({ open, onClose }) => {
               fullWidth
               value={shippingAddress.landmark}
               onChange={handleInputChange}
+              onBlur={handleBlur}
+              error={Boolean(errors.landmark)}
+              helperText={errors.landmark}
               margin="dense"
             />
           </Grid>
-          <Grid item md={12}>
+          <Grid item xs={12}>
             <TextField
-              label="City"
+              label="City *"
               name="city"
               size="small"
               fullWidth
               value={shippingAddress.city}
               onChange={handleInputChange}
-              required
+              onBlur={handleBlur}
+              error={Boolean(errors.city)}
+              helperText={errors.city}
               margin="dense"
             />
           </Grid>
-          <Grid item md={12}>
+          <Grid item xs={12}>
             <TextField
-              label="State"
+              label="State *"
               name="state"
               size="small"
               fullWidth
               value={shippingAddress.state}
               onChange={handleInputChange}
-              required
+              onBlur={handleBlur}
+              error={Boolean(errors.state)}
+              helperText={errors.state}
               margin="dense"
             />
           </Grid>
-          <Grid item md={12}>
+          <Grid item xs={12}>
             <TextField
-              label="Zip Code"
+              label="Zip Code *"
               name="zip_code"
               size="small"
               fullWidth
               value={shippingAddress.zip_code}
               onChange={handleInputChange}
-              required
+              onBlur={handleBlur}
+              error={Boolean(errors.zip_code)}
+              helperText={errors.zip_code}
               margin="dense"
             />
           </Grid>
         </Grid>
       </DialogContent>
+
       <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
-        <Button onClick={handleSubmit} color="primary" disabled={!isFormValid}>
-          Save
+        <Button onClick={onClose} color="primary">
+          Cancel
+        </Button>
+        <Button onClick={handleSubmit} color="primary" variant="contained">
+          Create Address
         </Button>
       </DialogActions>
     </Dialog>

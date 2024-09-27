@@ -8,12 +8,11 @@ import Button from "@mui/material/Button";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import { Grid } from "@mui/material";
-import { useNavigate, useLocation } from "react-router-dom";
 import * as API from "../../../utils/api";
 import Notification from "../../../utils/notification";
 
-const UpdateShippingAddress = ({ open, onClose, address }) => {
-  const navigate = useNavigate();
+const UpdateShippingAddress = ({ open, onClose, address, onUpdateAddress }) => {
+  const [alert, setAlert] = useState({ message: "", type: "" });
   const [shippingAddress, setShippingAddress] = useState({
     full_name: "",
     mobile: "",
@@ -44,13 +43,18 @@ const UpdateShippingAddress = ({ open, onClose, address }) => {
     }
   }, [address]);
 
-  // Handle input change for all fields
+  // Reset alert when dialog is closed/opened
+  useEffect(() => {
+    if (!open) {
+      setAlert({ message: "", type: "" });
+    }
+  }, [open]);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setShippingAddress((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Validation function for specific fields
   const validateField = (fieldName, value) => {
     let fieldErrors = { ...errors };
 
@@ -71,7 +75,8 @@ const UpdateShippingAddress = ({ open, onClose, address }) => {
         break;
       case "zip_code":
         if (!/^\d{5,6}$/.test(value)) {
-          fieldErrors.zip_code = "Zip code must be 5 or 6 digits.";
+          fieldErrors.zip_code =
+            "Zip code must be a valid 6-digit Indian PIN code.";
         } else {
           fieldErrors.zip_code = "";
         }
@@ -81,13 +86,6 @@ const UpdateShippingAddress = ({ open, onClose, address }) => {
           fieldErrors.address_line_1 = "Address Line 1 is required.";
         } else {
           fieldErrors.address_line_1 = "";
-        }
-        break;
-      case "address_line_2":
-        if (!value) {
-          fieldErrors.address_line_2 = "Address Line 2 is required.";
-        } else {
-          fieldErrors.address_line_2 = "";
         }
         break;
       case "city":
@@ -102,15 +100,6 @@ const UpdateShippingAddress = ({ open, onClose, address }) => {
           fieldErrors.state = "State is required.";
         } else {
           fieldErrors.state = "";
-        }
-        break;
-      case "zip_code":
-        if (!value) {
-          fieldErrors.zip_code = "Zip Code is required.";
-        } else if (value.length < 6 && value.length > 6) {
-          fieldErrors.zip_code = "Zip Code Should Contain 6 Digits.";
-        } else {
-          fieldErrors.zip_code = "";
         }
         break;
       default:
@@ -135,7 +124,6 @@ const UpdateShippingAddress = ({ open, onClose, address }) => {
     validateField(name, value);
   };
 
-  // Handle form submission
   const handleSubmit = () => {
     const fieldErrors = validateAllFields();
 
@@ -154,59 +142,30 @@ const UpdateShippingAddress = ({ open, onClose, address }) => {
       API.updateShippingAddress(address.id, shippingParams)
         .then((response) => {
           console.log("Shipping Address Updated Successfully:", response);
-          onClose();
-          navigate("/user_account_settings", {
-            state: {
-              alert: {
-                message: "Shipping address updated successfully!",
-                type: "success",
-              },
-            },
+          onUpdateAddress({ ...shippingParams, id: address.id });
+
+          setAlert({
+            message: "Shipping Address Updated Successfully.",
+            type: "success",
           });
+
+          onClose(); // Close the dialog on success
         })
         .catch((error) => {
-          let errorMessage = "An unknown error occurred";
-          if (
-            error?.response?.data?.errors &&
-            error.response.data.errors.length > 0
-          ) {
-            errorMessage = error.response.data.errors[0];
-          } else if (error?.response?.data?.message) {
-            errorMessage = error.response.data.message;
-          }
-          navigate("/user_account_settings", {
-            state: {
-              alert: {
-                message: errorMessage,
-                type: "error",
-              },
-            },
+          console.error("Error while updating shipping address:", error);
+
+          setAlert({
+            message: "Error updating shipping address. Please try again.",
+            type: "error",
           });
         });
+    } else {
+      setAlert({
+        message: "Please fill all required fields correctly.",
+        type: "error",
+      });
     }
   };
-
-  const location = useLocation();
-  const [alert, setAlert] = useState({ message: "", type: "" });
-  useEffect(() => {
-    setAlert({
-      message: location.state?.alert?.message || "",
-      type: location.state?.alert?.type || "",
-    });
-    const timer = setTimeout(() => {
-      handleAlertClose();
-    }, 4500); // 4500 ms = 4.5 seconds
-    return () => clearTimeout(timer);
-  }, [location.state]);
-
-  const handleAlertClose = () => {
-    setAlert({ message: "", type: "" });
-  };
-
-  useEffect(() => {
-    window.history.replaceState({}, "");
-  }, []);
-
   return (
     <Dialog
       open={open}
@@ -218,9 +177,7 @@ const UpdateShippingAddress = ({ open, onClose, address }) => {
         Update Shipping Address
       </DialogTitle>
 
-      {alert.message && alert.type === "error" && (
-        <Notification alert={alert} setAlert={handleAlertClose} />
-      )}
+      <Notification alert={alert} setAlert={setAlert} />
 
       <DialogContent>
         <Grid container spacing={2}>
@@ -329,12 +286,7 @@ const UpdateShippingAddress = ({ open, onClose, address }) => {
               size="small"
               fullWidth
               value={shippingAddress.zip_code}
-              onChange={(e) => {
-                const value = e.target.value;
-                if (/^\d*$/.test(value)) {
-                  handleInputChange(e);
-                }
-              }}
+              onChange={handleInputChange}
               onBlur={handleBlur}
               error={Boolean(errors.zip_code)}
               helperText={errors.zip_code}
@@ -343,6 +295,7 @@ const UpdateShippingAddress = ({ open, onClose, address }) => {
           </Grid>
         </Grid>
       </DialogContent>
+
       <DialogActions>
         <Button onClick={onClose} color="primary">
           Cancel

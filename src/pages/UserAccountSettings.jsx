@@ -38,7 +38,6 @@ const UserAccountSettings = () => {
 
   const location = useLocation();
   const [alert, setAlert] = useState({ message: "", type: "" });
-  console.log("abcd");
   useEffect(() => {
     setAlert({
       message: location.state?.alert?.message || "",
@@ -46,7 +45,7 @@ const UserAccountSettings = () => {
     });
     const timer = setTimeout(() => {
       handleAlertClose();
-    }, 4500); // 4500 ms = 4.5 seconds
+    }, 4500);
     return () => clearTimeout(timer);
   }, [location.state]);
 
