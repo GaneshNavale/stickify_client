@@ -219,6 +219,7 @@ const SignIn = () => {
         >
           Sign in
         </Typography>
+        <ForgotPassword open={open} handleClose={handleClose} />
         <Box
           component="form"
           onSubmit={handleSubmit}
@@ -255,6 +256,7 @@ const SignIn = () => {
             <Box sx={{ display: "flex", justifyContent: "space-between" }}>
               <FormLabel htmlFor="password">Password</FormLabel>
               <Link
+                as={NavLink}
                 component="button"
                 onClick={handleClickOpen}
                 variant="body2"
@@ -285,7 +287,6 @@ const SignIn = () => {
             control={<Checkbox value="remember" color="primary" />}
             label="Remember me"
           />
-          <ForgotPassword open={open} handleClose={handleClose} />
           <Button type="submit" fullWidth variant="contained">
             Sign in
           </Button>

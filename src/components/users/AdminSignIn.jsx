@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -14,6 +14,7 @@ import {
   CircularProgress,
   Container,
 } from "@mui/material";
+import { NavLink, useLocation } from "react-router-dom";
 import Card from "@mui/material/Card";
 import ForgotPassword from "./ForgotPassword";
 import * as AdminAPI from "../../utils/adminApi";
@@ -22,7 +23,17 @@ import Notification from "../../utils/notification";
 
 const AdminSignIn = () => {
   const { login } = useAdminAuth();
-  const [alert, setAlert] = useState({ message: "", type: "" });
+  const location = useLocation();
+  const [alert, setAlert] = useState({
+    message: location.state?.alert?.message,
+    type: location.state?.alert?.type,
+  });
+
+  useEffect(() => {
+    // removing persisted state to remove alert on page refresh
+    window.history.replaceState({}, "");
+  }, []);
+
   const [open, setOpen] = useState(false);
   const [openBackdrop, setOpenBackdrop] = useState(false);
 
@@ -140,7 +151,7 @@ const AdminSignIn = () => {
           backgroundRepeat: "no-repeat",
         }}
       >
-        {Notification && <Notification alert={alert} setAlert={setAlert} />}
+        <Notification alert={alert} setAlert={setAlert} />
         <Card
           sx={{
             "display": "flex",
@@ -171,6 +182,12 @@ const AdminSignIn = () => {
           >
             Admin Login
           </Typography>
+          <ForgotPassword
+            open={open}
+            handleClose={handleClose}
+            setAlert={setAlert}
+            isAdmin
+          />
           <Box
             component="form"
             onSubmit={handleSubmit}
@@ -207,6 +224,7 @@ const AdminSignIn = () => {
               <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                 <FormLabel htmlFor="password">Password</FormLabel>
                 <Link
+                  as={NavLink}
                   component="button"
                   onClick={handleClickOpen}
                   variant="body2"
@@ -237,7 +255,6 @@ const AdminSignIn = () => {
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"
             />
-            <ForgotPassword open={open} handleClose={handleClose} />
             <Button type="submit" fullWidth variant="contained">
               Sign in
             </Button>

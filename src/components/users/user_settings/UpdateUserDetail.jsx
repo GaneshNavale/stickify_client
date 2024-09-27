@@ -43,7 +43,8 @@ const UpdateUserDetail = ({ open, onClose }) => {
     mobile: user.mobile || "",
     website: user.website || "",
     bio: user.bio || "",
-    avatarImage: user.avatar_image_url || "",
+    avatar_image_url: user.avatar_image_url || "",
+    avatarImage: "",
   });
 
   const dobErrorMessage = React.useMemo(() => {
@@ -138,7 +139,6 @@ const UpdateUserDetail = ({ open, onClose }) => {
 
       API.updateUserDetail(formData)
         .then((response) => {
-          console.log("response", response);
           const updatedUser = {
             ...response.data.user,
             token: user.token,
@@ -175,7 +175,6 @@ const UpdateUserDetail = ({ open, onClose }) => {
   };
 
   const handleImageUpload = (imageData) => {
-    console.log("Image data to upload:", imageData);
     setUserDetail((prevState) => ({
       ...prevState,
       avatarImage: imageData,
