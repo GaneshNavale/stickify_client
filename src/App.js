@@ -25,7 +25,7 @@ function App() {
               path={route.path}
               element={
                 route.isProtected ? (
-                  <ProtectedRoute element={route.element} />
+                  <ProtectedRoute element={route.component} />
                 ) : (
                   route.component
                 )
