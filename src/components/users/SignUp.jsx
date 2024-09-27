@@ -194,10 +194,6 @@ const SignUp = () => {
     return fieldErrors;
   };
 
-  if (isAuthenticated) {
-    navigate("/", { replace: true });
-  }
-
   return (
     <Stack
       direction="column"
