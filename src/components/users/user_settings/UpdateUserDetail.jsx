@@ -84,7 +84,6 @@ const UpdateUserDetail = ({ open, onClose }) => {
   const validateField = (fieldName, value) => {
     let fieldErrors = { ...errors };
 
-    // Optional fields, no required checks
     switch (fieldName) {
       case "mobile":
         if (value && !/^\d+$/.test(value)) {

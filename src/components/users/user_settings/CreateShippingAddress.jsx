@@ -9,8 +9,11 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import * as API from "../../../utils/api";
 import { Grid2 as Grid } from "@mui/material";
+import { useLocation } from "react-router-dom";
+import Notification from "../../../utils/notification";
 
 const CreateShippingAddress = ({ open, onClose }) => {
+  const navigate = useLocation();
   const [shippingAddress, setShippingAddress] = useState({
     full_name: "",
     mobile: "",
@@ -68,14 +71,58 @@ const CreateShippingAddress = ({ open, onClose }) => {
     if (isFormValid) {
       API.createShippingAddress(newAddress)
         .then((response) => {
-          console.log("Shipping Address Created Successfully:", response);
           onClose();
+          navigate("/user_account_settings", {
+            state: {
+              alert: {
+                message: "Shipping Address Created successfully!",
+                type: "success",
+              },
+            },
+          });
         })
         .catch((error) => {
-          console.error("Error occurred:", error);
+          let errorMessage = "An unknown error occurred";
+          if (
+            error?.response?.data?.errors &&
+            error.response.data.errors.length > 0
+          ) {
+            errorMessage = error.response.data.errors[0];
+          } else if (error?.response?.data?.message) {
+            errorMessage = error.response.data.message;
+          }
+          navigate("/user_account_settings", {
+            state: {
+              alert: {
+                message: errorMessage,
+                type: "error",
+              },
+            },
+          });
         });
     }
   };
+
+  const location = useLocation();
+  const [alert, setAlert] = useState({ message: "", type: "" });
+  useEffect(() => {
+    setAlert({
+      message: location.state?.alert?.message || "",
+      type: location.state?.alert?.type || "",
+    });
+    const timer = setTimeout(() => {
+      handleAlertClose();
+    }, 4500); // 4500 ms = 4.5 seconds
+    return () => clearTimeout(timer);
+  }, [location.state]);
+
+  const handleAlertClose = () => {
+    setAlert({ message: "", type: "" });
+  };
+
+  useEffect(() => {
+    window.history.replaceState({}, "");
+  }, []);
 
   return (
     <Dialog
@@ -89,6 +136,11 @@ const CreateShippingAddress = ({ open, onClose }) => {
       <DialogTitle id="create-shipping-address-title">
         Create New Shipping Address
       </DialogTitle>
+
+      {alert.message && alert.type === "error" && (
+        <Notification alert={alert} setAlert={handleAlertClose} />
+      )}
+
       <DialogContent>
         <Grid container spacing={2} direction="column">
           <Grid item md={12}>
