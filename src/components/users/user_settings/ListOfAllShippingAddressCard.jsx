@@ -14,8 +14,10 @@ import * as API from "../../../utils/api";
 import UpdateShippingAddress from "./updateShippingAddress";
 import CreateShippingAddress from "./CreateShippingAddress";
 import { Link } from "react-router-dom";
+import Notification from "../../../utils/notification";
 
 const ListOfAllShippingAddressCard = ({ open, onClose }) => {
+  const [alert, setAlert] = useState({ message: "", type: "" });
   const [shippingAddresses, setShippingAddresses] = useState([]);
   const [selectedShippingAddress, setSelectedShippingAddress] = useState(null);
   const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
@@ -26,21 +28,64 @@ const ListOfAllShippingAddressCard = ({ open, onClose }) => {
 
   useEffect(() => {
     if (open) {
-      API.listAllShippingAddress()
-        .then((response) => {
-          console.log("Shipping address detail Response", response);
-          setShippingAddresses(response.data);
-        })
-        .catch((error) => {
-          console.log("Shipping address error", error);
-        });
+      fetchShippingAddresses();
     }
   }, [open]);
+
+  const fetchShippingAddresses = () => {
+    API.listAllShippingAddress()
+      .then((response) => {
+        console.log("Shipping address detail Response", response);
+        setShippingAddresses(response.data);
+      })
+      .catch((error) => {
+        console.log("Shipping address error", error);
+      });
+  };
+
+  const handleAddressUpdate = (updatedAddress) => {
+    setShippingAddresses((prevAddresses) =>
+      prevAddresses.map((address) =>
+        address.id === updatedAddress.id ? updatedAddress : address
+      )
+    );
+    setIsUpdateDialogOpen(false);
+  };
+
+  const handleAddNewAddress = (newAddress) => {
+    setShippingAddresses((prevAddresses) => [...prevAddresses, newAddress]);
+    setIsCreateDialogOpen(false);
+  };
+
+  const handleMakeDefaultClick = (id) => {
+    API.makeDefaulsShippingAddress(id)
+      .then((response) => {
+        console.log("Make Default Click", response);
+
+        setShippingAddresses((prevAddresses) =>
+          prevAddresses.map((address) =>
+            address.id === id
+              ? { ...address, default: true }
+              : { ...address, default: false }
+          )
+        );
+        setAlert({
+          message: "Default Address Changed Successfully.",
+          type: "success",
+        });
+      })
+      .catch((error) => {
+        console.error("Display Error :", error);
+        setAlert({
+          message: "Failed to change default address.",
+          type: "error",
+        });
+      });
+  };
 
   const handleEditClick = (address) => {
     setSelectedShippingAddress(address);
     setIsUpdateDialogOpen(true);
-    onClose();
   };
 
   const handleCloseUpdateDialog = () => {
@@ -63,8 +108,9 @@ const ListOfAllShippingAddressCard = ({ open, onClose }) => {
         open={open}
         onClose={onClose}
         aria-labelledby="list-shipping-address-title"
-        sx={{ "& .MuiDialog-paper": { width: "80%", maxWidth: "600px" } }} // Increase dialog width
+        sx={{ "& .MuiDialog-paper": { width: "80%", maxWidth: "700px" } }}
       >
+        <Notification alert={alert} setAlert={setAlert} />
         <DialogTitle id="list-shipping-address-title">
           List of All Shipping Addresses
         </DialogTitle>
@@ -92,32 +138,77 @@ const ListOfAllShippingAddressCard = ({ open, onClose }) => {
                       primary={address.full_name}
                       secondary={
                         <Box sx={{ mb: 1 }}>
-                          {" "}
-                          {/* Add margin bottom for spacing */}
                           <Typography variant="body2" color="text.secondary">
-                            {address.mobile}
-                            <br />
-                            {address.address_line_1}
-                            <br />
-                            {address.address_line_2 &&
-                              `${address.address_line_2}`}
-                            <br />
-                            {address.landmark && `${address.landmark}`}
-                            <br />
-                            {address.city}, {address.state} - {address.zip_code}
+                            {address.mobile && (
+                              <Typography variant="body2" color="textSecondary">
+                                {address.mobile}
+                                <br />
+                              </Typography>
+                            )}
+                            {address.address_line_1 && (
+                              <Typography variant="body2" color="textSecondary">
+                                {address.address_line_1}
+                                <br />
+                              </Typography>
+                            )}
+                            {address.address_line_2 && (
+                              <Typography variant="body2" color="textSecondary">
+                                {address.address_line_2}
+                                <br />
+                              </Typography>
+                            )}
+                            {address.landmark && (
+                              <Typography variant="body2" color="textSecondary">
+                                {address.landmark}
+                                <br />
+                              </Typography>
+                            )}
+                            {address.city && address.state && address.zip_code && (
+                              <Typography variant="body2" color="textSecondary">
+                                {address.city}, {address.state} -{" "}
+                                {address.zip_code}
+                                <br />
+                              </Typography>
+                            )}
                           </Typography>
                         </Box>
                       }
                     />
                     <Box sx={{ display: "flex", alignItems: "center" }}>
                       <Button
-                        variant="text"
+                        variant="contained"
                         color="primary"
+                        size="small"
                         onClick={() => handleEditClick(address)}
+                        sx={{ marginRight: 1 }}
                       >
                         Edit
                       </Button>
                     </Box>
+
+                    {address.default ? (
+                      <Box sx={{ display: "flex", alignItems: "center" }}>
+                        <Button
+                          variant="outlined"
+                          color="primary"
+                          size="small"
+                          disabled={true}
+                        >
+                          Default
+                        </Button>
+                      </Box>
+                    ) : (
+                      <Box sx={{ display: "flex", alignItems: "center" }}>
+                        <Button
+                          variant="outlined"
+                          color="primary"
+                          size="small"
+                          onClick={() => handleMakeDefaultClick(address.id)}
+                        >
+                          Make Default
+                        </Button>
+                      </Box>
+                    )}
                   </ListItem>
                   {index < shippingAddresses.length - 1 && (
                     <Divider style={{ margin: "16px 0" }} />
@@ -144,27 +235,41 @@ const ListOfAllShippingAddressCard = ({ open, onClose }) => {
               >
                 No shipping addresses found.
               </Typography>
-              <Link
-                onClick={handleCreateClick}
-                sx={{
-                  fontWeight: "bold",
-                  fontSize: "1.1rem",
-                  color: "primary.main",
-                  textDecoration: "none",
-                  mt: 2,
-                  padding: "8px 16px",
-                  borderRadius: "4px",
-                  "&:hover": {
-                    backgroundColor: "rgba(0, 0, 0, 0.1)",
-                  },
-                }}
-              >
-                Add New Shipping Address
-              </Link>
             </Box>
           )}
         </DialogContent>
-        <Divider style={{ margin: "6px 0" }} />
+        <Divider style={{ margin: "3px 0" }} />
+
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            margin: 2,
+            textAlign: "center",
+          }}
+        >
+          {" "}
+          <Link
+            onClick={handleCreateClick}
+            sx={{
+              fontWeight: "bold",
+              fontSize: "1.1rem",
+              color: "primary.main",
+              textDecoration: "none",
+              mt: 2,
+              padding: "8px 16px",
+              borderRadius: "4px",
+              "&:hover": {
+                backgroundColor: "rgba(0, 0, 0, 0.1)",
+              },
+            }}
+          >
+            Add New Shipping Address
+          </Link>
+        </Box>
+
+        <Divider style={{ margin: "3px 0" }} />
         <DialogActions>
           <Button onClick={onClose}>Close</Button>
         </DialogActions>
@@ -174,10 +279,13 @@ const ListOfAllShippingAddressCard = ({ open, onClose }) => {
         open={isUpdateDialogOpen}
         onClose={handleCloseUpdateDialog}
         address={selectedShippingAddress}
+        onUpdateAddress={handleAddressUpdate}
       />
+
       <CreateShippingAddress
         open={isCreateDialogOpen}
         onClose={handleCloseCreateDialog}
+        onUpdateAddress={handleAddNewAddress}
       />
     </>
   );
