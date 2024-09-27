@@ -175,40 +175,39 @@ const ListOfAllShippingAddressCard = ({ open, onClose }) => {
                       }
                     />
                     <Box sx={{ display: "flex", alignItems: "center" }}>
+                      {address.default ? (
+                        <Box sx={{ display: "flex", alignItems: "center" }}>
+                          <Button
+                            variant="outlined"
+                            color="primary"
+                            size="small"
+                            disabled={true}
+                          >
+                            Default
+                          </Button>
+                        </Box>
+                      ) : (
+                        <Box sx={{ display: "flex", alignItems: "center" }}>
+                          <Button
+                            variant="outlined"
+                            color="primary"
+                            size="small"
+                            onClick={() => handleMakeDefaultClick(address.id)}
+                          >
+                            Make Default
+                          </Button>
+                        </Box>
+                      )}
                       <Button
                         variant="contained"
                         color="primary"
                         size="small"
                         onClick={() => handleEditClick(address)}
-                        sx={{ marginRight: 1 }}
+                        sx={{ marginLeft: 1 }}
                       >
                         Edit
                       </Button>
                     </Box>
-
-                    {address.default ? (
-                      <Box sx={{ display: "flex", alignItems: "center" }}>
-                        <Button
-                          variant="outlined"
-                          color="primary"
-                          size="small"
-                          disabled={true}
-                        >
-                          Default
-                        </Button>
-                      </Box>
-                    ) : (
-                      <Box sx={{ display: "flex", alignItems: "center" }}>
-                        <Button
-                          variant="outlined"
-                          color="primary"
-                          size="small"
-                          onClick={() => handleMakeDefaultClick(address.id)}
-                        >
-                          Make Default
-                        </Button>
-                      </Box>
-                    )}
                   </ListItem>
                   {index < shippingAddresses.length - 1 && (
                     <Divider style={{ margin: "16px 0" }} />
