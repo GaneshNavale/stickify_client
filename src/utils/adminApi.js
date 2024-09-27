@@ -17,3 +17,15 @@ export const resetUserPassword = (params, customHeaders) => {
     headers: { ...customHeaders },
   });
 };
+
+export const createUser = (formData) => {
+  return axios.post("/admin/users", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+};
+
+export const updateUser = (id, formData) => {
+  return axios.put(`/admin/users/${id}`, formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+};

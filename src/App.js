@@ -9,6 +9,7 @@ import { Route, Routes } from "react-router-dom";
 import routes from "./routes";
 import { useAuth } from "./hooks/useAuth";
 import NavBar from "./components/NavBar";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   const { user } = useAuth();
@@ -19,7 +20,17 @@ function App() {
       <Container maxWidth="lg">
         <Routes>
           {routes.map((route, index) => (
-            <Route key={index} path={route.path} element={route.component} />
+            <Route
+              key={index}
+              path={route.path}
+              element={
+                route.isProtected ? (
+                  <ProtectedRoute element={route.element} />
+                ) : (
+                  route.component
+                )
+              }
+            />
           ))}
         </Routes>
       </Container>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -27,6 +27,15 @@ import { useAuth } from "../../hooks/useAuth";
 import Notification from "../../utils/notification";
 
 const SignIn = () => {
+  const { user: isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/", { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
+
   const [user, setUser] = useState({
     email: "",
     password: "",
@@ -48,7 +57,6 @@ const SignIn = () => {
 
   const linkedInRedirectUri = `${window.location.origin}/linkedin`;
   const googleRedirectUri = `${window.location.origin}`;
-  const navigate = useNavigate();
 
   const handleBackdropClose = () => setOpenBackdrop(false);
   const handleBackdropOpen = () => setOpenBackdrop(true);

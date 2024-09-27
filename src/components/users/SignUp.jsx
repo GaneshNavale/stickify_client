@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -22,6 +22,7 @@ import { useNavigate } from "react-router-dom";
 
 import * as API from "../../utils/api";
 import Notification from "../../utils/notification";
+import { useAuth } from "../../hooks/useAuth";
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -29,6 +30,13 @@ const SignUp = () => {
   const [errors, setErrors] = useState({});
   const [alert, setAlert] = useState({ message: "", type: "" });
   const [openBackdrop, setOpenBackdrop] = useState(false);
+  const { user: isAuthenticated } = useAuth();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/", { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
 
   const [user, setUser] = useState({
     firstName: "",
