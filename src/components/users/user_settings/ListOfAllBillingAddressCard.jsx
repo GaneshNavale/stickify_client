@@ -8,20 +8,15 @@ import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
 import CloseIcon from "@mui/icons-material/Close";
 import { useTheme } from "@mui/material/styles";
-import {
-  ListItem,
-  ListItemText,
-  Grid,
-  Box,
-  Link,
-  IconButton,
-} from "@mui/material";
+import { ListItem, ListItemText, Grid, Box, IconButton } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import * as API from "../../../utils/api";
 import UpdateBillingAddress from "./UpdateBillingAddress";
 import CreateBillingAddress from "./CreateBillingAddress";
+import Notification from "../../../utils/notification";
 
 const ListOfAllBillingAddressCard = ({ open, onClose }) => {
+  const [alert, setAlert] = useState({ message: "", type: "" });
   const [billingAddresses, setBillingAddresses] = useState([]);
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
@@ -34,11 +29,10 @@ const ListOfAllBillingAddressCard = ({ open, onClose }) => {
     if (open) {
       API.listAllBillingAddress()
         .then((response) => {
-          console.log("Billing address detail Response", response);
           setBillingAddresses(response.data);
         })
         .catch((error) => {
-          console.log("billing address error", error);
+          console.log("Billing address error", error);
         });
     }
   }, [open]);
@@ -46,7 +40,6 @@ const ListOfAllBillingAddressCard = ({ open, onClose }) => {
   const handleEditClick = (address) => {
     setSelectedAddress(address);
     setIsUpdateDialogOpen(true);
-    onClose();
   };
 
   const handleCloseUpdateDialog = () => {
@@ -62,6 +55,20 @@ const ListOfAllBillingAddressCard = ({ open, onClose }) => {
     setIsCreateDialogOpen(false);
   };
 
+  const handleAddNewAddress = (newAddress) => {
+    setBillingAddresses((prevAddresses) => {
+      return [...prevAddresses, newAddress];
+    });
+  };
+
+  const handleUpdateAddress = (updatedAddress) => {
+    setBillingAddresses((prevAddresses) =>
+      prevAddresses.map((address) =>
+        address.id === updatedAddress.id ? updatedAddress : address
+      )
+    );
+  };
+
   return (
     <>
       <Dialog
@@ -69,20 +76,21 @@ const ListOfAllBillingAddressCard = ({ open, onClose }) => {
         open={open}
         onClose={onClose}
         aria-labelledby="list-billing-address-title"
-        sx={{ "& .MuiDialog-paper": { width: "80%", maxWidth: "600px" } }} // Increase dialog width
+        sx={{ "& .MuiDialog-paper": { width: "80%", maxWidth: "700px" } }} // Increase dialog width
       >
+        <Notification alert={alert} setAlert={setAlert} />
         <DialogTitle id="list-billing-address-title">
           List of All Billing Addresses
         </DialogTitle>
         <IconButton
           aria-label="close"
           onClick={onClose}
-          sx={(theme) => ({
+          sx={{
             position: "absolute",
             right: 8,
             top: 8,
             color: theme.palette.grey[500],
-          })}
+          }}
         >
           <CloseIcon />
         </IconButton>
@@ -98,28 +106,49 @@ const ListOfAllBillingAddressCard = ({ open, onClose }) => {
                       primary={address.full_name}
                       secondary={
                         <Box sx={{ mb: 1 }}>
-                          {" "}
-                          {/* Add margin bottom for spacing */}
                           <Typography variant="body2" color="text.secondary">
-                            {address.mobile}
-                            <br />
-                            {address.address_line_1}
-                            <br />
-                            {address.address_line_2 &&
-                              `${address.address_line_2}`}
-                            <br />
-                            {address.landmark && `${address.landmark}`}
-                            <br />
-                            {address.city}, {address.state} - {address.zip_code}
+                            {address.mobile && (
+                              <Typography variant="body2" color="textSecondary">
+                                {address.mobile}
+                                <br />
+                              </Typography>
+                            )}
+                            {address.address_line_1 && (
+                              <Typography variant="body2" color="textSecondary">
+                                {address.address_line_1}
+                                <br />
+                              </Typography>
+                            )}
+                            {address.address_line_2 && (
+                              <Typography variant="body2" color="textSecondary">
+                                {address.address_line_2}
+                                <br />
+                              </Typography>
+                            )}
+                            {address.landmark && (
+                              <Typography variant="body2" color="textSecondary">
+                                {address.landmark}
+                                <br />
+                              </Typography>
+                            )}
+                            {address.city && address.state && address.zip_code && (
+                              <Typography variant="body2" color="textSecondary">
+                                {address.city}, {address.state} -{" "}
+                                {address.zip_code}
+                                <br />
+                              </Typography>
+                            )}
                           </Typography>
                         </Box>
                       }
                     />
                     <Box sx={{ display: "flex", alignItems: "center" }}>
                       <Button
-                        variant="text"
+                        variant="contained"
                         color="primary"
+                        size="small"
                         onClick={() => handleEditClick(address)}
+                        sx={{ marginLeft: 1 }}
                       >
                         Edit
                       </Button>
@@ -150,28 +179,28 @@ const ListOfAllBillingAddressCard = ({ open, onClose }) => {
               >
                 No billing addresses found.
               </Typography>
-              <Link
-                onClick={handleCreateClick}
-                sx={{
-                  cursor: "pointer",
-                  fontWeight: "bold",
-                  fontSize: "1.1rem",
-                  color: "primary.main",
-                  textDecoration: "none",
-                  mt: 2,
-                  padding: "8px 16px",
-                  borderRadius: "4px",
-                  "&:hover": {
-                    backgroundColor: "rgba(0, 0, 0, 0.1)",
-                  },
-                }}
-              >
-                Add New Billing Address
-              </Link>
             </Box>
           )}
         </DialogContent>
-        <Divider style={{ margin: "6px 0" }} />
+        <Divider style={{ margin: "3px 0" }} />
+          <Button
+            onClick={handleCreateClick}
+            sx={{
+              cursor: "pointer",
+              fontWeight: "bold",
+              fontSize: "1.1rem",
+              color: "primary.main",
+              textDecoration: "none",
+              borderRadius: "1px",
+              "&:hover": {
+                backgroundColor: "rgba(0, 0, 0, 0.1)",
+              },
+            }}
+          >
+            Add New Billing Address
+          </Button>
+
+        <Divider style={{ margin: "3px 0" }} />
         <DialogActions>
           <Button onClick={onClose}>Close</Button>
         </DialogActions>
@@ -181,10 +210,15 @@ const ListOfAllBillingAddressCard = ({ open, onClose }) => {
         open={isUpdateDialogOpen}
         onClose={handleCloseUpdateDialog}
         address={selectedAddress}
+        onUpdateAddress={handleUpdateAddress}
+        setAlert={setAlert}
       />
+
       <CreateBillingAddress
         open={isCreateDialogOpen}
         onClose={handleCloseCreateDialog}
+        onAddAddress={handleAddNewAddress}
+        setAlert={setAlert}
       />
     </>
   );

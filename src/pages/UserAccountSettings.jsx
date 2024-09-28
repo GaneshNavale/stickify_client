@@ -34,7 +34,9 @@ const UserAccountSettings = () => {
   const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
 
   const [billingAddress, setBillingAddress] = useState([]);
-  const [shippingAddresses, setShippingAddresses] = useState([]);
+  const [defaultAddress, setDefaultAddress] = useState([]);
+  const [dialogClosed, setDialogClosed] = useState(true);
+
 
   const location = useLocation();
   const [alert, setAlert] = useState({ message: "", type: "" });
@@ -62,11 +64,13 @@ const UserAccountSettings = () => {
     setIsBillingAddressDialogOpen(false);
   };
 
-  const handleOpenShippingAddressDialog = () =>
+  const handleOpenShippingAddressDialog = () =>{
     setIsShippingAddressDialogOpen(true);
+  }
   const handleCloseShippingAddressDialog = (event, reason) => {
     if (reason === "backdropClick") return;
     setIsShippingAddressDialogOpen(false);
+    setDialogClosed(true);
   };
 
   const handleOpenPasswordDialog = () => setIsPasswordDialogOpen(true);
@@ -86,14 +90,20 @@ const UserAccountSettings = () => {
   }, []);
 
   useEffect(() => {
+    if (dialogClosed) {
     API.listAllShippingAddress()
       .then((response) => {
-        setShippingAddresses(response.data);
+        const addresses = response.data;
+        const defaultAddress = addresses.find(address => address.default === true);
+        setDefaultAddress(defaultAddress || null);
+        setDialogClosed(false);
       })
       .catch((error) => {
         console.error("Shipping address error", error);
+        setDialogClosed(false);
       });
-  }, []);
+    }
+  }, [dialogClosed]);
 
   const [value, setValue] = useState(0);
   const handleChange = (event, newValue) => {
@@ -110,7 +120,7 @@ const UserAccountSettings = () => {
 
   return (
     <>
-      <AppBar
+      {/* <AppBar
         position="static"
         color="default"
         sx={{ display: "flex", alignItems: "center" }}
@@ -134,7 +144,7 @@ const UserAccountSettings = () => {
           <Tab label="Notifications" />
           <Tab label="Tax Exemptions" />
         </Tabs>
-      </AppBar>
+      </AppBar> */}
 
       {alert.message && alert.type === "success" && (
         <Notification alert={alert} setAlert={handleAlertClose} />
@@ -273,7 +283,7 @@ const UserAccountSettings = () => {
             primary="Shipping Address"
             secondary={
               <Typography variant="body2" color="text.secondary">
-                {shippingAddresses.length + " Addresses"}
+                {defaultAddress.full_name + ", " + defaultAddress.address_line_1}
               </Typography>
             }
           />

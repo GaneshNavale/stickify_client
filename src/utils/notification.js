@@ -10,8 +10,6 @@ const Notification = (props) => {
   React.useEffect(() => {
     setOpen(!!alert?.message);
   }, [alert]);
-
-  console.log("Welcome You are in the Notification")
   const handleClose = () => {
     setOpen(false);
     setAlert({ message: "", type: "" });

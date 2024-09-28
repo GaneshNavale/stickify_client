@@ -5,14 +5,13 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
+import CloseIcon from "@mui/icons-material/Close";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
-import { Grid } from "@mui/material";
+import { Grid, IconButton } from "@mui/material";
 import * as API from "../../../utils/api";
-import Notification from "../../../utils/notification";
 
-const UpdateShippingAddress = ({ open, onClose, address, onUpdateAddress }) => {
-  const [alert, setAlert] = useState({ message: "", type: "" });
+const UpdateShippingAddress = ({ open, onClose, address, onUpdateAddress, setAlert }) => {
   const [shippingAddress, setShippingAddress] = useState({
     full_name: "",
     mobile: "",
@@ -45,7 +44,7 @@ const UpdateShippingAddress = ({ open, onClose, address, onUpdateAddress }) => {
 
   // Reset alert when dialog is closed/opened
   useEffect(() => {
-    if (!open) {
+    if (open) {
       setAlert({ message: "", type: "" });
     }
   }, [open]);
@@ -74,7 +73,7 @@ const UpdateShippingAddress = ({ open, onClose, address, onUpdateAddress }) => {
         }
         break;
       case "zip_code":
-        if (!/^\d{5,6}$/.test(value)) {
+        if (!/^\d{6}$/.test(value)) {
           fieldErrors.zip_code =
             "Zip code must be a valid 6-digit Indian PIN code.";
         } else {
@@ -126,7 +125,7 @@ const UpdateShippingAddress = ({ open, onClose, address, onUpdateAddress }) => {
 
   const handleSubmit = () => {
     const fieldErrors = validateAllFields();
-
+    setErrors(fieldErrors);
     if (Object.values(fieldErrors).every((error) => error === "")) {
       const shippingParams = {
         full_name: shippingAddress.full_name,
@@ -142,14 +141,14 @@ const UpdateShippingAddress = ({ open, onClose, address, onUpdateAddress }) => {
       API.updateShippingAddress(address.id, shippingParams)
         .then((response) => {
           console.log("Shipping Address Updated Successfully:", response);
-          onUpdateAddress({ ...shippingParams, id: address.id });
+          onUpdateAddress({ ...response.data.shipping_address, id: address.id });
 
           setAlert({
             message: "Shipping Address Updated Successfully.",
             type: "success",
           });
 
-          onClose(); // Close the dialog on success
+          onClose();
         })
         .catch((error) => {
           console.error("Error while updating shipping address:", error);
@@ -177,7 +176,18 @@ const UpdateShippingAddress = ({ open, onClose, address, onUpdateAddress }) => {
         Update Shipping Address
       </DialogTitle>
 
-      <Notification alert={alert} setAlert={setAlert} />
+      <IconButton
+          aria-label="close"
+          onClick={onClose}
+          sx={(theme) => ({
+            position: "absolute",
+            right: 8,
+            top: 8,
+            color: theme.palette.grey[500],
+          })}
+        >
+          <CloseIcon />
+        </IconButton>
 
       <DialogContent>
         <Grid container spacing={2}>
@@ -225,7 +235,7 @@ const UpdateShippingAddress = ({ open, onClose, address, onUpdateAddress }) => {
           </Grid>
           <Grid item xs={12}>
             <TextField
-              label="Address Line 2 *"
+              label="Address Line 2"
               name="address_line_2"
               size="small"
               fullWidth

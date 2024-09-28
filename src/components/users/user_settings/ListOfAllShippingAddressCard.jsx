@@ -35,7 +35,6 @@ const ListOfAllShippingAddressCard = ({ open, onClose }) => {
   const fetchShippingAddresses = () => {
     API.listAllShippingAddress()
       .then((response) => {
-        console.log("Shipping address detail Response", response);
         setShippingAddresses(response.data);
       })
       .catch((error) => {
@@ -60,8 +59,6 @@ const ListOfAllShippingAddressCard = ({ open, onClose }) => {
   const handleMakeDefaultClick = (id) => {
     API.makeDefaulsShippingAddress(id)
       .then((response) => {
-        console.log("Make Default Click", response);
-
         setShippingAddresses((prevAddresses) =>
           prevAddresses.map((address) =>
             address.id === id
@@ -239,34 +236,22 @@ const ListOfAllShippingAddressCard = ({ open, onClose }) => {
         </DialogContent>
         <Divider style={{ margin: "3px 0" }} />
 
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            margin: 2,
-            textAlign: "center",
-          }}
-        >
-          {" "}
-          <Link
+          <Button
             onClick={handleCreateClick}
             sx={{
+              cursor: "pointer",
               fontWeight: "bold",
               fontSize: "1.1rem",
               color: "primary.main",
               textDecoration: "none",
-              mt: 2,
-              padding: "8px 16px",
-              borderRadius: "4px",
+              borderRadius: "1px",
               "&:hover": {
                 backgroundColor: "rgba(0, 0, 0, 0.1)",
               },
             }}
           >
             Add New Shipping Address
-          </Link>
-        </Box>
+          </Button>
 
         <Divider style={{ margin: "3px 0" }} />
         <DialogActions>
@@ -279,12 +264,14 @@ const ListOfAllShippingAddressCard = ({ open, onClose }) => {
         onClose={handleCloseUpdateDialog}
         address={selectedShippingAddress}
         onUpdateAddress={handleAddressUpdate}
+        setAlert={setAlert}
       />
 
       <CreateShippingAddress
         open={isCreateDialogOpen}
         onClose={handleCloseCreateDialog}
         onUpdateAddress={handleAddNewAddress}
+        setAlert={setAlert}
       />
     </>
   );
