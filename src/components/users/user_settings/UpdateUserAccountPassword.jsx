@@ -8,25 +8,20 @@ import {
   Button,
   IconButton,
   Typography,
+  Backdrop,
+  CircularProgress,
 } from "@mui/material";
 import * as API from "../../../utils/api";
 import CloseIcon from "@mui/icons-material/Close";
 import { useAuth } from "../../../hooks/useAuth";
 
-const UpdateUserAccountPassword = ({ open, onClose }) => {
+const UpdateUserAccountPassword = ({ open, onClose, setAlert }) => {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
-  const [userDetail, setUserDetail] = useState({
-    name: "",
-    email: "",
-    dateOfBirth: "",
-    mobile: "",
-    website: "",
-    bio: "",
-  });
+  const [openBackdrop, setOpenBackdrop] = useState(false);
   const { user, login } = useAuth();
 
   useEffect(() => {
@@ -41,21 +36,15 @@ const UpdateUserAccountPassword = ({ open, onClose }) => {
     }
   }, [currentPassword, newPassword, confirmNewPassword]);
 
-  useEffect(() => {
-    API.getUserDetail(user.id).then((response) => {
-      setUserDetail((prevDetail) => ({
-        ...prevDetail,
-        name: response.data.user.name,
-        email: response.data.user.email,
-        dateOfBirth: response.data.user.dateOfBirth,
-        mobile: response.data.user.mobile,
-        website: response.data.user.website,
-        bio: response.data.user.bio,
-      }));
-    });
-  }, [user.id]);
-
   const [newPasswordErrorMessage, setNewPasswordErrorMessage] = useState("");
+
+  const handleOnClose = () => {
+    setCurrentPassword("");
+    setNewPassword("");
+    setConfirmNewPassword("");
+    onClose();
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (newPassword.length < 6) {
@@ -66,9 +55,8 @@ const UpdateUserAccountPassword = ({ open, onClose }) => {
       setErrorMessage("New password and confirmation do not match.");
       return;
     }
-
+    setOpenBackdrop(true);
     const updatedUserDetail = {
-      ...userDetail,
       current_password: currentPassword,
       password: newPassword,
       password_confirmation: confirmNewPassword,
@@ -79,31 +67,35 @@ const UpdateUserAccountPassword = ({ open, onClose }) => {
         const newToken = response.headers["authorization"];
 
         if (newToken) {
+          setAlert({
+            message: "User password updated successfully",
+            type: "success",
+          });
           const updatedUser = {
             ...user,
+            //is write because to replace Bearer word with the empty string ex "bearer qwertyuioiuytrewqwsdfgyu765432" it will save "qwertyuioiuytrewqwsdfgyu765432" only
             token: newToken.replace("Bearer ", ""),
-            // token: newToken.replace("Bearer ", ""), is write because to replace Bearer word with the empty string ex "bearer qwertyuioiuytrewqwsdfgyu765432" it will save "qwertyuioiuytrewqwsdfgyu765432" only
           };
 
           login(updatedUser);
-          console.log(
-            "Password updated and token refreshed successfully",
-            updatedUser
-          );
-          onClose();
+          handleOnClose();
         }
       })
       .catch((error) => {
         console.error("Error updating password", error);
         setErrorMessage("Error updating password. Please try again.");
+      })
+      .finally(() => {
+        setOpenBackdrop(false);
       });
   };
+
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+    <Dialog open={open} handleOnClose={handleOnClose} fullWidth maxWidth="sm">
       <DialogTitle>Update Password</DialogTitle>
       <IconButton
         aria-label="close"
-        onClick={onClose}
+        onClick={handleOnClose}
         sx={(theme) => ({
           position: "absolute",
           right: 8,
@@ -159,7 +151,7 @@ const UpdateUserAccountPassword = ({ open, onClose }) => {
           )}
 
           <DialogActions>
-            <Button onClick={onClose} color="primary">
+            <Button onClick={handleOnClose} color="primary">
               Cancel
             </Button>
             <Button
@@ -173,6 +165,12 @@ const UpdateUserAccountPassword = ({ open, onClose }) => {
           </DialogActions>
         </form>
       </DialogContent>
+      <Backdrop
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={openBackdrop}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
     </Dialog>
   );
 };

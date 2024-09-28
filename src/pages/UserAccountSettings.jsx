@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../hooks/useAuth";
 import {
-  Grid,
+  Grid2 as Grid,
   Avatar,
   Typography,
   ListItemText,
   Divider,
   Button,
   ListItem,
+  Chip,
+  Box,
 } from "@mui/material";
 import UpdateUserDetail from "../components/users/user_settings/UpdateUserDetail";
 import ListOfAllBillingAddressCard from "../components/users/user_settings/ListOfAllBillingAddressCard";
@@ -153,9 +155,9 @@ const UserAccountSettings = () => {
       </Grid>
       <Divider />
 
-      <Grid container>
-        <Grid item xs={12}>
-          <ListItem>
+      <Grid container direction="column">
+        <Grid item sx={{ xs: 12 }}>
+          <ListItem sx={{ py: 0 }}>
             <ListItemText
               primary="Display Name"
               secondary={
@@ -174,10 +176,10 @@ const UserAccountSettings = () => {
           </ListItem>
         </Grid>
 
-        <Grid item xs={12}>
-          <ListItem>
+        <Grid item sx={{ xs: 12 }}>
+          <ListItem sx={{ py: 0 }}>
             <ListItemText
-              primary="Display Email"
+              primary="Email"
               secondary={
                 <Typography variant="body2" color="text.secondary">
                   {user.email}
@@ -188,8 +190,8 @@ const UserAccountSettings = () => {
         </Grid>
 
         {user.bio && (
-          <Grid item xs={12}>
-            <ListItem>
+          <Grid item sx={{ xs: 12 }}>
+            <ListItem sx={{ py: 0 }}>
               <ListItemText
                 primary="Bio"
                 secondary={
@@ -234,12 +236,14 @@ const UserAccountSettings = () => {
       <UpdateUserAccountPassword
         open={isPasswordDialogOpen}
         onClose={handleClosePasswordDialog}
+        setAlert={setAlert}
       />
       <Divider />
 
       {/* Shipping Address Section */}
-      <Grid item>
+      <Grid item xs={12}>
         <ListItem
+          // secondaryAction places the button in the correct position
           secondaryAction={
             <Button
               variant="outlined"
@@ -250,16 +254,42 @@ const UserAccountSettings = () => {
             </Button>
           }
         >
-          <ListItemText
-            primary="Shipping Address"
-            secondary={
+          {/* Use Box for full control over flex layout */}
+          <Box sx={{ display: "flex", flexDirection: "column", width: "100%" }}>
+            {/* Primary Title */}
+            <Typography variant="subtitle1">Shipping Address</Typography>
+
+            {/* Secondary Content (Address and Chip) */}
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                flexWrap: "wrap", // Makes the content wrap if space is insufficient
+                pr: { xs: 2, sm: 4 }, // Adds padding to prevent overlap with the button
+              }}
+            >
               <Typography variant="body2" color="text.secondary">
-                {defaultAddress.full_name +
-                  ", " +
-                  defaultAddress.address_line_1}
+                {[
+                  defaultAddress.full_name,
+                  defaultAddress.address_line_1,
+                  defaultAddress.address_line_2,
+                  defaultAddress.landmark,
+                  defaultAddress.city,
+                  defaultAddress.state,
+                  defaultAddress.zip_code,
+                ]
+                  .filter(Boolean)
+                  .join(", ")}
+                <Chip
+                  label="default"
+                  size="small"
+                  variant="outlined"
+                  color="primary"
+                  sx={{ ml: 0.5 }} // Adjusts margin for smaller screens
+                />
               </Typography>
-            }
-          />
+            </Box>
+          </Box>
         </ListItem>
       </Grid>
 

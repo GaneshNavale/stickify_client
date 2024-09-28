@@ -174,7 +174,6 @@ const UpdateUserDetail = ({ open, onClose }) => {
       fieldErrors[key] = errorsForField[key] || "";
     });
 
-    validateField("dob", dateOfBirth);
     return fieldErrors;
   };
 

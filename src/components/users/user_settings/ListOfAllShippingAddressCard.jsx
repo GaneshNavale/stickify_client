@@ -7,13 +7,19 @@ import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
 import { useTheme } from "@mui/material/styles";
-import { ListItem, ListItemText, Grid, Box, IconButton } from "@mui/material";
+import {
+  ListItem,
+  ListItemText,
+  Grid,
+  Box,
+  IconButton,
+  Grid2,
+} from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import * as API from "../../../utils/api";
 import UpdateShippingAddress from "./updateShippingAddress";
 import CreateShippingAddress from "./CreateShippingAddress";
-import { Link } from "react-router-dom";
 import Notification from "../../../utils/notification";
 
 const ListOfAllShippingAddressCard = ({ open, onClose }) => {
@@ -115,15 +121,15 @@ const ListOfAllShippingAddressCard = ({ open, onClose }) => {
         <IconButton
           aria-label="close"
           onClick={onClose}
-          sx={(theme) => ({
+          sx={{
             position: "absolute",
             right: 8,
             top: 8,
-          })}
+          }}
         >
           <CloseIcon />
         </IconButton>
-        <Divider style={{ margin: "6px 0" }} />
+        <Divider />
         <DialogContent>
           {shippingAddresses.length > 0 ? (
             <Grid container spacing={2}>
@@ -210,9 +216,7 @@ const ListOfAllShippingAddressCard = ({ open, onClose }) => {
                       </Button>
                     </Box>
                   </ListItem>
-                  {index < shippingAddresses.length - 1 && (
-                    <Divider style={{ margin: "16px 0" }} />
-                  )}
+                  {index < shippingAddresses.length - 1 && <Divider />}
                 </Grid>
               ))}
             </Grid>
@@ -238,24 +242,21 @@ const ListOfAllShippingAddressCard = ({ open, onClose }) => {
             </Box>
           )}
         </DialogContent>
-        <Divider style={{ margin: "3px 0" }} />
-
-        <Button
-          onClick={handleCreateClick}
+        <Grid2
+          container
+          direction="row"
+          my={2}
           sx={{
-            cursor: "pointer",
-            fontWeight: "bold",
-            fontSize: "1.1rem",
-            color: "primary.main",
-            textDecoration: "none",
-            borderRadius: "1px",
-            "&:hover": {
-              backgroundColor: "rgba(0, 0, 0, 0.1)",
-            },
+            justifyContent: "center",
+            alignItems: "center",
           }}
         >
-          Add New Shipping Address
-        </Button>
+          <Grid2 item>
+            <Button onClick={handleCreateClick} fullWidth={false}>
+              Add New Shipping Address
+            </Button>
+          </Grid2>
+        </Grid2>
 
         <Divider style={{ margin: "3px 0" }} />
         <DialogActions>
