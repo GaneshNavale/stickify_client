@@ -11,7 +11,13 @@ import { useTheme } from "@mui/material/styles";
 import { Grid, IconButton } from "@mui/material";
 import * as API from "../../../utils/api";
 
-const UpdateShippingAddress = ({ open, onClose, address, onUpdateAddress, setAlert }) => {
+const UpdateShippingAddress = ({
+  open,
+  onClose,
+  address,
+  onUpdateAddress,
+  setAlert,
+}) => {
   const [shippingAddress, setShippingAddress] = useState({
     full_name: "",
     mobile: "",
@@ -141,7 +147,10 @@ const UpdateShippingAddress = ({ open, onClose, address, onUpdateAddress, setAle
       API.updateShippingAddress(address.id, shippingParams)
         .then((response) => {
           console.log("Shipping Address Updated Successfully:", response);
-          onUpdateAddress({ ...response.data.shipping_address, id: address.id });
+          onUpdateAddress({
+            ...response.data.shipping_address,
+            id: address.id,
+          });
 
           setAlert({
             message: "Shipping Address Updated Successfully.",
@@ -177,17 +186,16 @@ const UpdateShippingAddress = ({ open, onClose, address, onUpdateAddress, setAle
       </DialogTitle>
 
       <IconButton
-          aria-label="close"
-          onClick={onClose}
-          sx={(theme) => ({
-            position: "absolute",
-            right: 8,
-            top: 8,
-            color: theme.palette.grey[500],
-          })}
-        >
-          <CloseIcon />
-        </IconButton>
+        aria-label="close"
+        onClick={onClose}
+        sx={(theme) => ({
+          position: "absolute",
+          right: 8,
+          top: 8,
+        })}
+      >
+        <CloseIcon />
+      </IconButton>
 
       <DialogContent>
         <Grid container spacing={2}>

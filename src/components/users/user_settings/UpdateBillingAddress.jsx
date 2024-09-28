@@ -188,7 +188,6 @@ const UpdateBillingAddress = ({
           position: "absolute",
           right: 8,
           top: 8,
-          color: theme.palette.grey[500],
         })}
       >
         <CloseIcon />

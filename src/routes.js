@@ -20,6 +20,11 @@ const routes = [
     exact: true,
     isProtected: true,
   },
+  {
+    path: "/reset_user_password",
+    component: <ResetUserPassword />,
+    exact: true,
+  },
 ];
 
 export default routes;

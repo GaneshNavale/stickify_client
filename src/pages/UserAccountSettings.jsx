@@ -8,9 +8,6 @@ import {
   Divider,
   Button,
   ListItem,
-  AppBar,
-  Tabs,
-  Tab,
 } from "@mui/material";
 import UpdateUserDetail from "../components/users/user_settings/UpdateUserDetail";
 import ListOfAllBillingAddressCard from "../components/users/user_settings/ListOfAllBillingAddressCard";
@@ -118,32 +115,6 @@ const UserAccountSettings = () => {
 
   return (
     <>
-      {/* <AppBar
-        position="static"
-        color="default"
-        sx={{ display: "flex", alignItems: "center" }}
-      >
-        <Tabs
-          value={value}
-          onChange={handleChange}
-          centered
-          variant="scrollable"
-          scrollButtons="auto"
-          aria-label="centered tabs"
-          textColor="primary"
-          indicatorColor="primary"
-        >
-          <Tab label="Summary" />
-          <Tab label="Orders" />
-          <Tab label="Reorder" />
-          <Tab label="Reviews" />
-          <Tab label="Artworks" />
-          <Tab label="CommissionsNEW" />
-          <Tab label="Notifications" />
-          <Tab label="Tax Exemptions" />
-        </Tabs>
-      </AppBar> */}
-
       {alert.message && alert.type === "success" && (
         <Notification alert={alert} setAlert={handleAlertClose} />
       )}

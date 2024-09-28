@@ -119,7 +119,6 @@ const ListOfAllShippingAddressCard = ({ open, onClose }) => {
             position: "absolute",
             right: 8,
             top: 8,
-            color: theme.palette.grey[500],
           })}
         >
           <CloseIcon />
@@ -160,13 +159,18 @@ const ListOfAllShippingAddressCard = ({ open, onClose }) => {
                                 <br />
                               </Typography>
                             )}
-                            {address.city && address.state && address.zip_code && (
-                              <Typography variant="body2" color="textSecondary">
-                                {address.city}, {address.state} -{" "}
-                                {address.zip_code}
-                                <br />
-                              </Typography>
-                            )}
+                            {address.city &&
+                              address.state &&
+                              address.zip_code && (
+                                <Typography
+                                  variant="body2"
+                                  color="textSecondary"
+                                >
+                                  {address.city}, {address.state} -{" "}
+                                  {address.zip_code}
+                                  <br />
+                                </Typography>
+                              )}
                           </Typography>
                         </Box>
                       }
@@ -236,22 +240,22 @@ const ListOfAllShippingAddressCard = ({ open, onClose }) => {
         </DialogContent>
         <Divider style={{ margin: "3px 0" }} />
 
-          <Button
-            onClick={handleCreateClick}
-            sx={{
-              cursor: "pointer",
-              fontWeight: "bold",
-              fontSize: "1.1rem",
-              color: "primary.main",
-              textDecoration: "none",
-              borderRadius: "1px",
-              "&:hover": {
-                backgroundColor: "rgba(0, 0, 0, 0.1)",
-              },
-            }}
-          >
-            Add New Shipping Address
-          </Button>
+        <Button
+          onClick={handleCreateClick}
+          sx={{
+            cursor: "pointer",
+            fontWeight: "bold",
+            fontSize: "1.1rem",
+            color: "primary.main",
+            textDecoration: "none",
+            borderRadius: "1px",
+            "&:hover": {
+              backgroundColor: "rgba(0, 0, 0, 0.1)",
+            },
+          }}
+        >
+          Add New Shipping Address
+        </Button>
 
         <Divider style={{ margin: "3px 0" }} />
         <DialogActions>

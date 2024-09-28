@@ -10,7 +10,6 @@ import { useTheme } from "@mui/material/styles";
 import * as API from "../../../utils/api";
 import { Grid } from "@mui/material";
 import Notification from "../../../utils/notification";
-import { useLocation } from "react-router-dom";
 
 const CreateBillingAddress = ({ open, onClose, onAddAddress, setAlert }) => {
   const [billingAddress, setBillingAddress] = useState({
@@ -68,7 +67,8 @@ const CreateBillingAddress = ({ open, onClose, onAddAddress, setAlert }) => {
         break;
       case "zip_code":
         if (!/^\d{6}$/.test(value)) {
-          fieldErrors.zip_code = "Zip code must be a valid 6-digit Indian PIN code.";
+          fieldErrors.zip_code =
+            "Zip code must be a valid 6-digit Indian PIN code.";
         } else {
           fieldErrors.zip_code = "";
         }
@@ -281,7 +281,12 @@ const CreateBillingAddress = ({ open, onClose, onAddAddress, setAlert }) => {
         <Button onClick={onClose} color="primary">
           Cancel
         </Button>
-        <Button onClick={handleSubmit} color="primary" variant="contained" disabled={!Object.values(billingAddress).some(field => field)}>
+        <Button
+          onClick={handleSubmit}
+          color="primary"
+          variant="contained"
+          disabled={!Object.values(billingAddress).some((field) => field)}
+        >
           Create Address
         </Button>
       </DialogActions>

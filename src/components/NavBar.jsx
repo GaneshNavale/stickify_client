@@ -110,7 +110,7 @@ const NavBar = (props) => {
                   key={item.name}
                   component={Link}
                   to={item.path}
-                  sx={{ color: "primary.main" }} // Apply primary color
+                  sx={{ color: "primary.main" }}
                 >
                   {item.name}
                 </Button>
