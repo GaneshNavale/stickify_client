@@ -24,19 +24,15 @@ const UserAccountSettings = () => {
   const { user } = useAuth();
 
   const [isUserDetailDialogOpen, setIsUserDetailDialogOpen] = useState(false);
-  const [isBillingAddressDialogOpen, setIsBillingAddressDialogOpen] = useState(
-    false
-  );
-  const [
-    isShippingAddressDialogOpen,
-    setIsShippingAddressDialogOpen,
-  ] = useState(false);
+  const [isBillingAddressDialogOpen, setIsBillingAddressDialogOpen] =
+    useState(false);
+  const [isShippingAddressDialogOpen, setIsShippingAddressDialogOpen] =
+    useState(false);
   const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
 
   const [billingAddress, setBillingAddress] = useState([]);
   const [defaultAddress, setDefaultAddress] = useState([]);
   const [dialogClosed, setDialogClosed] = useState(true);
-
 
   const location = useLocation();
   const [alert, setAlert] = useState({ message: "", type: "" });
@@ -64,9 +60,9 @@ const UserAccountSettings = () => {
     setIsBillingAddressDialogOpen(false);
   };
 
-  const handleOpenShippingAddressDialog = () =>{
+  const handleOpenShippingAddressDialog = () => {
     setIsShippingAddressDialogOpen(true);
-  }
+  };
   const handleCloseShippingAddressDialog = (event, reason) => {
     if (reason === "backdropClick") return;
     setIsShippingAddressDialogOpen(false);
@@ -91,17 +87,19 @@ const UserAccountSettings = () => {
 
   useEffect(() => {
     if (dialogClosed) {
-    API.listAllShippingAddress()
-      .then((response) => {
-        const addresses = response.data;
-        const defaultAddress = addresses.find(address => address.default === true);
-        setDefaultAddress(defaultAddress || null);
-        setDialogClosed(false);
-      })
-      .catch((error) => {
-        console.error("Shipping address error", error);
-        setDialogClosed(false);
-      });
+      API.listAllShippingAddress()
+        .then((response) => {
+          const addresses = response.data;
+          const defaultAddress = addresses.find(
+            (address) => address.default === true
+          );
+          setDefaultAddress(defaultAddress || null);
+          setDialogClosed(false);
+        })
+        .catch((error) => {
+          console.error("Shipping address error", error);
+          setDialogClosed(false);
+        });
     }
   }, [dialogClosed]);
 
@@ -218,18 +216,20 @@ const UserAccountSettings = () => {
           </ListItem>
         </Grid>
 
-        <Grid item xs={12}>
-          <ListItem>
-            <ListItemText
-              primary="Bio"
-              secondary={
-                <Typography variant="body2" color="text.secondary">
-                  {user.bio}
-                </Typography>
-              }
-            />
-          </ListItem>
-        </Grid>
+        {user.bio && (
+          <Grid item xs={12}>
+            <ListItem>
+              <ListItemText
+                primary="Bio"
+                secondary={
+                  <Typography variant="body2" color="text.secondary">
+                    {user.bio}
+                  </Typography>
+                }
+              />
+            </ListItem>
+          </Grid>
+        )}
       </Grid>
 
       <UpdateUserDetail
@@ -283,7 +283,9 @@ const UserAccountSettings = () => {
             primary="Shipping Address"
             secondary={
               <Typography variant="body2" color="text.secondary">
-                {defaultAddress.full_name + ", " + defaultAddress.address_line_1}
+                {defaultAddress.full_name +
+                  ", " +
+                  defaultAddress.address_line_1}
               </Typography>
             }
           />

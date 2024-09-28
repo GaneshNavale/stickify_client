@@ -11,7 +11,13 @@ import { useTheme } from "@mui/material/styles";
 import { Grid, IconButton } from "@mui/material";
 import * as API from "../../../utils/api";
 
-const UpdateBillingAddress = ({ open, onClose, address, onUpdateAddress, setAlert }) => {
+const UpdateBillingAddress = ({
+  open,
+  onClose,
+  address,
+  onUpdateAddress,
+  setAlert,
+}) => {
   const [billingAddress, setBillingAddress] = useState({
     full_name: "",
     mobile: "",
@@ -42,7 +48,6 @@ const UpdateBillingAddress = ({ open, onClose, address, onUpdateAddress, setAler
     }
   }, [address]);
 
-  // Reset alert when dialog is closed/opened
   useEffect(() => {
     if (open) {
       setAlert({ message: "", type: "" });
@@ -74,7 +79,8 @@ const UpdateBillingAddress = ({ open, onClose, address, onUpdateAddress, setAler
         break;
       case "zip_code":
         if (!/^\d{6}$/.test(value)) {
-          fieldErrors.zip_code = "Zip code must be a valid 6-digit Indian PIN code.";
+          fieldErrors.zip_code =
+            "Zip code must be a valid 6-digit Indian PIN code.";
         } else {
           fieldErrors.zip_code = "";
         }
@@ -130,8 +136,8 @@ const UpdateBillingAddress = ({ open, onClose, address, onUpdateAddress, setAler
         full_name: billingAddress.full_name,
         mobile: billingAddress.mobile,
         address_line_1: billingAddress.address_line_1,
-        address_line_2: billingAddress.address_line_2,
-        landmark: billingAddress.landmark,
+        address_line_2: billingAddress.address_line_2 || "",
+        landmark: billingAddress.landmark || "",
         city: billingAddress.city,
         state: billingAddress.state,
         zip_code: billingAddress.zip_code,
