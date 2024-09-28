@@ -16,10 +16,8 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import CloseIcon from "@mui/icons-material/Close";
 import AvatarUpload from "./AvatarUpload";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 import dayjs from "dayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
 import { IconButton } from "@mui/material";
@@ -88,15 +86,6 @@ const UpdateUserDetail = ({ open, onClose }) => {
           fieldErrors.name = "Full name is required.";
         } else {
           fieldErrors.name = "";
-        }
-        break;
-      case "dob":
-        if (!dateOfBirth) {
-          fieldErrors.dob = "Date of birth is required.";
-        } else if (dobError) {
-          fieldErrors.dob = dobErrorMessage;
-        } else {
-          fieldErrors.dob = "";
         }
         break;
       case "mobile":
@@ -262,28 +251,26 @@ const UpdateUserDetail = ({ open, onClose }) => {
           </Grid>
 
           <Grid item>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker
-                label="Date of Birth"
-                name="dob"
-                value={dateOfBirth}
-                onChange={(newValue) => {
-                  setDateOfBirth(newValue);
-                  setHasChanges(true);
-                }}
-                disableFuture
-                format="DD-MM-YYYY"
-                onBlur={handleBlur}
-                slotProps={{
-                  textField: {
-                    size: "small",
-                    helperText: dobErrorMessage,
-                    fullWidth: true,
-                    error: Boolean(errors.dob),
-                  },
-                }}
-              />
-            </LocalizationProvider>
+            <DatePicker
+              label="Date of Birth"
+              name="dob"
+              value={dateOfBirth}
+              onChange={(newValue) => {
+                setDateOfBirth(newValue);
+                setHasChanges(true);
+              }}
+              disableFuture
+              format="DD-MM-YYYY"
+              onBlur={handleBlur}
+              onError={(newError) => setDobError(newError)}
+              slotProps={{
+                textField: {
+                  size: "small",
+                  helperText: dobErrorMessage,
+                  fullWidth: true,
+                },
+              }}
+            />
           </Grid>
           <Grid item>
             <TextField
