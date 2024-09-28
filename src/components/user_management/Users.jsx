@@ -68,8 +68,8 @@ const Users = () => {
     fetchUsers,
     paginationModel.page,
     paginationModel.pageSize,
-    queryOptions.field,
-    queryOptions.sort,
+    queryOptions?.field,
+    queryOptions?.sort,
     searchTerm,
   ]);
 

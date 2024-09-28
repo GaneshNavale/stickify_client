@@ -47,6 +47,8 @@ const UserModal = (props) => {
       avatar_image_url: user?.avatar_image_url || "",
     });
     setDateOfBirth(user?.dob ? dayjs(user.dob, "DD-MM-YYYY") : null);
+    setErrors({});
+    setDobError();
   }, [user]);
 
   const dobErrorMessage = useMemo(() => {
@@ -119,6 +121,8 @@ const UserModal = (props) => {
       case "mobile":
         if (value && !/^\d+$/.test(value)) {
           fieldErrors.mobile = "Mobile number should contain only digits";
+        } else if (value && !/^\d{10}$/.test(value)) {
+          fieldErrors.mobile = "Mobile number should contain exactly 10 digits";
         } else {
           fieldErrors.mobile = "";
         }
@@ -234,7 +238,7 @@ const UserModal = (props) => {
           </Grid>
           <Grid item md={12}>
             <TextField
-              label="Name"
+              label="Name*"
               name="name"
               type="text"
               size="small"
@@ -249,7 +253,7 @@ const UserModal = (props) => {
           </Grid>
           <Grid item>
             <TextField
-              label="Email"
+              label="Email*"
               name="email"
               type="email"
               size="small"
