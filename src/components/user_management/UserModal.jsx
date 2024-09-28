@@ -121,7 +121,7 @@ const UserModal = (props) => {
       case "mobile":
         if (value && !/^\d+$/.test(value)) {
           fieldErrors.mobile = "Mobile number should contain only digits";
-        } else if (!/^\d{10}$/.test(value)) {
+        } else if (value && !/^\d{10}$/.test(value)) {
           fieldErrors.mobile = "Mobile number should contain exactly 10 digits";
         } else {
           fieldErrors.mobile = "";
