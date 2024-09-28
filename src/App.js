@@ -10,6 +10,7 @@ import routes from "./routes";
 import { useAuth } from "./hooks/useAuth";
 import NavBar from "./components/NavBar";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Footer from "./components/Footer";
 
 function App() {
   const { user } = useAuth();
@@ -34,7 +35,8 @@ function App() {
           ))}
         </Routes>
       </Container>
-      <Copyright />
+      {/* <Footer /> */}
+      <Copyright />  {/* write in footer  */}
     </ThemeProvider>
   );
 }
