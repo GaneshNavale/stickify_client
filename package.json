@@ -1,5 +1,9 @@
 {
   "name": "reality_reviews_client",
+  "engines": {
+    "npm": ">=10.5.0",
+    "node": ">=21.7.3"
+  },
   "version": "0.1.0",
   "private": true,
   "dependencies": {

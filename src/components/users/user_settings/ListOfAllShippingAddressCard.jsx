@@ -7,13 +7,19 @@ import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
 import { useTheme } from "@mui/material/styles";
-import { ListItem, ListItemText, Grid, Box, IconButton } from "@mui/material";
+import {
+  ListItem,
+  ListItemText,
+  Grid,
+  Box,
+  IconButton,
+  Grid2,
+} from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import * as API from "../../../utils/api";
 import UpdateShippingAddress from "./updateShippingAddress";
 import CreateShippingAddress from "./CreateShippingAddress";
-import { Link } from "react-router-dom";
 import Notification from "../../../utils/notification";
 
 const ListOfAllShippingAddressCard = ({ open, onClose }) => {
@@ -35,7 +41,6 @@ const ListOfAllShippingAddressCard = ({ open, onClose }) => {
   const fetchShippingAddresses = () => {
     API.listAllShippingAddress()
       .then((response) => {
-        console.log("Shipping address detail Response", response);
         setShippingAddresses(response.data);
       })
       .catch((error) => {
@@ -60,8 +65,6 @@ const ListOfAllShippingAddressCard = ({ open, onClose }) => {
   const handleMakeDefaultClick = (id) => {
     API.makeDefaulsShippingAddress(id)
       .then((response) => {
-        console.log("Make Default Click", response);
-
         setShippingAddresses((prevAddresses) =>
           prevAddresses.map((address) =>
             address.id === id
@@ -118,16 +121,15 @@ const ListOfAllShippingAddressCard = ({ open, onClose }) => {
         <IconButton
           aria-label="close"
           onClick={onClose}
-          sx={(theme) => ({
+          sx={{
             position: "absolute",
             right: 8,
             top: 8,
-            color: theme.palette.grey[500],
-          })}
+          }}
         >
           <CloseIcon />
         </IconButton>
-        <Divider style={{ margin: "6px 0" }} />
+        <Divider />
         <DialogContent>
           {shippingAddresses.length > 0 ? (
             <Grid container spacing={2}>
@@ -163,13 +165,18 @@ const ListOfAllShippingAddressCard = ({ open, onClose }) => {
                                 <br />
                               </Typography>
                             )}
-                            {address.city && address.state && address.zip_code && (
-                              <Typography variant="body2" color="textSecondary">
-                                {address.city}, {address.state} -{" "}
-                                {address.zip_code}
-                                <br />
-                              </Typography>
-                            )}
+                            {address.city &&
+                              address.state &&
+                              address.zip_code && (
+                                <Typography
+                                  variant="body2"
+                                  color="textSecondary"
+                                >
+                                  {address.city}, {address.state} -{" "}
+                                  {address.zip_code}
+                                  <br />
+                                </Typography>
+                              )}
                           </Typography>
                         </Box>
                       }
@@ -209,9 +216,7 @@ const ListOfAllShippingAddressCard = ({ open, onClose }) => {
                       </Button>
                     </Box>
                   </ListItem>
-                  {index < shippingAddresses.length - 1 && (
-                    <Divider style={{ margin: "16px 0" }} />
-                  )}
+                  {index < shippingAddresses.length - 1 && <Divider />}
                 </Grid>
               ))}
             </Grid>
@@ -237,36 +242,21 @@ const ListOfAllShippingAddressCard = ({ open, onClose }) => {
             </Box>
           )}
         </DialogContent>
-        <Divider style={{ margin: "3px 0" }} />
-
-        <Box
+        <Grid2
+          container
+          direction="row"
+          my={2}
           sx={{
-            display: "flex",
-            flexDirection: "column",
+            justifyContent: "center",
             alignItems: "center",
-            margin: 2,
-            textAlign: "center",
           }}
         >
-          {" "}
-          <Link
-            onClick={handleCreateClick}
-            sx={{
-              fontWeight: "bold",
-              fontSize: "1.1rem",
-              color: "primary.main",
-              textDecoration: "none",
-              mt: 2,
-              padding: "8px 16px",
-              borderRadius: "4px",
-              "&:hover": {
-                backgroundColor: "rgba(0, 0, 0, 0.1)",
-              },
-            }}
-          >
-            Add New Shipping Address
-          </Link>
-        </Box>
+          <Grid2 item>
+            <Button onClick={handleCreateClick} fullWidth={false}>
+              Add New Shipping Address
+            </Button>
+          </Grid2>
+        </Grid2>
 
         <Divider style={{ margin: "3px 0" }} />
         <DialogActions>
@@ -279,12 +269,14 @@ const ListOfAllShippingAddressCard = ({ open, onClose }) => {
         onClose={handleCloseUpdateDialog}
         address={selectedShippingAddress}
         onUpdateAddress={handleAddressUpdate}
+        setAlert={setAlert}
       />
 
       <CreateShippingAddress
         open={isCreateDialogOpen}
         onClose={handleCloseCreateDialog}
         onUpdateAddress={handleAddNewAddress}
+        setAlert={setAlert}
       />
     </>
   );

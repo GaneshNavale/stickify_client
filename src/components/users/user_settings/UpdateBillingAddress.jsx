@@ -5,15 +5,19 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
+import CloseIcon from "@mui/icons-material/Close";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
-import { Grid } from "@mui/material";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Grid, IconButton } from "@mui/material";
 import * as API from "../../../utils/api";
-import Notification from "../../../utils/notification";
 
-const UpdateBillingAddress = ({ open, onClose, address }) => {
-  const navigate = useNavigate();
+const UpdateBillingAddress = ({
+  open,
+  onClose,
+  address,
+  onUpdateAddress,
+  setAlert,
+}) => {
   const [billingAddress, setBillingAddress] = useState({
     full_name: "",
     mobile: "",
@@ -44,13 +48,17 @@ const UpdateBillingAddress = ({ open, onClose, address }) => {
     }
   }, [address]);
 
-  // Handle input change for all fields
+  useEffect(() => {
+    if (open) {
+      setAlert({ message: "", type: "" });
+    }
+  }, [open]);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setBillingAddress((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Validation function for specific fields
   const validateField = (fieldName, value) => {
     let fieldErrors = { ...errors };
 
@@ -70,8 +78,9 @@ const UpdateBillingAddress = ({ open, onClose, address }) => {
         }
         break;
       case "zip_code":
-        if (!/^\d{5,6}$/.test(value)) {
-          fieldErrors.zip_code = "Zip code must be 5 or 6 digits.";
+        if (!/^\d{6}$/.test(value)) {
+          fieldErrors.zip_code =
+            "Zip code must be a valid 6-digit Indian PIN code.";
         } else {
           fieldErrors.zip_code = "";
         }
@@ -83,13 +92,6 @@ const UpdateBillingAddress = ({ open, onClose, address }) => {
           fieldErrors.address_line_1 = "";
         }
         break;
-      case "address_line_2":
-        if (!value) {
-          fieldErrors.address_line_2 = "Address Line 2 is required.";
-        } else {
-          fieldErrors.address_line_2 = "";
-        }
-        break;
       case "city":
         if (!value) {
           fieldErrors.city = "City is required.";
@@ -99,18 +101,9 @@ const UpdateBillingAddress = ({ open, onClose, address }) => {
         break;
       case "state":
         if (!value) {
-          fieldErrors.state = "state is required.";
+          fieldErrors.state = "State is required.";
         } else {
           fieldErrors.state = "";
-        }
-        break;
-      case "zip_code":
-        if (!value) {
-          fieldErrors.zip_code = "Zip Code is required.";
-        } else if (value.length < 6 && value.length > 6) {
-          fieldErrors.zip_code = "Zip Code Should Contain 6 Digits.";
-        } else {
-          fieldErrors.zip_code = "";
         }
         break;
       default:
@@ -121,7 +114,6 @@ const UpdateBillingAddress = ({ open, onClose, address }) => {
     return fieldErrors;
   };
 
-  // Validate all fields before submission
   const validateAllFields = () => {
     const fieldErrors = {};
     Object.keys(billingAddress).forEach((key) => {
@@ -138,14 +130,14 @@ const UpdateBillingAddress = ({ open, onClose, address }) => {
 
   const handleSubmit = () => {
     const fieldErrors = validateAllFields();
-
+    setErrors(fieldErrors);
     if (Object.values(fieldErrors).every((error) => error === "")) {
       const billingParams = {
         full_name: billingAddress.full_name,
         mobile: billingAddress.mobile,
         address_line_1: billingAddress.address_line_1,
-        address_line_2: billingAddress.address_line_2,
-        landmark: billingAddress.landmark,
+        address_line_2: billingAddress.address_line_2 || "",
+        landmark: billingAddress.landmark || "",
         city: billingAddress.city,
         state: billingAddress.state,
         zip_code: billingAddress.zip_code,
@@ -153,58 +145,30 @@ const UpdateBillingAddress = ({ open, onClose, address }) => {
 
       API.updateBillingAddress(address.id, billingParams)
         .then((response) => {
-          onClose();
-          navigate("/user_account_settings", {
-            state: {
-              alert: {
-                message: "Billing address updated successfully!",
-                type: "success",
-              },
-            },
+          onUpdateAddress({ ...response.data.billing_address, id: address.id });
+
+          setAlert({
+            message: "Billing Address Updated Successfully.",
+            type: "success",
           });
+
+          onClose();
         })
         .catch((error) => {
-          let errorMessage = "An unknown error occurred";
-          if (
-            error?.response?.data?.errors &&
-            error.response.data.errors.length > 0
-          ) {
-            errorMessage = error.response.data.errors[0];
-          } else if (error?.response?.data?.message) {
-            errorMessage = error.response.data.message;
-          }
-          navigate("/user_account_settings", {
-            state: {
-              alert: {
-                message: errorMessage,
-                type: "error",
-              },
-            },
+          console.error("Error while updating billing address:", error);
+
+          setAlert({
+            message: "Error updating billing address. Please try again.",
+            type: "error",
           });
         });
+    } else {
+      setAlert({
+        message: "Please fill all required fields correctly.",
+        type: "error",
+      });
     }
   };
-
-  const location = useLocation();
-  const [alert, setAlert] = useState({ message: "", type: "" });
-  useEffect(() => {
-    setAlert({
-      message: location.state?.alert?.message || "",
-      type: location.state?.alert?.type || "",
-    });
-    const timer = setTimeout(() => {
-      handleAlertClose();
-    }, 4500); // 4500 ms = 4.5 seconds
-    return () => clearTimeout(timer);
-  }, [location.state]);
-
-  const handleAlertClose = () => {
-    setAlert({ message: "", type: "" });
-  };
-
-  useEffect(() => {
-    window.history.replaceState({}, "");
-  }, []);
 
   return (
     <Dialog
@@ -217,9 +181,17 @@ const UpdateBillingAddress = ({ open, onClose, address }) => {
         Update Billing Address
       </DialogTitle>
 
-      {alert.message && alert.type === "error" && (
-        <Notification alert={alert} setAlert={handleAlertClose} />
-      )}
+      <IconButton
+        aria-label="close"
+        onClick={onClose}
+        sx={(theme) => ({
+          position: "absolute",
+          right: 8,
+          top: 8,
+        })}
+      >
+        <CloseIcon />
+      </IconButton>
 
       <DialogContent>
         <Grid container spacing={2}>
@@ -267,7 +239,7 @@ const UpdateBillingAddress = ({ open, onClose, address }) => {
           </Grid>
           <Grid item xs={12}>
             <TextField
-              label="Address Line 2 *"
+              label="Address Line 2"
               name="address_line_2"
               size="small"
               fullWidth
@@ -328,12 +300,7 @@ const UpdateBillingAddress = ({ open, onClose, address }) => {
               size="small"
               fullWidth
               value={billingAddress.zip_code}
-              onChange={(e) => {
-                const value = e.target.value;
-                if (/^\d*$/.test(value)) {
-                  handleInputChange(e);
-                }
-              }}
+              onChange={handleInputChange}
               onBlur={handleBlur}
               error={Boolean(errors.zip_code)}
               helperText={errors.zip_code}
@@ -342,6 +309,7 @@ const UpdateBillingAddress = ({ open, onClose, address }) => {
           </Grid>
         </Grid>
       </DialogContent>
+
       <DialogActions>
         <Button onClick={onClose} color="primary">
           Cancel

@@ -16,10 +16,8 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import CloseIcon from "@mui/icons-material/Close";
 import AvatarUpload from "./AvatarUpload";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 import dayjs from "dayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
 import { IconButton } from "@mui/material";
@@ -52,11 +50,9 @@ const UpdateUserDetail = ({ open, onClose }) => {
       case "disableFuture": {
         return "Date of Birth can't be a future date";
       }
-
       case "invalidDate": {
         return "Your date is not valid";
       }
-
       default: {
         return "";
       }
@@ -85,9 +81,16 @@ const UpdateUserDetail = ({ open, onClose }) => {
     let fieldErrors = { ...errors };
 
     switch (fieldName) {
+      case "name":
+        if (!value) {
+          fieldErrors.name = "Full name is required.";
+        } else {
+          fieldErrors.name = "";
+        }
+        break;
       case "mobile":
-        if (value && !/^\d+$/.test(value)) {
-          fieldErrors.mobile = "Mobile number should contain only digits";
+        if (!/^\d{10}$/.test(value)) {
+          fieldErrors.mobile = "Mobile number must be 10 digits.";
         } else {
           fieldErrors.mobile = "";
         }
@@ -148,7 +151,7 @@ const UpdateUserDetail = ({ open, onClose }) => {
           navigate("/user_account_settings", {
             state: {
               alert: {
-                message: "Shipping address updated successfully!",
+                message: "User Details updated successfully!",
                 type: "success",
               },
             },
@@ -216,7 +219,7 @@ const UpdateUserDetail = ({ open, onClose }) => {
           </Grid>
           <Grid item md={12}>
             <TextField
-              label="Name"
+              label="Name *"
               name="name"
               type="text"
               size="small"
@@ -231,10 +234,11 @@ const UpdateUserDetail = ({ open, onClose }) => {
           </Grid>
           <Grid item>
             <TextField
-              label="Email"
+              label="Email *"
               name="email"
               type="email"
               size="small"
+              disabled={true}
               fullWidth
               value={userDetail.email}
               onChange={handleChange}
@@ -246,26 +250,26 @@ const UpdateUserDetail = ({ open, onClose }) => {
           </Grid>
 
           <Grid item>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker
-                label="Date of Birth"
-                value={dateOfBirth}
-                onChange={(newValue) => {
-                  setDateOfBirth(newValue);
-                  setHasChanges(true);
-                }}
-                disableFuture
-                format="DD-MM-YYYY"
-                onError={(newError) => setDobError(newError)}
-                slotProps={{
-                  textField: {
-                    size: "small",
-                    helperText: dobErrorMessage,
-                    fullWidth: true,
-                  },
-                }}
-              />
-            </LocalizationProvider>
+            <DatePicker
+              label="Date of Birth"
+              name="dob"
+              value={dateOfBirth}
+              onChange={(newValue) => {
+                setDateOfBirth(newValue);
+                setHasChanges(true);
+              }}
+              disableFuture
+              format="DD-MM-YYYY"
+              onBlur={handleBlur}
+              onError={(newError) => setDobError(newError)}
+              slotProps={{
+                textField: {
+                  size: "small",
+                  helperText: dobErrorMessage,
+                  fullWidth: true,
+                },
+              }}
+            />
           </Grid>
           <Grid item>
             <TextField
@@ -297,44 +301,41 @@ const UpdateUserDetail = ({ open, onClose }) => {
               margin="dense"
             />
           </Grid>
+
           <Grid item>
             <TextField
               label="Bio"
               name="bio"
-              multiline
+              type="text"
               size="small"
-              rows={3}
+              multiline
               fullWidth
+              rows={3}
               value={userDetail.bio}
               onChange={handleChange}
               onBlur={handleBlur}
-              placeholder="Enter your bio"
               margin="dense"
             />
           </Grid>
         </Grid>
       </DialogContent>
       <Divider />
-      <DialogActions sx={{ padding: 2 }}>
-        <Grid container spacing={2} direction="row">
-          <Grid item>
-            <Button onClick={onClose}>Cancel</Button>
-          </Grid>
-          <Grid item sx={{ marginRight: 1 }}>
-            <Button
-              type="submit"
-              color="primary"
-              variant="contained"
-              disabled={!hasChanges}
-              onClick={handleUserDetailUpdateSubmit}
-            >
-              Save Changes
-            </Button>
-          </Grid>
-        </Grid>
+      <DialogActions>
+        <Button onClick={onClose} variant="outlined" color="primary">
+          Cancel
+        </Button>
+        <Button
+          onClick={handleUserDetailUpdateSubmit}
+          variant="contained"
+          color="primary"
+          disabled={!hasChanges}
+        >
+          Save Changes
+        </Button>
       </DialogActions>
+
       <Backdrop
-        sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
         open={openBackdrop}
       >
         <CircularProgress color="inherit" />

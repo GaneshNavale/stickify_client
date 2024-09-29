@@ -1,5 +1,6 @@
 import * as React from "react";
 import PropTypes from "prop-types";
+import { Link } from "react-router-dom";
 import AppBar from "@mui/material/AppBar";
 import Divider from "@mui/material/Divider";
 import Drawer from "@mui/material/Drawer";
@@ -17,7 +18,6 @@ import Menu from "@mui/material/Menu";
 import Container from "@mui/material/Container";
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
-
 import CssBaseline from "@mui/material/CssBaseline";
 import { useAuth } from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
@@ -25,14 +25,18 @@ import UserMenuItems from "./users/user_settings/UserMenuItems";
 
 const drawerWidth = 240;
 const drawerHeight = 360;
-const navItems = ["Home", "Products", "About Us"];
+const navItems = [
+  { name: "Home", path: "/" },
+  { name: "Products", path: "/products" },
+  { name: "About Us", path: "/about" },
+];
 
 const NavBar = (props) => {
   const { user, window } = props;
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = React.useState(false);
-
   const [anchorElUser, setAnchorElUser] = React.useState(null);
+
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
   };
@@ -55,15 +59,23 @@ const NavBar = (props) => {
       <Divider />
       <List>
         {navItems.map((item) => (
-          <ListItem key={item} disablePadding>
-            <ListItemButton sx={{ textAlign: "center" }}>
-              <ListItemText primary={item} />
+          <ListItem key={item.name} disablePadding>
+            <ListItemButton
+              component={Link}
+              to={item.path}
+              sx={{ textAlign: "center", color: "primary.main" }}
+            >
+              <ListItemText primary={item.name} />
             </ListItemButton>
           </ListItem>
         ))}
         {!user && (
           <ListItem key="sign_in" disablePadding>
-            <ListItemButton to="/sign_in" sx={{ textAlign: "center" }}>
+            <ListItemButton
+              component={Link}
+              to="/sign_in"
+              sx={{ textAlign: "center", color: "primary.main" }}
+            >
               <ListItemText primary="Sign In" />
             </ListItemButton>
           </ListItem>
@@ -94,15 +106,18 @@ const NavBar = (props) => {
             </Typography>
             <Box sx={{ display: { xs: "none", sm: "block" } }}>
               {navItems.map((item) => (
-                <Button key={item} color="white">
-                  {item}
+                <Button
+                  key={item.name}
+                  component={Link}
+                  to={item.path}
+                  sx={{ color: "primary.main" }}
+                >
+                  {item.name}
                 </Button>
               ))}
               {!user && (
                 <Button
-                  color="white"
-                  to="/sign_in"
-                  sx={{ textDecoration: "none" }}
+                  color="primary"
                   onClick={() => {
                     navigate("/sign_in", { replace: true });
                   }}
@@ -139,7 +154,7 @@ const NavBar = (props) => {
                   onClose={handleCloseUserMenu}
                   PaperProps={{
                     sx: {
-                      width: 265, // Adjust this value to set the desired width
+                      width: 265,
                     },
                   }}
                 >
@@ -161,10 +176,10 @@ const NavBar = (props) => {
           open={mobileOpen}
           onClose={handleDrawerToggle}
           ModalProps={{
-            keepMounted: true, // Better open performance on mobile.
+            keepMounted: true,
           }}
           sx={{
-            "display": { xs: "block", sm: "none" },
+            display: { xs: "block", sm: "none" },
             "& .MuiDrawer-paper": {
               width: drawerWidth,
               height: drawerHeight,
@@ -179,10 +194,7 @@ const NavBar = (props) => {
 };
 
 NavBar.propTypes = {
-  /**
-   * Injected by the documentation to work in an iframe.
-   * You won't need it on your project.
-   */
   window: PropTypes.func,
 };
+
 export default NavBar;

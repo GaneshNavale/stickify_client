@@ -11,8 +11,7 @@ import * as API from "../../../utils/api";
 import { Grid } from "@mui/material";
 import Notification from "../../../utils/notification";
 
-const CreateShippingAddress = ({ open, onClose, onUpdateAddress }) => {
-  const [alert, setAlert] = useState({ message: "", type: "" });
+const CreateShippingAddress = ({ open, onClose, onUpdateAddress, setAlert }) => {
   const [shippingAddress, setShippingAddress] = useState({
     full_name: "",
     mobile: "",
@@ -67,7 +66,7 @@ const CreateShippingAddress = ({ open, onClose, onUpdateAddress }) => {
         }
         break;
       case "zip_code":
-        if (!/^\d{5,6}$/.test(value)) {
+        if (!/^\d{6}$/.test(value)) {
           fieldErrors.zip_code =
             "Zip code must be a valid 6-digit Indian PIN code.";
         } else {
@@ -120,7 +119,7 @@ const CreateShippingAddress = ({ open, onClose, onUpdateAddress }) => {
   // Handle form submission
   const handleSubmit = () => {
     const fieldErrors = validateAllFields();
-
+    setErrors(fieldErrors);
     if (Object.values(fieldErrors).every((error) => error === "")) {
       const shippingParams = {
         full_name: shippingAddress.full_name,
@@ -136,16 +135,11 @@ const CreateShippingAddress = ({ open, onClose, onUpdateAddress }) => {
       API.createShippingAddress(shippingParams)
         .then((response) => {
           console.log("Shipping Address Created Successfully:", response);
-          onUpdateAddress(shippingParams);
-
+          onUpdateAddress(response.data.shipping_address);
           setAlert({
-            message: "New Address Created Shipping Successfully.",
+            message: "New Shipping Address Created Successfully.",
             type: "success",
           });
-          setTimeout(() => {
-            setAlert({ message: "", type: "" });
-          }, 3000);
-
           onClose();
         })
         .catch((error) => {
@@ -154,10 +148,6 @@ const CreateShippingAddress = ({ open, onClose, onUpdateAddress }) => {
             message: "Failed to create shipping address.",
             type: "error",
           });
-
-          setTimeout(() => {
-            setAlert({ message: "", type: "" });
-          }, 3000);
         });
     }
   };
