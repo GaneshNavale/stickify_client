@@ -15,19 +15,21 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Menu from "@mui/material/Menu";
-import Container from "@mui/material/Container";
+import MenuItem from "@mui/material/MenuItem";
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import CssBaseline from "@mui/material/CssBaseline";
 import { useAuth } from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import UserMenuItems from "./users/user_settings/UserMenuItems";
+import Container from "@mui/material/Container";
+import ProductMenuItem from "./ProductMenuItem"; // Import the new component
 
 const drawerWidth = 240;
 const drawerHeight = 360;
 const navItems = [
   { name: "Home", path: "/" },
-  { name: "Products", path: "/products" },
+  { name: "Products", path: "/products/product_listing" },
   { name: "About Us", path: "/about" },
 ];
 
@@ -36,6 +38,7 @@ const NavBar = (props) => {
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const [productMenuAnchor, setProductMenuAnchor] = React.useState(null); // State for product dropdown
 
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
@@ -43,6 +46,14 @@ const NavBar = (props) => {
 
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
+  };
+
+  const handleOpenProductMenu = (event) => {
+    setProductMenuAnchor(event.currentTarget);
+  };
+
+  const handleCloseProductMenu = () => {
+    setProductMenuAnchor(null);
   };
 
   const { logout } = useAuth();
@@ -105,16 +116,25 @@ const NavBar = (props) => {
               LOGO
             </Typography>
             <Box sx={{ display: { xs: "none", sm: "block" } }}>
-              {navItems.map((item) => (
-                <Button
-                  key={item.name}
-                  component={Link}
-                  to={item.path}
-                  sx={{ color: "primary.main" }}
-                >
-                  {item.name}
-                </Button>
-              ))}
+              {navItems.map((item) =>
+                item.name === "Products" ? (
+                  <ProductMenuItem
+                    key={item.name}
+                    productMenuAnchor={productMenuAnchor}
+                    handleOpenProductMenu={handleOpenProductMenu}
+                    handleCloseProductMenu={handleCloseProductMenu}
+                  />
+                ) : (
+                  <Button
+                    key={item.name}
+                    component={Link}
+                    to={item.path}
+                    sx={{ color: "primary.main" }}
+                  >
+                    {item.name}
+                  </Button>
+                )
+              )}
               {!user && (
                 <Button
                   color="primary"
