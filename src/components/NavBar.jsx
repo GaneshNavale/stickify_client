@@ -15,7 +15,6 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -24,6 +23,7 @@ import { useNavigate } from "react-router-dom";
 import UserMenuItems from "./users/user_settings/UserMenuItems";
 import Container from "@mui/material/Container";
 import ProductMenuItem from "./ProductMenuItem"; // Import the new component
+import { useState } from "react";
 
 const drawerWidth = 240;
 const drawerHeight = 360;
@@ -36,9 +36,9 @@ const navItems = [
 const NavBar = (props) => {
   const { user, window } = props;
   const navigate = useNavigate();
-  const [mobileOpen, setMobileOpen] = React.useState(false);
-  const [anchorElUser, setAnchorElUser] = React.useState(null);
-  const [productMenuAnchor, setProductMenuAnchor] = React.useState(null); // State for product dropdown
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [anchorElUser, setAnchorElUser] = useState(null);
+  const [productMenuAnchor, setProductMenuAnchor] = useState(null);
 
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);

@@ -6,6 +6,7 @@ import UserAccountSettings from "./pages/UserAccountSettings";
 import ResetUserPassword from "./components/users/ResetUserPassword";
 import AboutUs from "./pages/AboutUs";
 import ProductListingPage from "./pages/Product/ProductListingPage";
+import ProductInfo from "./pages/Product/ProductInfo";
 
 const routes = [
   { path: "/", component: <Home />, exact: true },
@@ -15,6 +16,11 @@ const routes = [
   {
     path: "/products/product_listing",
     component: <ProductListingPage />,
+    exact: true,
+  },
+  {
+    path: "/products/product_info",
+    component: <ProductInfo />,
     exact: true,
   },
   { path: "/about", component: <AboutUs />, exact: true },
