@@ -106,7 +106,7 @@ const ProductListingPage = () => {
               sm={6}
               md={4}
               sx={{
-                marginLeft: 2,
+                marginLeft: 2.5,
               }}
             >
               <Typography
