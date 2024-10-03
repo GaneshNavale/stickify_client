@@ -29,3 +29,36 @@ export const updateUser = (id, formData) => {
     headers: { "Content-Type": "multipart/form-data" },
   });
 };
+
+export const createCategory = (formData) => {
+  return axios.post("/admin/categories", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+};
+
+export const fetchCategories = (params) => {
+  return axios.get("/admin/categories", { params: params });
+};
+
+export const fetchCategory = (id) => {
+  return axios.get(`/admin/categories/${id}`);
+};
+
+export const updateDescription = (id, formData) => {
+  return axios.put(`/admin/descriptions/${id}`, formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+};
+
+export const createDescription = (formData) => {
+  return axios.post("/admin/descriptions", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+};
+
+export const updateCategory = (id, formData) => {
+  return axios.put(`/admin/categories/${id}`, formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+};
+
