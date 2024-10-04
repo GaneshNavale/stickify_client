@@ -144,7 +144,13 @@ const DescriptionModal = (props) => {
         formData.append("description[images][]", image);
       });
     } else if (description.media_type === "video" && description.video) {
-      formData.append("description[video]", description.video);
+      // formData.append("description[video]", description.video);
+      // Prasad Shelke Change added if condition
+      if (description.video instanceof File) {
+        formData.append("description[video]", description.video);
+      } else {
+        console.error("Video is not a file object:", description.video);
+      }
     }
 
     try {

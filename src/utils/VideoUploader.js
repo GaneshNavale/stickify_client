@@ -21,11 +21,10 @@ const VideoUploader = ({ videoUrl, onVideoChange }) => {
         setAlert({ open: true, message: "Please upload a valid MP4 video." });
         return;
       }
-      setLoading(true);
       const videoURL = URL.createObjectURL(file);
       setVideo(videoURL);
+      console.log("Video File:", file); // Add this line to verify the file type
       onVideoChange(file); // Send the file back to the parent
-      setLoading(false);
     }
   };
 
