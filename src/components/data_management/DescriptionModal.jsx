@@ -167,6 +167,13 @@ const DescriptionModal = (props) => {
   };
 
   const onClose = () => {
+    setDescription({
+      title: "",
+      body: "",
+      media_type: "none",
+      images: [],
+      video: null,
+    });
     handleModalClose();
   };
   const handleBlur = (name) => {
