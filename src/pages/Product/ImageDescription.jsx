@@ -10,21 +10,17 @@ function srcset(image, size, rows = 1, cols = 1) {
 
 const ImageDescription = (props) => {
   const { imageInfo } = props;
+
   const [displayImages, setDisplayImages] = useState([]);
 
   useEffect(() => {
     if (imageInfo && imageInfo.images) {
       const images = Object.values(imageInfo.images);
-      if (images.length > 3) {
-        const shuffledImages = images.sort(() => Math.random() - 0.5);
-        setDisplayImages(shuffledImages.slice(0, 3));
-      } else {
-        setDisplayImages(images);
-      }
+      setDisplayImages(images);
     }
-  }, [imageInfo]);
+  }, [imageInfo, props]);
 
-  if (!imageInfo || !imageInfo.images) {
+  if (!imageInfo || !imageInfo.images || imageInfo.images.length === 0) {
     return null;
   }
 
@@ -53,21 +49,31 @@ const ImageDescription = (props) => {
           }}
         >
           <ImageList
-            sx={{
-              width: "auto",
-              height: "auto",
-            }}
             variant="quilted"
             cols={3}
-            rowHeight={121}
+            gap={8}
+            sx={{
+              width: { xs: "100%", sm: "80%", md: "60%" },
+              height: "auto",
+              borderRadius: "8px",
+            }}
           >
             {displayImages.map((imgSrc, index) => (
-              <ImageListItem key={imgSrc.url} cols={1} rows={1}>
+              <ImageListItem
+                key={imgSrc.url}
+                cols={index === 0 ? 2 : 1}
+                rows={index === 0 ? 2 : 1}
+              >
                 <img
-                  {...srcset(imgSrc.url, 121)}
+                  {...srcset(imgSrc.url, 250)}
                   alt={`Image ${index + 1}`}
                   loading="lazy"
-                  style={{ borderRadius: 8 }}
+                  style={{
+                    borderRadius: 8,
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                  }}
                 />
               </ImageListItem>
             ))}

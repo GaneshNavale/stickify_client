@@ -10,6 +10,7 @@ import routes from "./routes";
 import { useAuth } from "./hooks/useAuth";
 import NavBar from "./components/NavBar";
 import ProtectedRoute from "./components/ProtectedRoute";
+import { Grid2 as Grid } from "@mui/material";
 
 function App() {
   const { user } = useAuth();

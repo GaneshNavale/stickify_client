@@ -2,7 +2,7 @@ import * as React from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid2";
 import { useLocation } from "react-router-dom";
-import { Divider, Typography } from "@mui/material";
+import { Container, Divider, Typography } from "@mui/material";
 import Rating from "@mui/material/Rating";
 import StarIcon from "@mui/icons-material/Star";
 import { useState, useEffect } from "react";
@@ -34,15 +34,11 @@ const ProductListingPage = () => {
   const navigate = useNavigate();
   const [categoryLoading, setCategoryLoading] = useState(true);
   const [products, setProducts] = useState([]);
-  const [videoData, setVideoData] = useState({
-    videoUrl: "https://www.youtube.com/embed/Nnop2walGmM",
-    heading: "Best Song Of Bollywood",
-    description:
-      "sentences that are organized and coherent, paragraphs. sentences that are organized and coherent, paragraphs. sentences that are organized and coherent, paragraphs.sentences that are organized and coherent, paragraphs.sentences that are organized and coherent, paragraphs.",
-  });
 
-  const [imageInfo, setImageInfo] = useState([]);
   const [prodDescription, setprodDescription] = useState("");
+
+  const [imageDescriptions, setImageDescriptions] = useState([]);
+  const [videoDescriptions, setVideoDescriptions] = useState([]);
 
   useEffect(() => {
     if (categoryId) {
@@ -56,12 +52,18 @@ const ProductListingPage = () => {
 
       API.getCategoryDescription(categoryId)
         .then((response) => {
-          const descriptions = response?.data?.category?.descriptions;
-          setprodDescription(response.data.category.description);
-          setImageInfo(descriptions[0]);
+          const descriptions = response?.data?.category?.descriptions || [];
+          setprodDescription(response?.data?.category?.description);
+          descriptions.forEach((desc) => {
+            if (desc.media_type === "image") {
+              setImageDescriptions((prevImages) => [...prevImages, desc]);
+            } else if (desc.media_type === "video") {
+              setVideoDescriptions((prevVideos) => [...prevVideos, desc]);
+            }
+          });
         })
         .catch((error) => {
-          console.error("Image Error :", error);
+          console.error("Error fetching category description:", error);
         })
         .finally(() => {
           setCategoryLoading(false);
@@ -74,7 +76,7 @@ const ProductListingPage = () => {
   };
 
   return (
-    <>
+    <Container size="lg">
       <Box
         sx={{
           width: "100vw",
@@ -87,7 +89,7 @@ const ProductListingPage = () => {
       >
         <Box
           sx={{
-            width: "100%",
+            width: "80%",
             maxWidth: "1200px",
             margin: "0 auto",
           }}
@@ -96,18 +98,18 @@ const ProductListingPage = () => {
             container
             spacing={2}
             alignItems="center"
-            sx={{
-              marginLeft: 3,
-            }}
+            // sx={{
+            //   marginLeft: 3,
+            // }}
           >
             <Grid
               item
               xs={12}
               sm={6}
               md={4}
-              sx={{
-                marginLeft: 2.5,
-              }}
+              // sx={{
+              //   marginLeft: 2.5,
+              // }}
             >
               <Typography
                 variant="h4"
@@ -165,7 +167,7 @@ const ProductListingPage = () => {
       >
         <Box
           sx={{
-            width: "100%",
+            width: "80%",
             maxWidth: "1200px",
             margin: "0 auto",
             padding: 2,
@@ -178,7 +180,7 @@ const ProductListingPage = () => {
                   item
                   size={{
                     xs: 6,
-                    sm: 4,
+                    sm: 3,
                     md: 3,
                     lg: 2.4,
                   }}
@@ -236,16 +238,24 @@ const ProductListingPage = () => {
 
       <Box>
         <Box sx={{ height: "70px" }} />
-        <VideoDescription videoData={videoData} />
-        <Box sx={{ height: "70px" }} />
-        {!categoryLoading && (
+
+        {!categoryLoading && videoDescriptions.length > 0 && (
           <>
+            <VideoDescription videoData={videoDescriptions} />
+            <Box sx={{ height: "70px" }} />
             <Divider />
-            <ImageDescription imageInfo={imageInfo} />
+          </>
+        )}
+
+        {!categoryLoading && imageDescriptions.length > 0 && (
+          <>
+            {imageDescriptions.map((imageInfo, index) => (
+              <ImageDescription key={index} imageInfo={imageInfo} />
+            ))}
           </>
         )}
       </Box>
-    </>
+    </Container>
   );
 };
 
