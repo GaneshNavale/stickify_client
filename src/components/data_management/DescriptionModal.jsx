@@ -254,6 +254,7 @@ const DescriptionModal = (props) => {
           )}
 
           {description.media_type === "video" && (
+            // sx={{ marginBottom: 4 }} will add in grid
             <Grid item>
               <VideoUploader
                 videoUrl={description.video?.url}

@@ -43,7 +43,14 @@ const VideoUploader = ({ videoUrl, onVideoChange }) => {
         <CircularProgress />
       ) : video ? (
         <Box sx={{ position: "relative" }}>
-          <video width="100%" controls>
+          <video
+            width="100%"
+            controls
+            style={{
+              maxHeight: "280px", // Adjust the max height here as needed
+              objectFit: "contain", // Ensures video scales properly within the max height
+            }}
+          >
             <source src={video} type="video/mp4" />
             Your browser does not support the video tag.
           </video>
