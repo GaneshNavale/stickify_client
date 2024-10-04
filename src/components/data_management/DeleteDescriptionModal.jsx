@@ -32,10 +32,14 @@ const DeleteDescriptionModal = (props) => {
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={cancelDelete} color="primary">
+        <Button variant="outlined" onClick={cancelDelete} color="primary">
           Cancel
         </Button>
-        <Button onClick={() => confirmDelete(description.id)} color="secondary">
+        <Button
+          variant="contained"
+          onClick={() => confirmDelete(description.id)}
+          color="error"
+        >
           Delete
         </Button>
       </DialogActions>
