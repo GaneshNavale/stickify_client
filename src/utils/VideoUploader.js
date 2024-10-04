@@ -7,7 +7,7 @@ import {
   CircularProgress,
   Snackbar,
 } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const VideoUploader = ({ videoUrl, onVideoChange }) => {
   const [video, setVideo] = useState(videoUrl || null);
@@ -39,29 +39,32 @@ const VideoUploader = ({ videoUrl, onVideoChange }) => {
   };
 
   return (
-    <Box sx={{ textAlign: "center", my: 2 }}>
+    <Box>
       {loading ? (
         <CircularProgress />
       ) : video ? (
-        <Box>
+        <Box sx={{ position: "relative" }}>
           <video width="100%" controls>
             <source src={video} type="video/mp4" />
             Your browser does not support the video tag.
           </video>
           <IconButton
-            color="error"
-            onClick={handleRemoveVideo}
             aria-label="remove video"
+            onClick={handleRemoveVideo}
+            style={{
+              position: "absolute",
+              top: "10px", // Positioned at the top-right
+              right: "10px",
+              backgroundColor: "rgba(255, 255, 255, 0.7)",
+              zIndex: 2, // Ensures it appears above the video
+            }}
           >
-            <CloseIcon />
+            <DeleteIcon fontSize="small" />
           </IconButton>
         </Box>
       ) : (
         <Box>
-          <Typography variant="body1">
-            No video uploaded. Please upload a video.
-          </Typography>
-          <Button variant="contained" component="label" sx={{ mt: 1 }}>
+          <Button variant="contained" component="label">
             Upload Video
             <input
               type="file"

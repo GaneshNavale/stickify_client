@@ -6,11 +6,13 @@ import Grid from "@mui/material/Grid2";
 import DescriptionModal from "./DescriptionModal";
 import EditIcon from "@mui/icons-material/Edit";
 
+
 const ImageDescription = ({
   categoryId,
   description,
   setDescriptions,
   setAlert,
+  deleteDescriptionBtn,
 }) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const handleEditClick = () => {
@@ -101,7 +103,7 @@ const ImageDescription = ({
           setDescriptions={setDescriptions}
         />
       )}
-
+      {deleteDescriptionBtn && deleteDescriptionBtn(description.id)}
       <Fab
         color="primary"
         aria-label="edit"
@@ -110,7 +112,7 @@ const ImageDescription = ({
         sx={{
           position: "absolute",
           bottom: 16,
-          right: 16,
+          right: 65,
           boxShadow: "0 2px 8px rgba(0, 0, 0, 0.2)",
         }}
       >

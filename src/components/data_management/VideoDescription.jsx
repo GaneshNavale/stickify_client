@@ -9,6 +9,7 @@ const VideoDescription = ({
   description,
   setDescriptions,
   setAlert,
+  deleteDescriptionBtn,
 }) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
@@ -86,12 +87,13 @@ const VideoDescription = ({
         sx={{
           position: "absolute",
           bottom: 16,
-          right: 16,
+          right: 65,
           boxShadow: "0 2px 8px rgba(0, 0, 0, 0.2)",
         }}
       >
         <EditIcon />
       </Fab>
+      {deleteDescriptionBtn(description.id)}
     </div>
   );
 };

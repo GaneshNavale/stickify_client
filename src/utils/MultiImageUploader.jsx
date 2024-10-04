@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Grid, IconButton } from "@mui/material";
+import { Button, Grid2 as Grid, IconButton } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 const MultiImageUploader = ({ images = [], onImageChange, onImageRemove }) => {
@@ -43,7 +43,7 @@ const MultiImageUploader = ({ images = [], onImageChange, onImageRemove }) => {
         {/* Display pre-existing image URLs (for editing existing descriptions) */}
         {images.length > 0 &&
           images.map((image) => (
-            <Grid item xs={3} key={`existing-${image.id}`}>
+            <Grid size={{ xs: 3 }} key={`existing-${image.id}`}>
               <div style={{ position: "relative" }}>
                 <img
                   src={image.url}
@@ -73,7 +73,7 @@ const MultiImageUploader = ({ images = [], onImageChange, onImageRemove }) => {
 
         {/* Display newly selected image previews */}
         {selectedFiles.map((file, index) => (
-          <Grid item xs={3} key={`new-${index}`}>
+          <Grid size={{ xs: 3 }} key={`new-${index}`}>
             <div style={{ position: "relative" }}>
               <img
                 src={URL.createObjectURL(file)}

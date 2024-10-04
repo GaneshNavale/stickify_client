@@ -1,5 +1,3 @@
-// CategoryModal.js
-
 import React, { useEffect, useState } from "react";
 import {
   Button,
@@ -21,6 +19,7 @@ import { useNavigate } from "react-router-dom";
 
 const CategoryModal = (props) => {
   const { open, selectedCategory, handleModalClose } = props;
+  const [errors, setErrors] = useState({});
   const navigate = useNavigate();
   const [category, setCategory] = useState({
     name: "",
@@ -28,6 +27,7 @@ const CategoryModal = (props) => {
     description: "",
     image: null,
     active: false,
+    image_url: "",
   });
   const [openBackdrop, setOpenBackdrop] = useState(false);
   const [alert, setAlert] = useState({ type: "", message: "" });
@@ -39,19 +39,18 @@ const CategoryModal = (props) => {
         description: selectedCategory.description || "",
         image: selectedCategory.image || null,
         active: selectedCategory.active || false,
-      });
-    } else {
-      setCategory({
-        name: "",
-        display_name: "",
-        description: "",
-        image: null,
+        image_url: selectedCategory.image_url,
       });
     }
   }, [selectedCategory]);
 
   const handleImageChange = (image) => {
-    setCategory({ ...category, image: image });
+    if (image) {
+      setCategory({ ...category, image: image });
+      let newErrors = { ...errors };
+      delete newErrors.image; // Clear image error if an image is selected
+      setErrors(newErrors);
+    }
   };
 
   const handleSwitchChange = (event) => {
@@ -59,10 +58,39 @@ const CategoryModal = (props) => {
     setCategory({ ...category, active: event.target.checked });
   };
 
+  const validateFields = () => {
+    let errors = {};
+    if (!category.name.trim()) {
+      errors.name = "Name is required";
+    }
+    if (!category.display_name.trim()) {
+      errors.display_name = "Display Name is required";
+    }
+    if (!category.description.trim()) {
+      errors.description = "Description is required";
+    }
+    if (!category.image && !category.image_url) {
+      errors.image = "Image is required";
+    }
+    setErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const handleBlur = (field) => (e) => {
+    if (!e.target.value.trim()) {
+      setErrors({ ...errors, [field]: `${field} is required` });
+    } else {
+      let newErrors = { ...errors };
+      delete newErrors[field];
+      setErrors(newErrors);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setOpenBackdrop(true);
+    if (!validateFields()) return;
 
+    setOpenBackdrop(true);
     const formData = new FormData();
     formData.append("category[name]", category.name);
     formData.append("category[display_name]", category.display_name);
@@ -101,6 +129,15 @@ const CategoryModal = (props) => {
 
   const onClose = () => {
     handleModalClose();
+    setErrors({});
+    setCategory({
+      name: "",
+      display_name: "",
+      description: "",
+      image: null,
+      active: false,
+      image_url: "",
+    });
   };
 
   return (
@@ -125,6 +162,8 @@ const CategoryModal = (props) => {
             <ImageUploader
               imageUrl={selectedCategory?.image_url}
               onImageChange={handleImageChange}
+              error={!!errors.image}
+              helperText={errors.image}
             />
           </Grid>
           <Grid item>
@@ -137,6 +176,9 @@ const CategoryModal = (props) => {
               onChange={(e) =>
                 setCategory({ ...category, name: e.target.value })
               }
+              onBlur={handleBlur("name")}
+              error={!!errors.name}
+              helperText={errors.name}
               margin="dense"
               required
             />
@@ -151,6 +193,9 @@ const CategoryModal = (props) => {
               onChange={(e) =>
                 setCategory({ ...category, display_name: e.target.value })
               }
+              onBlur={handleBlur("display_name")}
+              error={!!errors.display_name}
+              helperText={errors.display_name}
               margin="dense"
               required
             />
@@ -166,6 +211,9 @@ const CategoryModal = (props) => {
               onChange={(e) =>
                 setCategory({ ...category, description: e.target.value })
               }
+              onBlur={handleBlur("description")}
+              error={!!errors.description}
+              helperText={errors.description}
               placeholder="Enter description"
               margin="dense"
               required

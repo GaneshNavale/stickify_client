@@ -13,6 +13,7 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  FormHelperText,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import VideoUploader from "../../utils/VideoUploader";
@@ -23,7 +24,6 @@ import * as API from "../../utils/adminApi";
 const DescriptionModal = (props) => {
   const { categoryId, open, selectedDescription, handleModalClose, setAlert } =
     props;
-  console.log("propsss", props);
   const navigate = useNavigate();
   const [description, setDescription] = useState({
     title: "",
@@ -34,6 +34,17 @@ const DescriptionModal = (props) => {
     video: null,
   });
   const [openBackdrop, setOpenBackdrop] = useState(false);
+  const [errors, setErrors] = useState({
+    title: "",
+    body: "",
+    media_type: "",
+    images: "",
+    video: "",
+  });
+
+  useEffect(() => {
+    console.log("errors", errors);
+  }, [errors]);
 
   useEffect(() => {
     if (selectedDescription) {
@@ -57,6 +68,11 @@ const DescriptionModal = (props) => {
 
   const handleImageChange = (newImages) => {
     setDescription((prevState) => ({ ...prevState, newImages: newImages }));
+    const totalImages =
+      (description.images?.length || 0) + (newImages.length || 0);
+    if (totalImages > 2) {
+      errors.media_type = "";
+    }
   };
 
   const handleImageRemove = (id) => {
@@ -65,11 +81,44 @@ const DescriptionModal = (props) => {
   };
 
   const handleVideoChange = (video) => {
+    if (video) {
+      setErrors({
+        ...errors,
+        media_type: "",
+      });
+    }
     setDescription((prevState) => ({ ...prevState, video: video }));
+  };
+
+  const validateFields = () => {
+    let errors = {};
+    if (!description.title.trim()) {
+      errors.title = "Title is required.";
+    }
+    if (!description.body.trim()) {
+      errors.body = "Description body is required.";
+    }
+    if (description.media_type === "image") {
+      const totalImages =
+        (description.images?.length || 0) +
+        (description.newImages?.length || 0);
+      if (totalImages < 3) {
+        errors.media_type =
+          "At least 3 images are required. Please upload Images.";
+      }
+    } else if (description.media_type === "video" && !description.video) {
+      errors.media_type = "No video uploaded. Please upload a video.";
+    }
+
+    setErrors(errors);
+
+    return Object.keys(errors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!validateFields()) return;
+
     setOpenBackdrop(true);
 
     const formData = new FormData();
@@ -120,6 +169,22 @@ const DescriptionModal = (props) => {
   const onClose = () => {
     handleModalClose();
   };
+  const handleBlur = (name) => {
+    let newErrors = { ...errors }; // Create a copy of the existing errors
+
+    // Validate based on the field that triggered the blur event
+    if (name === "title" && !description.title) {
+      newErrors.title = "Title is required.";
+    } else if (name === "body" && !description.body) {
+      newErrors.body = "Description body is required.";
+    } else {
+      // Clear the error if the condition is met
+      if (name === "title") newErrors.title = "";
+      if (name === "body") newErrors.body = "";
+    }
+
+    setErrors(newErrors); // Update the state with merged errors
+  };
 
   return (
     <Dialog
@@ -146,14 +211,22 @@ const DescriptionModal = (props) => {
                 id="demo-simple-select"
                 value={description.media_type}
                 label="Media Type"
-                onChange={(e) =>
-                  setDescription({ ...description, media_type: e.target.value })
-                }
+                onChange={(e) => {
+                  setDescription({
+                    ...description,
+                    media_type: e.target.value,
+                  });
+                  setErrors({ ...errors, media_type: "" });
+                }}
+                error={!!errors.media_type}
               >
                 <MenuItem value="none">None</MenuItem>
                 <MenuItem value="image">Image</MenuItem>
                 <MenuItem value="video">Video</MenuItem>
               </Select>
+              <FormHelperText color="danger" error>
+                {errors.media_type}
+              </FormHelperText>
             </FormControl>
           </Grid>
 
@@ -186,6 +259,9 @@ const DescriptionModal = (props) => {
               onChange={(e) =>
                 setDescription({ ...description, title: e.target.value })
               }
+              onBlur={() => handleBlur("title")}
+              error={!!errors.title}
+              helperText={errors.title}
               margin="dense"
               required
             />
@@ -198,6 +274,9 @@ const DescriptionModal = (props) => {
               rows={3}
               fullWidth
               value={description.body}
+              onBlur={() => handleBlur("body")}
+              error={!!errors.body}
+              helperText={errors.body}
               onChange={(e) =>
                 setDescription({ ...description, body: e.target.value })
               }
