@@ -162,7 +162,6 @@ const DescriptionModal = (props) => {
         handleModalClose(response.data);
       }
     } catch (error) {
-      console.log("error", error);
       setAlert({ message: "Failed to save description.", type: "error" });
     } finally {
       setOpenBackdrop(false);
