@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -10,7 +10,11 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 
 const VideoUploader = ({ videoUrl, onVideoChange }) => {
+  console.log("videoUrl", videoUrl);
   const [video, setVideo] = useState(videoUrl || null);
+  useEffect(() => {
+    console.log("video", video);
+  }, [video]);
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState({ open: false, message: "" });
 
@@ -21,16 +25,18 @@ const VideoUploader = ({ videoUrl, onVideoChange }) => {
         setAlert({ open: true, message: "Please upload a valid MP4 video." });
         return;
       }
+      setLoading(true);
       const videoURL = URL.createObjectURL(file);
       setVideo(videoURL);
-      console.log("Video File:", file); // Add this line to verify the file type
-      onVideoChange(file); // Send the file back to the parent
+      console.log("Video File:", file);
+      onVideoChange(file);
+      setLoading(false);
     }
   };
 
   const handleRemoveVideo = () => {
     setVideo(null);
-    onVideoChange(null); // Notify parent that video has been removed
+    onVideoChange(null);
   };
 
   const handleCloseAlert = () => {
@@ -47,8 +53,8 @@ const VideoUploader = ({ videoUrl, onVideoChange }) => {
             width="100%"
             controls
             style={{
-              maxHeight: "280px", // Adjust the max height here as needed
-              objectFit: "contain", // Ensures video scales properly within the max height
+              maxHeight: "280px",
+              objectFit: "contain",
             }}
           >
             <source src={video} type="video/mp4" />
@@ -59,10 +65,10 @@ const VideoUploader = ({ videoUrl, onVideoChange }) => {
             onClick={handleRemoveVideo}
             style={{
               position: "absolute",
-              top: "10px", // Positioned at the top-right
+              top: "10px",
               right: "10px",
               backgroundColor: "rgba(255, 255, 255, 0.7)",
-              zIndex: 2, // Ensures it appears above the video
+              zIndex: 2,
             }}
           >
             <DeleteIcon fontSize="small" />

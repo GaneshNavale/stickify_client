@@ -1,14 +1,12 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid2";
-import { Button, Container, TextField, InputAdornment } from "@mui/material";
+import { Button, Container } from "@mui/material";
 import * as API from "../../utils/adminApi";
 import { DataGrid } from "@mui/x-data-grid";
-import SearchIcon from "@mui/icons-material/Search";
 import AddIcon from "@mui/icons-material/Add";
 import { Link, NavLink } from "react-router-dom";
 import Notification from "../../utils/notification";
-import { useNavigate } from "react-router-dom";
 import CategoryModal from "./CategoryModal";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
@@ -16,25 +14,22 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 
 const Categories = () => {
-  const [searchTerm, setSearchTerm] = useState("");
   const [alert, setAlert] = useState({ message: "", type: "" });
   const [isLoading, setIsLoading] = useState(true);
   const [isNewModalOpen, setIsNewModalOpen] = useState(false);
-  const navigate = useNavigate();
+  const [filter, setFilter] = useState("all");
 
   const [state, setState] = useState({
     categories: [],
-    filteredCategories: [],
   });
 
-  const fetchCategories = useCallback(async () => {
+  const fetchCategories = useCallback(async (filter) => {
     setIsLoading(true);
     try {
-      const data = await API.fetchCategories();
+      const data = await API.fetchCategories({ filter });
       setState((prevState) => ({
         ...prevState,
         categories: data.data,
-        filteredCategories: data.data, // Initially show all categories
       }));
     } catch (error) {
       setAlert({ message: "Failed to fetch categories.", type: "error" });
@@ -44,8 +39,8 @@ const Categories = () => {
   }, []);
 
   useEffect(() => {
-    fetchCategories();
-  }, [fetchCategories]);
+    fetchCategories(filter);
+  }, [fetchCategories, filter]);
 
   const columns = useMemo(
     () => [
@@ -103,28 +98,9 @@ const Categories = () => {
     setIsNewModalOpen(false);
   };
 
-  // My Changes From Here
-  const [filter, setFilter] = useState("all");
-
   const handleChange = (event) => {
     const selectedFilter = event.target.value;
     setFilter(selectedFilter);
-
-    if (selectedFilter === "all") {
-      setState((prevState) => ({
-        ...prevState,
-        filteredCategories: prevState.categories,
-      }));
-    } else {
-      const isActive = selectedFilter === "active";
-      const filteredCategories = state.categories.filter(
-        (category) => category.active === isActive
-      );
-      setState((prevState) => ({
-        ...prevState,
-        filteredCategories,
-      }));
-    }
   };
 
   return (
@@ -178,7 +154,7 @@ const Categories = () => {
           </Grid>
           <Grid item xs={12}>
             <DataGrid
-              rows={state.filteredCategories}
+              rows={state.categories}
               columns={columns}
               loading={isLoading}
               disableColumnFilter
