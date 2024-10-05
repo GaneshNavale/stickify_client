@@ -72,6 +72,7 @@ const ProductListingPage = () => {
   }, [categoryId]);
 
   const handleProductClick = (product) => {
+    // fetch the data
     navigate("/products/product_info", { state: { product } });
   };
 
