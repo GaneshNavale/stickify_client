@@ -65,4 +65,3 @@ export const updateDescription = (id, formData) => {
 export const deleteDescription = (id, params) => {
   return axios.delete(`/admin/descriptions/${id}`, { params: params });
 };
-

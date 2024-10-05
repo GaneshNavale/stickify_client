@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -10,7 +10,11 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 
 const VideoUploader = ({ videoUrl, onVideoChange }) => {
+  console.log("videoUrl", videoUrl);
   const [video, setVideo] = useState(videoUrl || null);
+  useEffect(() => {
+    console.log("video", video);
+  }, [video]);
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState({ open: false, message: "" });
 
@@ -24,14 +28,15 @@ const VideoUploader = ({ videoUrl, onVideoChange }) => {
       setLoading(true);
       const videoURL = URL.createObjectURL(file);
       setVideo(videoURL);
-      onVideoChange(file); // Send the file back to the parent
+      console.log("Video File:", file);
+      onVideoChange(file);
       setLoading(false);
     }
   };
 
   const handleRemoveVideo = () => {
     setVideo(null);
-    onVideoChange(null); // Notify parent that video has been removed
+    onVideoChange(null);
   };
 
   const handleCloseAlert = () => {
@@ -44,7 +49,14 @@ const VideoUploader = ({ videoUrl, onVideoChange }) => {
         <CircularProgress />
       ) : video ? (
         <Box sx={{ position: "relative" }}>
-          <video width="100%" controls>
+          <video
+            width="100%"
+            controls
+            style={{
+              maxHeight: "280px",
+              objectFit: "contain",
+            }}
+          >
             <source src={video} type="video/mp4" />
             Your browser does not support the video tag.
           </video>
@@ -53,10 +65,10 @@ const VideoUploader = ({ videoUrl, onVideoChange }) => {
             onClick={handleRemoveVideo}
             style={{
               position: "absolute",
-              top: "10px", // Positioned at the top-right
+              top: "10px",
               right: "10px",
               backgroundColor: "rgba(255, 255, 255, 0.7)",
-              zIndex: 2, // Ensures it appears above the video
+              zIndex: 2,
             }}
           >
             <DeleteIcon fontSize="small" />

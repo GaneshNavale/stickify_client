@@ -54,7 +54,6 @@ const CategoryModal = (props) => {
   };
 
   const handleSwitchChange = (event) => {
-    console.log("event", event.target.checked);
     setCategory({ ...category, active: event.target.checked });
   };
 

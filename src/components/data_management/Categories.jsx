@@ -1,32 +1,36 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid2";
-import { Button, Container, TextField, InputAdornment } from "@mui/material";
+import { Button, Container } from "@mui/material";
 import * as API from "../../utils/adminApi";
 import { DataGrid } from "@mui/x-data-grid";
-import SearchIcon from "@mui/icons-material/Search";
 import AddIcon from "@mui/icons-material/Add";
 import { Link, NavLink } from "react-router-dom";
 import Notification from "../../utils/notification";
-import { useNavigate } from "react-router-dom";
 import CategoryModal from "./CategoryModal";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
 
 const Categories = () => {
-  const [searchTerm, setSearchTerm] = useState("");
   const [alert, setAlert] = useState({ message: "", type: "" });
   const [isLoading, setIsLoading] = useState(true);
   const [isNewModalOpen, setIsNewModalOpen] = useState(false);
-  const navigate = useNavigate();
+  const [filter, setFilter] = useState("all");
 
   const [state, setState] = useState({
     categories: [],
   });
 
-  const fetchCategories = useCallback(async () => {
+  const fetchCategories = useCallback(async (filter) => {
     setIsLoading(true);
     try {
-      const data = await API.fetchCategories();
-      setState((prevState) => ({ ...prevState, categories: data.data }));
+      const data = await API.fetchCategories({ filter });
+      setState((prevState) => ({
+        ...prevState,
+        categories: data.data,
+      }));
     } catch (error) {
       setAlert({ message: "Failed to fetch categories.", type: "error" });
     } finally {
@@ -35,8 +39,8 @@ const Categories = () => {
   }, []);
 
   useEffect(() => {
-    fetchCategories();
-  }, [fetchCategories, searchTerm]);
+    fetchCategories(filter);
+  }, [fetchCategories, filter]);
 
   const columns = useMemo(
     () => [
@@ -60,7 +64,6 @@ const Categories = () => {
             {params.row.name}
           </Link>
         ),
-
         minWidth: 130,
         flex: 1,
         display: "flex",
@@ -95,6 +98,11 @@ const Categories = () => {
     setIsNewModalOpen(false);
   };
 
+  const handleChange = (event) => {
+    const selectedFilter = event.target.value;
+    setFilter(selectedFilter);
+  };
+
   return (
     <Container maxWidth="xl">
       <CategoryModal
@@ -109,20 +117,20 @@ const Categories = () => {
           </Grid>
           <Grid container spacing={2} justifyContent="space-between">
             <Grid item xs={12} sm={6} md={4}>
-              <TextField
-                fullWidth
-                size="small"
-                placeholder="Search..."
-                value={searchTerm}
-                onChange={(event) => setSearchTerm(event.target.value)}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon />
-                    </InputAdornment>
-                  ),
-                }}
-              />
+              <FormControl sx={{ minWidth: 200 }} fullWidth>
+                <InputLabel id="demo-simple-select-label">Select</InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={filter}
+                  label="Filter"
+                  onChange={handleChange}
+                >
+                  <MenuItem value={"all"}>All</MenuItem>
+                  <MenuItem value={"active"}>Active</MenuItem>
+                  <MenuItem value={"inactive"}>Inactive</MenuItem>
+                </Select>
+              </FormControl>
             </Grid>
             <Grid
               item

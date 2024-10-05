@@ -51,7 +51,7 @@ const VideoDescription = ({
                 width: "100%",
                 height: "auto",
                 borderRadius: "8px",
-                maxHeight: 200, // Ensures the video has consistent height
+                maxHeight: 200,
               }}
             />
           </Grid>

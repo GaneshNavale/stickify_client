@@ -18,13 +18,11 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import VideoUploader from "../../utils/VideoUploader";
 import MultiImageUploader from "../../utils/MultiImageUploader";
-import { useNavigate } from "react-router-dom";
 import * as API from "../../utils/adminApi";
 
 const DescriptionModal = (props) => {
   const { categoryId, open, selectedDescription, handleModalClose, setAlert } =
     props;
-  const navigate = useNavigate();
   const [description, setDescription] = useState({
     title: "",
     body: "",
@@ -43,10 +41,6 @@ const DescriptionModal = (props) => {
   });
 
   useEffect(() => {
-    console.log("errors", errors);
-  }, [errors]);
-
-  useEffect(() => {
     if (selectedDescription) {
       setDescription({
         title: selectedDescription.title,
@@ -54,6 +48,7 @@ const DescriptionModal = (props) => {
         media_type: selectedDescription.media_type || "none",
         images: selectedDescription.images || [],
         video: selectedDescription.video || null,
+        newVideo: null,
       });
     } else {
       setDescription({
@@ -87,7 +82,11 @@ const DescriptionModal = (props) => {
         media_type: "",
       });
     }
-    setDescription((prevState) => ({ ...prevState, video: video }));
+    setDescription((prevState) => ({
+      ...prevState,
+      newVideo: video,
+      video: video ? prevState.video : null,
+    }));
   };
 
   const validateFields = () => {
@@ -106,7 +105,11 @@ const DescriptionModal = (props) => {
         errors.media_type =
           "At least 3 images are required. Please upload Images.";
       }
-    } else if (description.media_type === "video" && !description.video) {
+    } else if (
+      description.media_type === "video" &&
+      !description.video &&
+      !description.newVideo
+    ) {
       errors.media_type = "No video uploaded. Please upload a video.";
     }
 
@@ -143,8 +146,8 @@ const DescriptionModal = (props) => {
       description?.newImages?.forEach((image) => {
         formData.append("description[images][]", image);
       });
-    } else if (description.media_type === "video" && description.video) {
-      formData.append("description[video]", description.video);
+    } else if (description.media_type === "video" && description.newVideo) {
+      formData.append("description[video]", description.newVideo);
     }
 
     try {
@@ -159,7 +162,6 @@ const DescriptionModal = (props) => {
         handleModalClose(response.data);
       }
     } catch (error) {
-      console.log("error", error);
       setAlert({ message: "Failed to save description.", type: "error" });
     } finally {
       setOpenBackdrop(false);
@@ -167,23 +169,28 @@ const DescriptionModal = (props) => {
   };
 
   const onClose = () => {
+    setDescription({
+      title: "",
+      body: "",
+      media_type: "none",
+      images: [],
+      video: null,
+    });
     handleModalClose();
   };
   const handleBlur = (name) => {
-    let newErrors = { ...errors }; // Create a copy of the existing errors
+    let newErrors = { ...errors };
 
-    // Validate based on the field that triggered the blur event
     if (name === "title" && !description.title) {
       newErrors.title = "Title is required.";
     } else if (name === "body" && !description.body) {
       newErrors.body = "Description body is required.";
     } else {
-      // Clear the error if the condition is met
       if (name === "title") newErrors.title = "";
       if (name === "body") newErrors.body = "";
     }
 
-    setErrors(newErrors); // Update the state with merged errors
+    setErrors(newErrors);
   };
 
   return (
@@ -212,10 +219,13 @@ const DescriptionModal = (props) => {
                 value={description.media_type}
                 label="Media Type"
                 onChange={(e) => {
-                  setDescription({
-                    ...description,
-                    media_type: e.target.value,
-                  });
+                  const newMediaType = e.target.value;
+
+                  setDescription((prevState) => ({
+                    ...prevState,
+                    media_type: newMediaType,
+                  }));
+
                   setErrors({ ...errors, media_type: "" });
                 }}
                 error={!!errors.media_type}
@@ -224,6 +234,7 @@ const DescriptionModal = (props) => {
                 <MenuItem value="image">Image</MenuItem>
                 <MenuItem value="video">Video</MenuItem>
               </Select>
+
               <FormHelperText color="danger" error>
                 {errors.media_type}
               </FormHelperText>
@@ -235,7 +246,7 @@ const DescriptionModal = (props) => {
               <MultiImageUploader
                 images={description.images}
                 onImageChange={handleImageChange}
-                onImageRemove={handleImageRemove} // Pass the remove handler
+                onImageRemove={handleImageRemove}
               />
             </Grid>
           )}
