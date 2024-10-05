@@ -118,12 +118,11 @@ const Categories = () => {
           <Grid container spacing={2} justifyContent="space-between">
             <Grid item xs={12} sm={6} md={4}>
               <FormControl sx={{ minWidth: 200 }} fullWidth>
-                <InputLabel id="demo-simple-select-label">Select</InputLabel>
                 <Select
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
                   value={filter}
-                  label="Filter"
+                  size="small"
                   onChange={handleChange}
                 >
                   <MenuItem value={"all"}>All</MenuItem>
