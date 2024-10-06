@@ -7,10 +7,13 @@ import Typography from "@mui/material/Typography";
 import CssBaseline from "@mui/material/CssBaseline";
 import { ThemeProvider } from "@mui/material/styles";
 import DashboardIcon from "@mui/icons-material/Dashboard";
-import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
+import CategoryIcon from "@mui/icons-material/Category";
+import DatasetIcon from "@mui/icons-material/Dataset";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import PeopleIcon from "@mui/icons-material/People";
+import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import InventoryIcon from "@mui/icons-material/Inventory";
+import FormatColorFillIcon from "@mui/icons-material/FormatColorFill";
+import PeopleIcon from "@mui/icons-material/People";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import ReviewsIcon from "@mui/icons-material/Reviews";
 import { AppProvider } from "@toolpad/core/AppProvider";
@@ -18,8 +21,10 @@ import { DashboardLayout } from "@toolpad/core/DashboardLayout";
 import Orders from "./orders";
 import AdminSignIn from "./components/users/AdminSignIn";
 import Users from "./components/user_management/Users";
+import Categories from "./components/data_management/Categories";
 import AdminUsers from "./components/user_management/AdminUsers";
 import ResetUserPassword from "./components/users/ResetUserPassword";
+import Category from "./components/data_management/Category";
 
 const NAVIGATION = [
   {
@@ -33,11 +38,27 @@ const NAVIGATION = [
     icon: <ShoppingCartIcon />,
   },
   {
-    segment: "admin/products",
-    title: "Data Management",
-    icon: <InventoryIcon />,
+    segment: "admin/data_management",
+    title: "Catalog Management",
+    icon: <DatasetIcon />,
+    children: [
+      {
+        segment: "",
+        title: "Categories",
+        icon: <CategoryIcon />,
+      },
+      {
+        segment: "products",
+        title: "Products",
+        icon: <InventoryIcon />,
+      },
+      {
+        segment: "customization",
+        title: "Customization",
+        icon: <FormatColorFillIcon />,
+      },
+    ],
   },
-  { kind: "divider" },
   {
     segment: "admin/users_management",
     title: "User Management",
@@ -153,6 +174,8 @@ function AdminApp(props) {
             <Routes>
               <Route path="/admin/orders" element={<Orders />} />
               <Route path="/admin/users_management/*" element={<Users />} />
+              <Route path="/admin/data_management/*" element={<Categories />} />
+              <Route path="/admin/categories/:slug" element={<Category />} />
               <Route
                 path="/admin/users_management/admin_users"
                 element={<AdminUsers />}

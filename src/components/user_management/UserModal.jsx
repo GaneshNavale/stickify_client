@@ -15,7 +15,6 @@ import * as API from "../../utils/adminApi";
 
 const UserModal = (props) => {
   const { open, setOpen, user, setAlert, fetchUsers } = props;
-  console.log("user", user);
   const newUser = !user?.id;
   const handleClose = () => {
     setOpen(false);
