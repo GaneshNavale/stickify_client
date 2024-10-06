@@ -6,7 +6,6 @@ const AvatarUpload = ({ avatarImageUrl, onImageUpload }) => {
   const [image, setImage] = useState("");
 
   useEffect(() => {
-    // Set the initial avatar image from the API
     setImage(avatarImageUrl);
   }, [avatarImageUrl]);
 
@@ -48,7 +47,7 @@ const AvatarUpload = ({ avatarImageUrl, onImageUpload }) => {
             component="span"
             style={{ position: "absolute", bottom: -10, right: -10 }}
           >
-            <PhotoCamera fontSize="large" sx={{ color: "#a3a0a0" }} />
+            <PhotoCamera fontSize="large" color="primary" />
           </IconButton>
         </Tooltip>
       </label>
