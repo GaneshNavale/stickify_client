@@ -270,28 +270,30 @@ const UserAccountSettings = () => {
                 pr: { xs: 2, sm: 4 }, // Adds padding to prevent overlap with the button
               }}
             >
-              <Typography variant="body2" color="text.secondary">
-                {[
-                  defaultAddress.full_name,
-                  defaultAddress.address_line_1,
-                  defaultAddress.address_line_2,
-                  defaultAddress.landmark,
-                  defaultAddress.city,
-                  defaultAddress.state,
-                  defaultAddress.zip_code,
-                ]
-                  .filter(Boolean)
-                  .join(", ")}
-                <Chip
-                  label="default"
-                  size="small"
-                  variant="outlined"
-                  color="primary"
-                  sx={{ ml: 0.5 }} // Adjusts margin for smaller screens
-                />
-                <br />
-                {shippingAddressLength + " Addresses"}
-              </Typography>
+              {defaultAddress && (
+                <Typography variant="body2" color="text.secondary">
+                  {[
+                    defaultAddress.full_name,
+                    defaultAddress.address_line_1,
+                    defaultAddress.address_line_2,
+                    defaultAddress.landmark,
+                    defaultAddress.city,
+                    defaultAddress.state,
+                    defaultAddress.zip_code,
+                  ]
+                    .filter(Boolean)
+                    .join(", ")}
+                  <Chip
+                    label="default"
+                    size="small"
+                    variant="outlined"
+                    color="primary"
+                    sx={{ ml: 0.5 }} // Adjusts margin for smaller screens
+                  />
+                  <br />
+                  {shippingAddressLength + " Addresses"}
+                </Typography>
+              )}
             </Box>
           </Box>
         </ListItem>
