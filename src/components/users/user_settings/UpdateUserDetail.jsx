@@ -89,7 +89,7 @@ const UpdateUserDetail = ({ open, onClose }) => {
         }
         break;
       case "mobile":
-        if (!/^\d{10}$/.test(value)) {
+        if (value && !/^\d{10}$/.test(value)) {
           fieldErrors.mobile = "Mobile number must be 10 digits.";
         } else {
           fieldErrors.mobile = "";
@@ -182,6 +182,7 @@ const UpdateUserDetail = ({ open, onClose }) => {
       ...prevState,
       avatarImage: imageData,
     }));
+    setHasChanges(true);
   };
 
   return (
