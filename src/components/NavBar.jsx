@@ -2,7 +2,6 @@ import * as React from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import AppBar from "@mui/material/AppBar";
-import Divider from "@mui/material/Divider";
 import Drawer from "@mui/material/Drawer";
 import IconButton from "@mui/material/IconButton";
 import List from "@mui/material/List";
@@ -27,8 +26,8 @@ const drawerWidth = 240;
 const drawerHeight = 360;
 const navItems = [
   { name: "Home", path: "/" },
-  { name: "Products", path: "/products" },
   { name: "About Us", path: "/about" },
+  { name: "Products", path: "/products" }, // Keep this if you still want the products link
 ];
 
 const NavBar = (props) => {
@@ -56,7 +55,6 @@ const NavBar = (props) => {
       <Typography variant="h6" sx={{ my: 2 }}>
         LOGO
       </Typography>
-      <Divider />
       <List>
         {navItems.map((item) => (
           <ListItem key={item.name} disablePadding>
@@ -92,7 +90,84 @@ const NavBar = (props) => {
       <CssBaseline />
       <AppBar component="nav" position="static">
         <Container>
-          <Toolbar>
+          <Toolbar sx={{ justifyContent: "space-between" }}>
+            {/* Group Logo and Nav Items */}
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Typography variant="h6" component="div" sx={{ mr: 2 }}>
+                LOGO
+              </Typography>
+              {/* Navigation items next to the logo */}
+              <Box sx={{ display: { xs: "none", sm: "block" } }}>
+                {navItems.map((item) => (
+                  <Button
+                    key={item.name}
+                    component={Link}
+                    to={item.path}
+                    sx={{ color: "primary.main", mx: 1 }}
+                  >
+                    {item.name}
+                  </Button>
+                ))}
+              </Box>
+            </Box>
+
+            {/* Sign In or User Avatar on the right */}
+            <Box
+              sx={{ display: { xs: "none", sm: "flex" }, alignItems: "center" }}
+            >
+              {!user && (
+                <Button
+                  variant="contained" // Change variant to "contained"
+                  color="primary" // Ensure the primary color is used
+                  onClick={() => {
+                    navigate("/sign_in", { replace: true });
+                  }}
+                >
+                  Sign In
+                </Button>
+              )}
+              {user && (
+                <Box sx={{ flexGrow: 0 }}>
+                  <Tooltip title="Open settings">
+                    <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                      <Avatar
+                        alt="User Avatar"
+                        src={user.avatar_image_url}
+                        sx={{ width: 30, height: 30 }}
+                      />
+                    </IconButton>
+                  </Tooltip>
+                  <Menu
+                    sx={{ mt: "45px" }}
+                    id="menu-appbar"
+                    anchorEl={anchorElUser}
+                    anchorOrigin={{
+                      vertical: "top",
+                      horizontal: "right",
+                    }}
+                    keepMounted
+                    transformOrigin={{
+                      vertical: "top",
+                      horizontal: "right",
+                    }}
+                    open={Boolean(anchorElUser)}
+                    onClose={handleCloseUserMenu}
+                    PaperProps={{
+                      sx: {
+                        width: 265,
+                      },
+                    }}
+                  >
+                    <UserMenuItems
+                      handleCloseUserMenu={handleCloseUserMenu}
+                      logout={logout}
+                      user={user}
+                    />
+                  </Menu>
+                </Box>
+              )}
+            </Box>
+
             <IconButton
               aria-label="open drawer"
               edge="start"
@@ -101,74 +176,10 @@ const NavBar = (props) => {
             >
               <MenuIcon />
             </IconButton>
-            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              LOGO
-            </Typography>
-            <Box sx={{ display: { xs: "none", sm: "block" } }}>
-              {navItems.map((item) => (
-                <Button
-                  key={item.name}
-                  component={Link}
-                  to={item.path}
-                  sx={{ color: "primary.main" }}
-                >
-                  {item.name}
-                </Button>
-              ))}
-              {!user && (
-                <Button
-                  color="primary"
-                  onClick={() => {
-                    navigate("/sign_in", { replace: true });
-                  }}
-                >
-                  Sign In
-                </Button>
-              )}
-            </Box>
-            {user && (
-              <Box sx={{ flexGrow: 0 }}>
-                <Tooltip title="Open settings">
-                  <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                    <Avatar
-                      alt="Remy Sharp"
-                      src={user.avatar_image_url}
-                      sx={{ width: 30, height: 30 }}
-                    />
-                  </IconButton>
-                </Tooltip>
-                <Menu
-                  sx={{ mt: "45px" }}
-                  id="menu-appbar"
-                  anchorEl={anchorElUser}
-                  anchorOrigin={{
-                    vertical: "top",
-                    horizontal: "right",
-                  }}
-                  keepMounted
-                  transformOrigin={{
-                    vertical: "top",
-                    horizontal: "right",
-                  }}
-                  open={Boolean(anchorElUser)}
-                  onClose={handleCloseUserMenu}
-                  PaperProps={{
-                    sx: {
-                      width: 265,
-                    },
-                  }}
-                >
-                  <UserMenuItems
-                    handleCloseUserMenu={handleCloseUserMenu}
-                    logout={logout}
-                    user={user}
-                  />
-                </Menu>
-              </Box>
-            )}
           </Toolbar>
         </Container>
       </AppBar>
+
       <nav>
         <Drawer
           container={container}
