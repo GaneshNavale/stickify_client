@@ -82,8 +82,7 @@ const UpdateUserAccountPassword = ({ open, onClose, setAlert }) => {
         }
       })
       .catch((error) => {
-        console.error("Error updating password", error);
-        setErrorMessage("Error updating password. Please try again.");
+        setErrorMessage(error.response.data.errors);
       })
       .finally(() => {
         setOpenBackdrop(false);
