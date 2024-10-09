@@ -190,15 +190,19 @@ const UserAccountSettings = () => {
         </Grid>
 
         {user.bio && (
-          <Grid item sx={{ xs: 12 }}>
+          <Grid item xs={12}>
             <ListItem sx={{ py: 0 }}>
               <ListItemText
                 primary="Bio"
-                secondary={
-                  <Typography variant="body2" color="text.secondary">
-                    {user.bio}
+                secondary={user.bio.split("\n").map((line, index) => (
+                  <Typography
+                    key={index}
+                    variant="body2"
+                    color="text.secondary"
+                  >
+                    {line}
                   </Typography>
-                }
+                ))}
               />
             </ListItem>
           </Grid>
