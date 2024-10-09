@@ -8,10 +8,16 @@ import Button from "@mui/material/Button";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import * as API from "../../../utils/api";
-import { Grid } from "@mui/material";
+import { Grid, IconButton } from "@mui/material";
 import Notification from "../../../utils/notification";
+import CloseIcon from "@mui/icons-material/Close";
 
-const CreateShippingAddress = ({ open, onClose, onUpdateAddress, setAlert }) => {
+const CreateShippingAddress = ({
+  open,
+  onClose,
+  onUpdateAddress,
+  setAlert,
+}) => {
   const [shippingAddress, setShippingAddress] = useState({
     full_name: "",
     mobile: "",
@@ -162,6 +168,17 @@ const CreateShippingAddress = ({ open, onClose, onUpdateAddress, setAlert }) => 
       <DialogTitle id="create-shipping-address-title">
         Create New Shipping Address
       </DialogTitle>
+      <IconButton
+        aria-label="close"
+        onClick={onClose}
+        sx={{
+          position: "absolute",
+          right: 8,
+          top: 8,
+        }}
+      >
+        <CloseIcon />
+      </IconButton>
 
       <Notification alert={alert} setAlert={setAlert} />
 
