@@ -291,7 +291,9 @@ const UserAccountSettings = () => {
                     sx={{ ml: 0.5 }} // Adjusts margin for smaller screens
                   />
                   <br />
-                  {shippingAddressLength + " Addresses"}
+                  {shippingAddressLength > 1
+                    ? ` ${shippingAddressLength - 1} More Addresses`
+                    : ""}
                 </Typography>
               )}
             </Box>
