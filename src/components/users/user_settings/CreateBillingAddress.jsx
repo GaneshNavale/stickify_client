@@ -8,8 +8,9 @@ import Button from "@mui/material/Button";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import * as API from "../../../utils/api";
-import { Grid } from "@mui/material";
+import { Grid, IconButton } from "@mui/material";
 import Notification from "../../../utils/notification";
+import CloseIcon from "@mui/icons-material/Close";
 
 const CreateBillingAddress = ({ open, onClose, onAddAddress, setAlert }) => {
   const [billingAddress, setBillingAddress] = useState({
@@ -160,11 +161,21 @@ const CreateBillingAddress = ({ open, onClose, onAddAddress, setAlert }) => {
       maxWidth="sm"
       fullWidth
     >
+      <Notification alert={alert} setAlert={setAlert} />
       <DialogTitle id="create-billing-address-title">
         Create New Billing Address
       </DialogTitle>
-
-      <Notification alert={alert} setAlert={setAlert} />
+      <IconButton
+        aria-label="close"
+        onClick={onClose}
+        sx={{
+          position: "absolute",
+          right: 8,
+          top: 8,
+        }}
+      >
+        <CloseIcon />
+      </IconButton>
 
       <DialogContent>
         <Grid container spacing={2}>
