@@ -1,4 +1,3 @@
-import { blue, teal, deepOrange, grey } from "@mui/material/colors";
 import { createTheme } from "@mui/material/styles";
 
 const main = createTheme({
@@ -8,7 +7,7 @@ const main = createTheme({
         root: {
           // Ensure link color does not change when visited
           "&:visited": {
-            color: teal[700],
+            color: "#006ce5",
           },
         },
       },
@@ -16,33 +15,36 @@ const main = createTheme({
     MuiAppBar: {
       styleOverrides: {
         colorPrimary: {
-          backgroundColor: "#fcfdff",
-          color: teal[700],
+          backgroundColor: "#f5fafe",
+          color: "#fe4816",
         },
       },
     },
     MuiDrawer: {
       styleOverrides: {
         paper: {
-          // backgroundColor: blue[700],
-          color: teal[700],
+          color: "#fe4816",
         },
       },
     },
   },
+
   palette: {
     primary: {
-      light: teal[500],
-      main: teal[700],
-      dark: teal[900],
-      contrastText: "#fff",
+      main: "#fe4816",
     },
-    // secondary: {
-    //   light: deepOrange[300],
-    //   main: deepOrange[600],
-    //   dark: deepOrange[900],
-    //   contrastText: "#fff",
-    // },
+    secondary: {
+      main: "#006ce5",
+    },
+    error: {
+      main: "#f00000",
+    },
+    warning: {
+      main: "#ed6c02",
+    },
+    info: {
+      main: "#0288d1",
+    },
   },
 });
 
