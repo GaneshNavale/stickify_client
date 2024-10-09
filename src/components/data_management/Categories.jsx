@@ -124,6 +124,7 @@ const Categories = () => {
                   id="demo-simple-select"
                   value={filter}
                   label="Filter"
+                  size="small"
                   onChange={handleChange}
                 >
                   <MenuItem value={"all"}>All</MenuItem>

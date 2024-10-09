@@ -161,6 +161,13 @@ const DescriptionModal = (props) => {
         const response = await API.createDescription(formData);
         handleModalClose(response.data);
       }
+      setDescription({
+        title: "",
+        body: "",
+        media_type: "none",
+        images: [],
+        video: null,
+      });
     } catch (error) {
       setAlert({ message: "Failed to save description.", type: "error" });
     } finally {
