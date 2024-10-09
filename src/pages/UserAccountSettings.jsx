@@ -30,6 +30,7 @@ const UserAccountSettings = () => {
   const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
 
   const [billingAddress, setBillingAddress] = useState([]);
+  const [shippingAddressLength, setShippingAddressLength] = useState(0);
   const [defaultAddress, setDefaultAddress] = useState([]);
   const [dialogClosed, setDialogClosed] = useState(true);
 
@@ -89,6 +90,7 @@ const UserAccountSettings = () => {
       API.listAllShippingAddress()
         .then((response) => {
           const addresses = response.data;
+          setShippingAddressLength(addresses.length);
           const defaultAddress = addresses.find(
             (address) => address.default === true
           );
@@ -287,6 +289,8 @@ const UserAccountSettings = () => {
                   color="primary"
                   sx={{ ml: 0.5 }} // Adjusts margin for smaller screens
                 />
+                <br />
+                {shippingAddressLength + " Addresses"}
               </Typography>
             </Box>
           </Box>
