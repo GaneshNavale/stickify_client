@@ -17,24 +17,26 @@ import Menu from "@mui/material/Menu";
 import Container from "@mui/material/Container";
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
-import CssBaseline from "@mui/material/CssBaseline";
 import { useAuth } from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import UserMenuItems from "./users/user_settings/UserMenuItems";
+import { useState, useEffect } from "react";
 
-const drawerWidth = 240;
-const drawerHeight = 360;
+const drawerWidth = "50%";
 const navItems = [
-  { name: "Home", path: "/" },
-  { name: "About Us", path: "/about" },
-  { name: "Products", path: "/products" }, // Keep this if you still want the products link
+  { name: "Products", path: "/products" },
+  { name: "Tools", path: "/tools" },
+  { name: "Sample Steacker", path: "/" },
+  { name: "Deals", path: "/deals" },
 ];
 
 const NavBar = (props) => {
-  const { user, window } = props;
+  const { user } = props;
   const navigate = useNavigate();
-  const [mobileOpen, setMobileOpen] = React.useState(false);
-  const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [anchorElUser, setAnchorElUser] = useState(null);
+  const [activeTab, setActiveTab] = useState(navItems[2].path);
+  const [isSticky, setIsSticky] = useState(false);
 
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
@@ -50,9 +52,30 @@ const NavBar = (props) => {
     setMobileOpen((prevState) => !prevState);
   };
 
+  const handleTabChange = (path) => {
+    setActiveTab(path);
+    navigate(path);
+  };
+
+  const handleScroll = () => {
+    const scrollTop = window.scrollY;
+    setIsSticky(scrollTop > 34);
+  };
+
+  // Directly using window here instead of passing as a prop
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   const drawer = (
     <Box onClick={handleDrawerToggle} sx={{ textAlign: "center" }}>
-      <Typography variant="h6" sx={{ my: 2 }}>
+      <Typography
+        variant="h6"
+        sx={{ my: 2, display: "flex", alignItems: "center" }}
+      >
         LOGO
       </Typography>
       <List>
@@ -61,6 +84,7 @@ const NavBar = (props) => {
             <ListItemButton
               component={Link}
               to={item.path}
+              onClick={() => handleTabChange(item.path)}
               sx={{ textAlign: "center", color: "primary.main" }}
             >
               <ListItemText primary={item.name} />
@@ -82,28 +106,45 @@ const NavBar = (props) => {
     </Box>
   );
 
-  const container =
-    window !== undefined ? () => window().document.body : undefined;
-
   return (
-    <Box sx={{ display: "flex" }}>
-      <CssBaseline />
-      <AppBar component="nav" position="static">
+    <Box sx={{ display: "flex", flexDirection: "column", marginBottom: 6.5 }}>
+      <Box
+        sx={{
+          bgcolor: "primary.main",
+          height: "35px",
+          position: "relative",
+          top: 0,
+          width: "100%",
+          zIndex: 1000,
+        }}
+      />
+      <AppBar
+        component="nav"
+        sx={{
+          position: isSticky ? "fixed" : "absolute",
+          bgcolor: "background.paper",
+          boxShadow: 3,
+          marginTop: isSticky ? "0px" : "30px",
+        }}
+      >
         <Container>
           <Toolbar sx={{ justifyContent: "space-between" }}>
-            {/* Group Logo and Nav Items */}
             <Box sx={{ display: "flex", alignItems: "center" }}>
               <Typography variant="h6" component="div" sx={{ mr: 2 }}>
                 LOGO
               </Typography>
-              {/* Navigation items next to the logo */}
               <Box sx={{ display: { xs: "none", sm: "block" } }}>
                 {navItems.map((item) => (
                   <Button
                     key={item.name}
+                    variant={activeTab === item.path ? "contained" : "text"}
                     component={Link}
                     to={item.path}
-                    sx={{ color: "primary.main", mx: 1 }}
+                    onClick={() => handleTabChange(item.path)}
+                    sx={{
+                      color: activeTab === item.path ? "white" : "black",
+                      mx: 1,
+                    }}
                   >
                     {item.name}
                   </Button>
@@ -111,20 +152,35 @@ const NavBar = (props) => {
               </Box>
             </Box>
 
-            {/* Sign In or User Avatar on the right */}
             <Box
-              sx={{ display: { xs: "none", sm: "flex" }, alignItems: "center" }}
+              sx={{
+                display: { xs: "none", sm: "flex" },
+                alignItems: "center",
+              }}
             >
               {!user && (
-                <Button
-                  variant="contained" // Change variant to "contained"
-                  color="primary" // Ensure the primary color is used
-                  onClick={() => {
-                    navigate("/sign_in", { replace: true });
-                  }}
-                >
-                  Sign In
-                </Button>
+                <>
+                  <Button
+                    sx={{ color: "black" }}
+                    onClick={() => {
+                      navigate("/sign_up", { replace: true });
+                    }}
+                  >
+                    Sign UP
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => {
+                      navigate("/sign_in", { replace: true });
+                    }}
+                    sx={{
+                      borderRadius: "1.5rem",
+                    }}
+                  >
+                    Log In
+                  </Button>
+                </>
               )}
               {user && (
                 <Box sx={{ flexGrow: 0 }}>
@@ -182,7 +238,6 @@ const NavBar = (props) => {
 
       <nav>
         <Drawer
-          container={container}
           variant="temporary"
           open={mobileOpen}
           onClose={handleDrawerToggle}
@@ -193,7 +248,6 @@ const NavBar = (props) => {
             display: { xs: "block", sm: "none" },
             "& .MuiDrawer-paper": {
               width: drawerWidth,
-              height: drawerHeight,
             },
           }}
         >
@@ -204,8 +258,8 @@ const NavBar = (props) => {
   );
 };
 
-NavBar.propTypes = {
-  window: PropTypes.func,
-};
+// NavBar.propTypes = {
+//   // Removed the window prop since we're using the global window object directly
+// };
 
 export default NavBar;
