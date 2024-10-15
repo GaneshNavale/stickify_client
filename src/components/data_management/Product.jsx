@@ -3,11 +3,10 @@ import { useParams, useLocation } from "react-router-dom";
 import { Container } from "@mui/material";
 import * as API from "../../utils/adminApi";
 import Notification from "../../utils/notification";
-import CategoryDetail from "./CategoryDetail";
 import DescriptionList from "./DescriptionList";
-import DescriptionModal from "./DescriptionModal";
+import ProductDetail from "./ProductDetail";
 
-const Category = () => {
+const Product = () => {
   const location = useLocation();
   const { slug } = useParams();
   const [alert, setAlert] = useState({
@@ -15,27 +14,27 @@ const Category = () => {
     type: location.state?.alert?.type,
   });
 
-  const [category, setCategory] = useState(null);
+  const [product, setProduct] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [descriptions, setDescriptions] = useState([]);
 
-  const fetchCategory = async () => {
+  const fetchProduct = async () => {
     try {
       setIsLoading(true);
-      const data = await API.fetchCategory(slug);
-      setCategory(data.data.category);
-      setDescriptions(data.data.category.descriptions);
+      const data = await API.fetchProduct(slug);
+      setProduct(data.data.product);
+      setDescriptions(data.data.product.descriptions);
     } catch (error) {
-      setAlert({ message: "Failed to fetch category.", type: "error" });
+      console.log("error", error);
+      setAlert({ message: "Failed to fetch Product.", type: "error" });
     } finally {
       setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchCategory();
+    fetchProduct();
   }, [slug]);
-
 
   if (isLoading) return <div>Loading...</div>;
 
@@ -43,16 +42,16 @@ const Category = () => {
     <Container maxWidth="lg">
       <Notification alert={alert} setAlert={setAlert} />
       {!isLoading && (
-        <CategoryDetail
-          category={category}
-          setCategory={setCategory}
+        <ProductDetail
+          product={product}
+          setProduct={setProduct}
           setAlert={setAlert}
         />
       )}
       {!isLoading && (
         <DescriptionList
-          id={category.id}
-          type="Category"
+          id={product.id}
+          type="Product"
           descriptions={descriptions}
           setDescriptions={setDescriptions}
           setAlert={setAlert}
@@ -62,4 +61,4 @@ const Category = () => {
   );
 };
 
-export default Category;
+export default Product;

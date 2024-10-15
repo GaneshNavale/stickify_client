@@ -157,75 +157,74 @@ const Users = () => {
         fetchUsers={fetchUsers}
         user={selectedUser}
       />
-      <Grid>
-        <Notification alert={alert} setAlert={setAlert} />
-      </Grid>
-      <Box sx={{ flexGrow: 1 }}>
-        <Grid container spacing={2} direction="column">
-          <Grid container spacing={2} justifyContent="space-between">
-            <Grid display="flex" size={{ sm: 6, md: 4 }}>
-              <TextField
-                fullWidth
-                size="small"
-                minWidth="100px"
-                placeholder="Search..."
-                value={searchTerm}
-                onChange={(event) => {
-                  setSearchTerm(event.target.value);
-                }}
-                slotProps={{
-                  input: {
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <SearchIcon />
-                      </InputAdornment>
-                    ),
-                  },
-                }}
-              />
-            </Grid>
-            <Grid display="flex" size={{ sm: 6, md: 8 }} justifyContent="right">
-              <Button
-                variant="contained"
-                startIcon={<AddIcon />}
-                onClick={() => {
-                  setSelectedUser();
-                  setOpen(true);
-                }}
-              >
-                New User
-              </Button>
-            </Grid>
-          </Grid>
-          <Grid size={{ xs: 12 }}>
-            <DataGrid
-              initialState={{
-                sorting: {
-                  sortModel: sortModel,
-                },
+
+      <Grid container spacing={2} direction="column">
+        <Grid>
+          <Notification alert={alert} setAlert={setAlert} />
+        </Grid>
+        <Grid container spacing={2} justifyContent="space-between">
+          <Grid display="flex" size={{ sm: 6, md: 4 }}>
+            <TextField
+              fullWidth
+              size="small"
+              minWidth="100px"
+              placeholder="Search..."
+              value={searchTerm}
+              onChange={(event) => {
+                setSearchTerm(event.target.value);
               }}
-              rows={state.users}
-              columns={columns}
-              loading={isLoading}
-              rowCount={state.totalItems}
-              sortingMode="server"
-              paginationMode="server"
-              sortModel={sortModel}
-              onSortModelChange={handleOnSortModelChange}
-              pageSizeOptions={[10, 25, 50]}
-              paginationModel={paginationModel}
-              onPaginationModelChange={setPaginationModel}
-              disableColumnFilter
               slotProps={{
-                loadingOverlay: {
-                  variant: "skeleton",
-                  noRowsVariant: "circular-progress",
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon />
+                    </InputAdornment>
+                  ),
                 },
               }}
             />
           </Grid>
+          <Grid display="flex" size={{ sm: 6, md: 8 }} justifyContent="right">
+            <Button
+              variant="contained"
+              startIcon={<AddIcon />}
+              onClick={() => {
+                setSelectedUser();
+                setOpen(true);
+              }}
+            >
+              New User
+            </Button>
+          </Grid>
         </Grid>
-      </Box>
+        <Grid size={{ xs: 12 }}>
+          <DataGrid
+            initialState={{
+              sorting: {
+                sortModel: sortModel,
+              },
+            }}
+            rows={state.users}
+            columns={columns}
+            loading={isLoading}
+            rowCount={state.totalItems}
+            sortingMode="server"
+            paginationMode="server"
+            sortModel={sortModel}
+            onSortModelChange={handleOnSortModelChange}
+            pageSizeOptions={[10, 25, 50]}
+            paginationModel={paginationModel}
+            onPaginationModelChange={setPaginationModel}
+            disableColumnFilter
+            slotProps={{
+              loadingOverlay: {
+                variant: "skeleton",
+                noRowsVariant: "circular-progress",
+              },
+            }}
+          />
+        </Grid>
+      </Grid>
     </Container>
   );
 };

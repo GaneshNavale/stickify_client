@@ -51,7 +51,6 @@ const UserModal = (props) => {
   }, [user]);
 
   const dobErrorMessage = useMemo(() => {
-    console.log("error", dobError);
     switch (dobError) {
       case "disableFuture": {
         return "Date of Birth can't be a future date";

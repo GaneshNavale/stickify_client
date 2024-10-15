@@ -2,6 +2,15 @@ import { createTheme } from "@mui/material/styles";
 
 const main = createTheme({
   components: {
+    MuiListItemButton: {
+      styleOverrides: {
+        root: {
+          "&.MuiListItemButton-root .MuiSvgIcon-root": {
+            color: "#fe4816", // Change to your desired color
+          },
+        },
+      },
+    },
     MuiLink: {
       styleOverrides: {
         root: {
@@ -15,7 +24,7 @@ const main = createTheme({
     MuiAppBar: {
       styleOverrides: {
         colorPrimary: {
-          backgroundColor: "#f5fafe",
+          backgroundColor: "#ffffff",
           color: "#fe4816",
         },
       },
@@ -37,7 +46,7 @@ const main = createTheme({
       main: "#006ce5",
     },
     error: {
-      main: "#f00000",
+      main: "#b71c1c",
     },
     warning: {
       main: "#ed6c02",

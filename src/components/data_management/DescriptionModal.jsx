@@ -21,7 +21,7 @@ import MultiImageUploader from "../../utils/MultiImageUploader";
 import * as API from "../../utils/adminApi";
 
 const DescriptionModal = (props) => {
-  const { categoryId, open, selectedDescription, handleModalClose, setAlert } =
+  const { id, type, open, selectedDescription, handleModalClose, setAlert } =
     props;
   const [description, setDescription] = useState({
     title: "",
@@ -123,13 +123,12 @@ const DescriptionModal = (props) => {
     if (!validateFields()) return;
 
     setOpenBackdrop(true);
-
     const formData = new FormData();
     formData.append("description[title]", description.title);
     formData.append("description[body]", description.body);
     formData.append("description[media_type]", description.media_type);
-    formData.append("describable_type", "Category");
-    formData.append("describable_id", categoryId);
+    formData.append("describable_type", type);
+    formData.append("describable_id", id);
 
     if (description.media_type === "image") {
       if (selectedDescription) {

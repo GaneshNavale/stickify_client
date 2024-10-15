@@ -56,7 +56,7 @@ const Categories = () => {
         renderCell: (params) => (
           <Link
             as={NavLink}
-            to={`/admin/categories/${params.row.slug}`}
+            to={`/admin/data_management/categories/${params.row.slug}`}
             component="button"
             variant="body2"
             sx={{ alignSelf: "baseline", textDecoration: "none" }}
@@ -102,6 +102,19 @@ const Categories = () => {
     const selectedFilter = event.target.value;
     setFilter(selectedFilter);
   };
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [windowWidth]);
 
   return (
     <Container maxWidth="xl">
@@ -110,58 +123,50 @@ const Categories = () => {
         handleModalClose={handleNewCategoryClose}
       />
 
-      <Box sx={{ flexGrow: 1 }}>
-        <Grid container spacing={2} direction="column">
-          <Grid item>
-            <Notification alert={alert} setAlert={setAlert} />
-          </Grid>
-          <Grid container spacing={2} justifyContent="space-between">
-            <Grid item xs={12} sm={6} md={4}>
-              <FormControl sx={{ minWidth: 200 }} fullWidth>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  value={filter}
-                  size="small"
-                  onChange={handleChange}
-                >
-                  <MenuItem value={"all"}>All</MenuItem>
-                  <MenuItem value={"active"}>Active</MenuItem>
-                  <MenuItem value={"inactive"}>Inactive</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid
-              item
-              xs={12}
-              sm={6}
-              md={8}
-              container
-              justifyContent="flex-end"
-            >
-              <Button
-                variant="contained"
-                startIcon={<AddIcon />}
-                onClick={() => {
-                  setIsNewModalOpen(true);
-                }}
-                aria-label="Add new category"
+      <Grid container spacing={2} direction="column">
+        <Grid item>
+          <Notification alert={alert} setAlert={setAlert} />
+        </Grid>
+        <Grid container spacing={2} justifyContent="space-between">
+          <Grid item xs={12} sm={6} md={4}>
+            <FormControl sx={{ minWidth: 200 }} fullWidth>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={filter}
+                size="small"
+                onChange={handleChange}
               >
-                New Category
-              </Button>
-            </Grid>
+                <MenuItem value={"all"}>All</MenuItem>
+                <MenuItem value={"active"}>Active</MenuItem>
+                <MenuItem value={"inactive"}>Inactive</MenuItem>
+              </Select>
+            </FormControl>
           </Grid>
-          <Grid item xs={12}>
-            <DataGrid
-              rows={state.categories}
-              columns={columns}
-              loading={isLoading}
-              disableColumnFilter
-              hideFooter
-            />
+          <Grid item xs={12} sm={6} md={8} container justifyContent="flex-end">
+            <Button
+              variant="contained"
+              startIcon={<AddIcon />}
+              onClick={() => {
+                setIsNewModalOpen(true);
+              }}
+              aria-label="Add new category"
+            >
+              New Category
+            </Button>
           </Grid>
         </Grid>
-      </Box>
+        <Grid item xs={12}>
+          <DataGrid
+            rows={state.categories}
+            columns={columns}
+            loading={isLoading}
+            disableColumnFilter
+            hideFooter
+            sx={{ width: "100%" }}
+          />
+        </Grid>
+      </Grid>
     </Container>
   );
 };

@@ -16,7 +16,7 @@ import DeleteDescriptionModal from "./DeleteDescriptionModal";
 import * as API from "../../utils/adminApi";
 
 const DescriptionList = (props) => {
-  const { categoryId, descriptions, setDescriptions, setAlert } = props;
+  const { id, type, descriptions, setDescriptions, setAlert } = props;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [openBackdrop, setOpenBackdrop] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -46,8 +46,8 @@ const DescriptionList = (props) => {
   const confirmDelete = (descriptionId) => {
     setOpenBackdrop(true);
     API.deleteDescription(descriptionId, {
-      describable_type: "Category",
-      describable_id: categoryId,
+      describable_type: type,
+      describable_id: id,
     })
       .then((response) => {
         setDescriptions((prevDescriptions) =>
@@ -113,8 +113,9 @@ const DescriptionList = (props) => {
           description.media_type === "none" ? (
             <Grid size={{ xs: 12 }} py={2}>
               <ImageDescription
+                id={id}
+                type={type}
                 key={description.id}
-                categoryId={categoryId}
                 description={description}
                 setAlert={setAlert}
                 setDescriptions={setDescriptions}
@@ -124,8 +125,9 @@ const DescriptionList = (props) => {
           ) : (
             <Grid size={{ xs: 12 }} py={2}>
               <VideoDescription
+                id={id}
+                type={type}
                 key={description.id}
-                categoryId={categoryId}
                 description={description}
                 setAlert={setAlert}
                 setDescriptions={setDescriptions}
@@ -136,7 +138,8 @@ const DescriptionList = (props) => {
         )}
       </Grid>
       <DescriptionModal
-        categoryId={categoryId}
+        id={id}
+        type={type}
         open={isModalOpen}
         handleModalClose={handleModalClose}
         setAlert={setAlert}

@@ -108,15 +108,18 @@ const CategoryModal = (props) => {
         handleModalClose(response.data.category);
       } else {
         const response = await API.createCategory(formData);
-        navigate(`/admin/categories/${response.data.category.slug}`, {
-          replace: true,
-          state: {
-            alert: {
-              message: "Category created Successfully.",
-              type: "success",
+        navigate(
+          `/admin/data_management/categories/${response.data.category.slug}`,
+          {
+            replace: true,
+            state: {
+              alert: {
+                message: "Category created Successfully.",
+                type: "success",
+              },
             },
-          },
-        });
+          }
+        );
         onClose();
       }
     } catch (error) {
