@@ -5,7 +5,8 @@ import DescriptionModal from "./DescriptionModal";
 import EditIcon from "@mui/icons-material/Edit";
 
 const VideoDescription = ({
-  categoryId,
+  id,
+  type,
   description,
   setDescriptions,
   setAlert,
@@ -71,7 +72,8 @@ const VideoDescription = ({
 
       {isEditModalOpen && (
         <DescriptionModal
-          categoryId={categoryId}
+          id={id}
+          type={type}
           open={isEditModalOpen}
           handleModalClose={handleModalClose}
           selectedDescription={description}

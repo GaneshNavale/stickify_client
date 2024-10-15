@@ -65,3 +65,23 @@ export const updateDescription = (id, formData) => {
 export const deleteDescription = (id, params) => {
   return axios.delete(`/admin/descriptions/${id}`, { params: params });
 };
+
+export const fetchProducts = (params) => {
+  return axios.get("/admin/products", { params: params });
+};
+
+export const fetchProduct = (id) => {
+  return axios.get(`/admin/products/${id}`);
+};
+
+export const createProduct = (formData) => {
+  return axios.post("/admin/products", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+};
+
+export const updateProduct = (id, formData) => {
+  return axios.put(`/admin/products/${id}`, formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+};

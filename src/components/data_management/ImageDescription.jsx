@@ -8,7 +8,8 @@ import EditIcon from "@mui/icons-material/Edit";
 
 
 const ImageDescription = ({
-  categoryId,
+  id,
+  type,
   description,
   setDescriptions,
   setAlert,
@@ -96,7 +97,8 @@ const ImageDescription = ({
       {isEditModalOpen && (
         <DescriptionModal
           open={isEditModalOpen}
-          categoryId={categoryId}
+          id={id}
+          type={type}
           handleModalClose={handleModalClose}
           selectedDescription={description}
           setAlert={setAlert}

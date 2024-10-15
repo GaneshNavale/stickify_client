@@ -25,6 +25,8 @@ import Categories from "./components/data_management/Categories";
 import AdminUsers from "./components/user_management/AdminUsers";
 import ResetUserPassword from "./components/users/ResetUserPassword";
 import Category from "./components/data_management/Category";
+import Products from "./components/data_management/Products";
+import Product from "./components/data_management/Product";
 
 const NAVIGATION = [
   {
@@ -62,12 +64,12 @@ const NAVIGATION = [
   {
     segment: "admin/users_management",
     title: "User Management",
-    icon: <ManageAccountsIcon />,
+    icon: <ManageAccountsIcon color="primary" />,
     children: [
       {
         segment: "",
         title: "Users",
-        icon: <PeopleIcon />,
+        icon: <PeopleIcon color="primary" />,
       },
       {
         segment: "admin_users",
@@ -147,42 +149,52 @@ function AdminApp(props) {
         </Routes>
       )}
       {user && (
-        <AppProvider
-          session={userDetails}
-          authentication={authentication}
-          navigation={NAVIGATION}
-          router={router}
-          branding={{
-            logo: <img src="https://mui.com/static/logo.png" alt="MUI logo" />,
-            title: "Stickify",
-          }}
-          theme={main}
-        >
-          <DashboardLayout>
-            <Box
-              sx={{
-                py: 4,
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                textAlign: "center",
-              }}
+        <>
+          <AppProvider
+            session={userDetails}
+            authentication={authentication}
+            navigation={NAVIGATION}
+            router={router}
+            branding={{
+              logo: <img src="/logo.png" alt="Stick IT Up logo" />,
+              title: "",
+            }}
+            theme={main}
+          >
+            <DashboardLayout
+              sx={{ width: "100%", flexGrow: 1, position: "relative" }}
             >
-              <Typography>Dashboard content for {pathname}</Typography>
-            </Box>
-
-            <Routes>
-              <Route path="/admin/orders" element={<Orders />} />
-              <Route path="/admin/users_management/*" element={<Users />} />
-              <Route path="/admin/data_management/*" element={<Categories />} />
-              <Route path="/admin/categories/:slug" element={<Category />} />
-              <Route
-                path="/admin/users_management/admin_users"
-                element={<AdminUsers />}
-              />
-            </Routes>
-          </DashboardLayout>
-        </AppProvider>
+              <Box
+                sx={{ display: "flex", flexDirection: "column", flexGrow: 1 }}
+              >
+                <Routes>
+                  <Route path="/admin/orders" element={<Orders />} />
+                  <Route path="/admin/users_management/*" element={<Users />} />
+                  <Route
+                    path="/admin/data_management/*"
+                    element={<Categories />}
+                  />
+                  <Route
+                    path="/admin/data_management/categories/:slug"
+                    element={<Category />}
+                  />
+                  <Route
+                    path="/admin/data_management/products"
+                    element={<Products />}
+                  />
+                  <Route
+                    path="/admin/data_management/products/:slug"
+                    element={<Product />}
+                  />
+                  <Route
+                    path="/admin/users_management/admin_users"
+                    element={<AdminUsers />}
+                  />
+                </Routes>
+              </Box>
+            </DashboardLayout>
+          </AppProvider>
+        </>
       )}
     </ThemeProvider>
   );

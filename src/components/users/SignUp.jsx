@@ -204,7 +204,7 @@ const SignUp = () => {
         paddingLeft: 3,
         paddingRight: 3,
         backgroundImage:
-          "radial-gradient(ellipse at 50% 50%, hsl(210, 100%, 97%), hsl(0, 0%, 100%))",
+          "radial-gradient(ellipse at 50% 50%, hsl(210, 100%, 98%), hsl(0, 0%, 200%))",
         backgroundRepeat: "no-repeat",
       }}
     >
@@ -218,6 +218,7 @@ const SignUp = () => {
           "padding": 4,
           "gap": 2,
           "margin": "auto",
+          "borderRadius": "2%",
           "boxShadow":
             "hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px",
           "@media (min-width: 600px)": {
