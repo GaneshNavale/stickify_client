@@ -1,5 +1,4 @@
 import * as React from "react";
-import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import AppBar from "@mui/material/AppBar";
 import Drawer from "@mui/material/Drawer";
@@ -10,17 +9,19 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import MenuIcon from "@mui/icons-material/Menu";
 import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Menu from "@mui/material/Menu";
 import Container from "@mui/material/Container";
+import MenuItem from "@mui/material/MenuItem";
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import { useAuth } from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import UserMenuItems from "./users/user_settings/UserMenuItems";
 import { useState, useEffect } from "react";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import { Fade, Paper, Popper } from "@mui/material";
 
 const drawerWidth = "50%";
 const navItems = [
@@ -30,6 +31,13 @@ const navItems = [
   { name: "Deals", path: "/deals" },
 ];
 
+const productItems = [
+  { itemName: "Product1" },
+  { itemName: "Product2" },
+  { itemName: "Product3" },
+  { itemName: "Product4" },
+];
+
 const NavBar = (props) => {
   const { user } = props;
   const navigate = useNavigate();
@@ -37,6 +45,8 @@ const NavBar = (props) => {
   const [anchorElUser, setAnchorElUser] = useState(null);
   const [activeTab, setActiveTab] = useState(navItems[2].path);
   const [isSticky, setIsSticky] = useState(false);
+  const [anchorElProduct, setAnchorElProduct] = useState(null);
+  const [openProductPopper, setOpenProductPopper] = React.useState(false);
 
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
@@ -62,6 +72,14 @@ const NavBar = (props) => {
     setIsSticky(scrollTop > 34);
   };
 
+  const handleOpenProductMenu = (event) => {
+    setAnchorElProduct(event.currentTarget);
+  };
+
+  const handleCloseProductMenu = () => {
+    setAnchorElProduct(null);
+  };
+
   // Directly using window here instead of passing as a prop
   useEffect(() => {
     window.addEventListener("scroll", handleScroll);
@@ -72,31 +90,91 @@ const NavBar = (props) => {
 
   const drawer = (
     <Box onClick={handleDrawerToggle} sx={{ textAlign: "center" }}>
-      <Typography
-        variant="h6"
-        sx={{ my: 2, display: "flex", alignItems: "center" }}
-      >
-        LOGO
-      </Typography>
+      <Box sx={{ my: 2, display: "flex", alignItems: "center" }}>
+        <img
+          src="images/stickitupLogo.png"
+          alt="Logo"
+          style={{ height: "30px", width: "auto" }}
+        />
+      </Box>
       <List>
-        {navItems.map((item) => (
-          <ListItem key={item.name} disablePadding>
-            <ListItemButton
-              component={Link}
-              to={item.path}
-              onClick={() => handleTabChange(item.path)}
-              sx={{ textAlign: "center", color: "primary.main" }}
-            >
-              <ListItemText primary={item.name} />
-            </ListItemButton>
-          </ListItem>
-        ))}
+        {navItems.map((item) =>
+          item.name === "Products" ? (
+            <>
+              <ListItem key={item.name} disablePadding>
+                <ListItemButton
+                  variant={activeTab === item.path ? "contained" : "text"}
+                  component={Button}
+                  onClick={handleOpenProductMenu}
+                  sx={{
+                    color: "primary.main",
+                    mx: 1,
+                  }}
+                >
+                  {item.name}
+                  <KeyboardArrowDownIcon />
+                </ListItemButton>
+                <Popper
+                  open={openProductPopper}
+                  anchorEl={anchorElProduct}
+                  placement="right-start"
+                  transition
+                  sx={{ zIndex: 1200 }}
+                >
+                  {({ TransitionProps }) => (
+                    <Fade {...TransitionProps} timeout={350}>
+                      <Paper>
+                        <Box sx={{ p: 1 }}>
+                          {productItems.map((product) => (
+                            <Button
+                              key={product.itemName}
+                              onClick={() => {
+                                handleCloseProductMenu();
+                                navigate(`/products/${product.itemName}`);
+                              }}
+                              sx={{
+                                display: "block",
+                                width: "100%",
+                                textAlign: "left",
+                                color: "primary.main",
+                                "&:hover": {
+                                  backgroundColor: "rgba(0, 0, 0, 0.08)", // Add a hover effect
+                                },
+                              }}
+                            >
+                              {product.itemName}
+                            </Button>
+                          ))}
+                        </Box>
+                      </Paper>
+                    </Fade>
+                  )}
+                </Popper>
+              </ListItem>
+            </>
+          ) : (
+            <ListItem key={item.name} disablePadding>
+              <ListItemButton
+                variant={activeTab === item.path ? "contained" : "text"}
+                component={Link}
+                to={item.path}
+                onClick={() => handleTabChange(item.path)}
+                sx={{
+                  color: "primary.main",
+                  mx: 1,
+                }}
+              >
+                <ListItemText primary={item.name} />
+              </ListItemButton>
+            </ListItem>
+          )
+        )}
         {!user && (
           <ListItem key="sign_in" disablePadding>
             <ListItemButton
               component={Link}
               to="/sign_in"
-              sx={{ textAlign: "center", color: "primary.main" }}
+              sx={{ mx: 1, color: "primary.main" }}
             >
               <ListItemText primary="Sign In" />
             </ListItemButton>
@@ -130,31 +208,75 @@ const NavBar = (props) => {
         <Container>
           <Toolbar sx={{ justifyContent: "space-between" }}>
             <Box sx={{ display: "flex", alignItems: "center" }}>
-              <Typography variant="h6" component="div" sx={{ mr: 2 }}>
-                LOGO
-              </Typography>
-              <Box sx={{ display: { xs: "none", sm: "block" } }}>
-                {navItems.map((item) => (
-                  <Button
-                    key={item.name}
-                    variant={activeTab === item.path ? "contained" : "text"}
-                    component={Link}
-                    to={item.path}
-                    onClick={() => handleTabChange(item.path)}
-                    sx={{
-                      color: activeTab === item.path ? "white" : "black",
-                      mx: 1,
-                    }}
-                  >
-                    {item.name}
-                  </Button>
-                ))}
+              <Box sx={{ my: 2, display: "flex", alignItems: "center" }}>
+                <img
+                  src="images/stickitupLogo.png"
+                  alt="Logo"
+                  style={{ height: "30px", width: "auto" }}
+                />
+              </Box>
+              <Box sx={{ display: { xs: "none", sm: "none", md: "block" } }}>
+                {navItems.map((item) =>
+                  item.name === "Products" ? (
+                    <>
+                      <Button
+                        key={item.name}
+                        variant={activeTab === item.path ? "contained" : "text"}
+                        component={Link}
+                        to={item.path}
+                        onClick={(event) => {
+                          handleTabChange(item.path);
+                          handleOpenProductMenu(event);
+                        }}
+                        sx={{
+                          color: activeTab === item.path ? "white" : "black",
+                          mx: 1,
+                        }}
+                      >
+                        {item.name}
+                        <KeyboardArrowDownIcon />
+                      </Button>
+                      <Menu
+                        anchorEl={anchorElProduct}
+                        open={Boolean(anchorElProduct)}
+                        onClose={handleCloseProductMenu}
+                      >
+                        {productItems.map((product) => (
+                          <MenuItem
+                            key={product.itemName}
+                            onClick={() => {
+                              handleCloseProductMenu();
+                              navigate(`/products/${product.itemName}`);
+                            }}
+                            disableRipple
+                          >
+                            {product.itemName}
+                          </MenuItem>
+                        ))}
+                      </Menu>
+                    </>
+                  ) : (
+                    <Button
+                      key={item.name}
+                      variant={activeTab === item.path ? "contained" : "text"}
+                      component={Link}
+                      to={item.path}
+                      onClick={() => handleTabChange(item.path)}
+                      sx={{
+                        color: activeTab === item.path ? "white" : "black",
+                        mx: 1,
+                      }}
+                    >
+                      {item.name}
+                    </Button>
+                  )
+                )}
               </Box>
             </Box>
 
             <Box
               sx={{
-                display: { xs: "none", sm: "flex" },
+                display: { xs: "none", sm: "none", md: "block" },
                 alignItems: "center",
               }}
             >
@@ -228,7 +350,7 @@ const NavBar = (props) => {
               aria-label="open drawer"
               edge="start"
               onClick={handleDrawerToggle}
-              sx={{ mr: 2, display: { sm: "none" } }}
+              sx={{ mr: 2, display: { xs: "block", sm: "block", md: "none" } }}
             >
               <MenuIcon />
             </IconButton>
@@ -245,9 +367,9 @@ const NavBar = (props) => {
             keepMounted: true,
           }}
           sx={{
-            display: { xs: "block", sm: "none" },
+            display: { xs: "block", sm: "block", md: "none" },
             "& .MuiDrawer-paper": {
-              width: drawerWidth,
+              width: { xs: "50%", sm: "35%" },
             },
           }}
         >
