@@ -1,4 +1,3 @@
-import SampleSteackers from "./pages/SampleSteacker";
 import SignIn from "./components/users/SignIn";
 import SignUp from "./components/users/SignUp";
 import { LinkedInCallback } from "react-linkedin-login-oauth2";
@@ -7,9 +6,10 @@ import ResetUserPassword from "./components/users/ResetUserPassword";
 import Products from "./pages/Products";
 import Tools from "./pages/Tools";
 import Deals from "./pages/Deals";
+import SampleStickers from "./pages/SampleSticker";
 
 const routes = [
-  { path: "/", component: <SampleSteackers />, exact: true },
+  { path: "/", component: <SampleStickers />, exact: true },
   { path: "/sign_in", component: <SignIn />, exact: true },
   { path: "/sign_up", component: <SignUp />, exact: true },
   { path: "/linkedin", component: <LinkedInCallback />, exact: true },

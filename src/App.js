@@ -4,7 +4,7 @@ import main from "./themes/main";
 import Copyright from "./Copyright";
 import CssBaseline from "@mui/material/CssBaseline";
 import { ThemeProvider } from "@mui/material/styles";
-import Container from "@mui/material/Container";
+import Box from "@mui/material/Box";
 import { Route, Routes } from "react-router-dom";
 import routes from "./routes";
 import { useAuth } from "./hooks/useAuth";
@@ -17,7 +17,7 @@ function App() {
     <ThemeProvider theme={main}>
       <CssBaseline />
       <NavBar user={user} />
-      <Container maxWidth="lg">
+      <Box marginTop={7.5}>
         <Routes>
           {routes.map((route, index) => (
             <Route
@@ -33,7 +33,7 @@ function App() {
             />
           ))}
         </Routes>
-      </Container>
+      </Box>
       <Copyright />
     </ThemeProvider>
   );
