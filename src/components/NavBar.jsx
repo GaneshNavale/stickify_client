@@ -5,8 +5,6 @@ import Drawer from "@mui/material/Drawer";
 import IconButton from "@mui/material/IconButton";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemText from "@mui/material/ListItemText";
 import MenuIcon from "@mui/icons-material/Menu";
 import Toolbar from "@mui/material/Toolbar";
 import Button from "@mui/material/Button";
@@ -14,11 +12,7 @@ import Box from "@mui/material/Box";
 import Menu from "@mui/material/Menu";
 import Container from "@mui/material/Container";
 import MenuItem from "@mui/material/MenuItem";
-import Avatar from "@mui/material/Avatar";
-import Tooltip from "@mui/material/Tooltip";
-import { useAuth } from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
-import UserMenuItems from "./users/user_settings/UserMenuItems";
 import { useState, useEffect } from "react";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import Logo from "./Logo";
@@ -109,13 +103,15 @@ const NavBar = (props) => {
         )}
         {!user && (
           <ListItem key="sign_in" disablePadding>
-            <ListItemButton
+            <Button
               component={Link}
+              variant={activeTab === "/sign_in" ? "contained" : "text"}
+              onClick={() => handleTabChange("/sign_in")}
               to="/sign_in"
-              sx={{ mx: 1, color: "primary.main" }}
+              sx={{ mx: 1 }}
             >
-              <ListItemText primary="Sign In" />
-            </ListItemButton>
+              Sign In
+            </Button>
           </ListItem>
         )}
       </List>
@@ -143,7 +139,7 @@ const NavBar = (props) => {
           marginTop: isSticky ? "0px" : "30px",
         }}
       >
-        <Container maxWidth="xl">
+        <Container maxWidth="lg">
           <Toolbar sx={{ justifyContent: "space-between" }}>
             <Box sx={{ display: "flex", alignItems: "center" }}>
               <Box sx={{ my: 2, display: "flex", alignItems: "center" }}>
@@ -160,7 +156,6 @@ const NavBar = (props) => {
                       <Button
                         key={item.name}
                         variant={activeTab === item.path ? "contained" : "text"}
-                        component={Link}
                         to={item.path}
                         onClick={(event) => {
                           handleOpenProductMenu(event);

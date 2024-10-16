@@ -10,11 +10,6 @@ import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import HeroBanner from "./HeroBanner";
 
-const INFO_TEXTS = [
-  "Made in India",
-  "Free Shipping",
-  "14 Days Return and Exchange",
-];
 
 const TruncatedText = ({ text }) => {
   const maxLength = 100;
@@ -94,6 +89,151 @@ const SampleStickers = () => {
     <div>
       <Notification alert={alert} setAlert={setAlert} />
       <HeroBanner />
+      <Box
+        sx={{
+          display: "flex",
+          padding: 3,
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <img
+          src="images/review.png"
+          alt="Review"
+          style={{ height: "auto", width: "auto" }}
+        />
+        <Typography sx={{ fontWeight: "light", paddingBottom: 3 }}>
+          Reviews
+        </Typography>
+        <Typography variant="h7" sx={{ fontWeight: "bold", paddingBottom: 3 }}>
+          MORE THAN 3 LAKH НАРРУ CUSTOMERS
+        </Typography>
+      </Box>
+      <Box
+        sx={{
+          display: "flex",
+          padding: 3,
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Typography sx={{ paddingBottom: 4 }}>
+          <Button
+            variant="contained"
+            sx={{
+              borderRadius: "12px 12px 0 0",
+              fontSize: "15px",
+            }}
+          >
+            Trusted By
+          </Button>
+        </Typography>
+        <Grid container spacing={2}>
+          <img
+            src="images/stickitupLogo.png"
+            alt="Review"
+            style={{ height: "30px", width: "auto" }}
+          />
+          <img
+            src="images/stickitupLogo.png"
+            alt="Review"
+            style={{ height: "30px", width: "auto" }}
+          />
+          <img
+            src="images/stickitupLogo.png"
+            alt="Review"
+            style={{ height: "30px", width: "auto" }}
+          />
+        </Grid>
+      </Box>
+
+      <Box
+        sx={{
+          padding: 3,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundColor: "primary.main",
+          height: "auto",
+          display: "flex",
+          width: "100vw",
+          marginLeft: "calc(-50vw + 50%)",
+          justifyContent: "center",
+          alignItems: "center",
+          flexDirection: "column",
+        }}
+      >
+        <Typography variant="h4" sx={{ fontWeight: "bold", paddingBottom: 3 }}>
+          What our customers has to say
+        </Typography>
+        <Grid
+          container
+          spacing={4}
+          sx={{ justifyContent: "center", maxWidth: "1200px" }}
+        >
+          {/* size={{ lg: 3, md: 6, sm: 12 }} */}
+          <Grid item size={{ xs: 12, sm: 6, lg: 3 }}>
+            <Card sx={{ height: "335px", padding: 2 }}>
+              <CardContent>
+                <Typography sx={{ color: "text.secondary", mb: 1.5 }}>
+                  <TruncatedText
+                    text={
+                      "The concept is great, but I faced some connectivity issues. Hoping for a firmware update to fix this."
+                    }
+                  />
+                </Typography>
+              </CardContent>
+              <CardActions
+                sx={{
+                  justifyContent: "center",
+                  alignItems: "center",
+                  margin: 2,
+                  flexDirection: "column", // Stack items vertically
+                }}
+              >
+                <Typography sx={{ fontWeight: "bold" }}>
+                  Prasad Shelke
+                </Typography>
+                <Divider sx={{ width: "100%", marginY: 1 }} />{" "}
+                {/* Divider below the name */}
+                <Typography sx={{ textAlign: "center", fontWeight: "medium" }}>
+                  Software Engineer
+                </Typography>
+                <Typography
+                  sx={{ textAlign: "center", color: "text.secondary" }}
+                >
+                  Google
+                </Typography>
+              </CardActions>
+            </Card>
+          </Grid>
+          <Grid item size={{ xs: 12, sm: 6, lg: 3 }}>
+            <ReviewCard
+              name="Prasad Shelke"
+              title="Software Engineer"
+              company="Google"
+              review="The concept is great, but I faced some connectivity issues. Hoping for a firmware update to fix this."
+            />
+          </Grid>
+          <Grid item size={{ xs: 12, sm: 6, lg: 3 }}>
+            <ReviewCard
+              name="Ram Kote"
+              title="Frontend Developer"
+              company="Tech Mahindra"
+              review="Steacker is a fantastic product that really delivers on its promises. The build quality is excellent, and it has made my daily tasks so much easier. However, I wish it had a few more customization options. Overall, I'm satisfied!"
+            />
+          </Grid>
+          <Grid item size={{ xs: 12, sm: 6, lg: 3 }}>
+            <ReviewCard
+              name="Mamta"
+              title="Network Engineer"
+              company="Cisco"
+              review="I've been using Steacker for a month now, and I absolutely love it! The design is sleek, and it performs flawlessly. Highly recommend!"
+            />
+          </Grid>
+        </Grid>
+      </Box>
     </div>
   );
 };
