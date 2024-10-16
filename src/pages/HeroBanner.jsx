@@ -35,8 +35,8 @@ const HeroBanner = () => {
       <img
         src={
           isXs
-            ? "images/hero_banner.webp "
-            : "images/background/HomeBackground.jpg"
+            ? process.env.PUBLIC_URL + "/images/hero_banner.webp"
+            : process.env.PUBLIC_URL + "/images/background/HomeBackground.jpg"
         }
         alt="Custom Stickers Background"
         style={{

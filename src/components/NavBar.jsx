@@ -144,7 +144,7 @@ const NavBar = (props) => {
             <Box sx={{ display: "flex", alignItems: "center" }}>
               <Box sx={{ my: 2, display: "flex", alignItems: "center" }}>
                 <img
-                  src="logo.png"
+                  src={process.env.PUBLIC_URL + "logo.png"}
                   alt="Logo"
                   style={{ height: "30px", width: "auto" }}
                 />
