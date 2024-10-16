@@ -99,7 +99,7 @@ const SampleStickers = () => {
         }}
       >
         <img
-          src="images/review.png"
+          src={process.env.PUBLIC_URL + "review.png"}
           alt="Review"
           style={{ height: "auto", width: "auto" }}
         />
@@ -132,17 +132,17 @@ const SampleStickers = () => {
         </Typography>
         <Grid container spacing={2}>
           <img
-            src="images/stickitupLogo.png"
+            src={process.env.PUBLIC_URL + "logo.png"}
             alt="Review"
             style={{ height: "30px", width: "auto" }}
           />
           <img
-            src="images/stickitupLogo.png"
+            src={process.env.PUBLIC_URL + "logo.png"}
             alt="Review"
             style={{ height: "30px", width: "auto" }}
           />
           <img
-            src="images/stickitupLogo.png"
+            src={process.env.PUBLIC_URL + "logo.png"}
             alt="Review"
             style={{ height: "30px", width: "auto" }}
           />
