@@ -17,25 +17,20 @@ import { useState, useEffect } from "react";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import Logo from "./Logo";
 import UserMenu from "./UserMenu";
+import * as API from "./../utils/api";
 
 const navItems = [
-  { name: "Products", path: "/products" },
+  { name: "Products", path: "/categories" },
   { name: "Tools", path: "/tools" },
   { name: "Sample Steacker", path: "/" },
   { name: "Deals", path: "/deals" },
-];
-
-const productItems = [
-  { itemName: "Product1", path: "/products/product1" },
-  { itemName: "Product2", path: "/products/product2" },
-  { itemName: "Product3", path: "/products/product3" },
-  { itemName: "Product4", path: "/products/product4" },
 ];
 
 const NavBar = (props) => {
   const { user } = props;
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [productItems, setProductItems] = useState([]);
   const [activeTab, setActiveTab] = useState(navItems[2].path);
   const [isSticky, setIsSticky] = useState(false);
   const [anchorElProduct, setAnchorElProduct] = useState(null);
@@ -62,6 +57,19 @@ const NavBar = (props) => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const fetchCategories = React.useCallback(async () => {
+    try {
+      const data = await API.fetchCategories();
+      setProductItems(data.data);
+    } catch (error) {
+      console.log("error while fetching categories", error);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchCategories();
+  }, [fetchCategories]);
 
   const drawer = (
     <Box sx={{ textAlign: "center" }}>
@@ -144,7 +152,7 @@ const NavBar = (props) => {
             <Box sx={{ display: "flex", alignItems: "center" }}>
               <Box sx={{ my: 2, display: "flex", alignItems: "center" }}>
                 <img
-                  src={process.env.PUBLIC_URL + "logo.png"}
+                  src={process.env.PUBLIC_URL + "/logo.png"}
                   alt="Logo"
                   style={{ height: "30px", width: "auto" }}
                 />
@@ -175,15 +183,19 @@ const NavBar = (props) => {
                       >
                         {productItems.map((product) => (
                           <MenuItem
-                            key={product.itemName}
+                            key={product.name}
                             onClick={() => {
                               handleCloseProductMenu();
-                              handleTabChange(item.path);
-                              // navigate(`/products/${product.itemName}`);
+                              handleTabChange("/categories");
+                              navigate(`/categories/${product.slug}`, {
+                                state: {
+                                  category: product,
+                                },
+                              });
                             }}
                             disableRipple
                           >
-                            {product.itemName}
+                            {product.name}
                           </MenuItem>
                         ))}
                       </Menu>
@@ -242,11 +254,11 @@ const NavBar = (props) => {
 
             <IconButton
               aria-label="open drawer"
-              edge="start"
+              edge="end"
               onClick={handleDrawerToggle}
-              sx={{ mr: 2, display: { xs: "block", sm: "block", md: "none" } }}
+              sx={{ display: { xs: "block", sm: "block", md: "none" } }}
             >
-              <MenuIcon />
+              <MenuIcon fontSize="large" color="primary" />
             </IconButton>
           </Toolbar>
         </Container>

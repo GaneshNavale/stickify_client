@@ -19,9 +19,8 @@ export const signInUser = (params) => {
 
 // User Account Apis
 export const listAllBillingAddress = () => {
-  return axios.get("/billing_addresses")
-}
-
+  return axios.get("/billing_addresses");
+};
 
 export const sendResetPasswordInstruction = (params) => {
   return axios.post("/auth/password", params);
@@ -32,37 +31,36 @@ export const resetUserPassword = (params, customHeaders) => {
 };
 
 export const createBillingAddress = (params) => {
-  return axios.post("/billing_addresses", params)
-}
+  return axios.post("/billing_addresses", params);
+};
 
 export const updateBillingAddress = (id, params) => {
   return axios.put(`/billing_addresses/${id}`, params);
-}
-
+};
 
 export const deleteBillingAddress = (id) => {
-  return axios.get("/billing_addresses", id)
-}
+  return axios.get("/billing_addresses", id);
+};
 
 export const listAllShippingAddress = () => {
-  return axios.get("/shipping_addresses")
-}
+  return axios.get("/shipping_addresses");
+};
 
 export const createShippingAddress = (params) => {
-  return axios.post("/shipping_addresses", params)
-}
+  return axios.post("/shipping_addresses", params);
+};
 
 export const updateShippingAddress = (id, params) => {
   return axios.put(`/shipping_addresses/${id}`, params);
-}
+};
 
 export const deleteShippingAddress = (id) => {
-  return axios.get("/shipping_addresses", id)
-}
+  return axios.get("/shipping_addresses", id);
+};
 
 export const makeDefaulsShippingAddress = (id) => {
   return axios.patch(`/shipping_addresses/${id}/mark_default`);
-}
+};
 
 export const updateUserDetail = (formData) => {
   return axios.put("/update_user_details", formData, {
@@ -73,9 +71,25 @@ export const updateUserDetail = (formData) => {
 };
 
 export const getUserDetail = (id) => {
-  return axios.get("/get_user_details", id)
-}
+  return axios.get("/get_user_details", id);
+};
 
 export const updateUserPassword = (user) => {
-  return axios.put("/update_user_password", {user :user});
+  return axios.put("/update_user_password", { user: user });
+};
+
+export const fetchCategory = (id) => {
+  return axios.get(`/categories/${id}`);
+};
+
+export const fetchCategories = (params) => {
+  return axios.get("/categories", { params: params });
+};
+
+export const fetchProducts = (category_id, params = {}) => {
+  return axios.get(`/categories/${category_id}/products`, { params: params });
+};
+
+export const fetchProduct = (category_id, id) => {
+  return axios.get(`/categories/${category_id}/products/${id}`);
 };

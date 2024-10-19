@@ -10,6 +10,7 @@ import {
   ListItem,
   Chip,
   Box,
+  Container,
 } from "@mui/material";
 import UpdateUserDetail from "../components/users/user_settings/UpdateUserDetail";
 import ListOfAllBillingAddressCard from "../components/users/user_settings/ListOfAllBillingAddressCard";
@@ -104,11 +105,6 @@ const UserAccountSettings = () => {
     }
   }, [dialogClosed]);
 
-  const [value, setValue] = useState(0);
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
-
   const handleAlertClose = () => {
     setAlert({ message: "", type: "" });
   };
@@ -118,7 +114,7 @@ const UserAccountSettings = () => {
   }, []);
 
   return (
-    <>
+    <Container size="lg">
       {alert.message && alert.type === "success" && (
         <Notification alert={alert} setAlert={handleAlertClose} />
       )}
@@ -339,7 +335,7 @@ const UserAccountSettings = () => {
         onClose={handleCloseBillingAddressDialog}
       />
       <Divider />
-    </>
+    </Container>
   );
 };
 

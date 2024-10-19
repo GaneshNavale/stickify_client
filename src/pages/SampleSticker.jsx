@@ -10,7 +10,6 @@ import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import HeroBanner from "./HeroBanner";
 
-
 const TruncatedText = ({ text }) => {
   const maxLength = 100;
 
@@ -99,7 +98,7 @@ const SampleStickers = () => {
         }}
       >
         <img
-          src={process.env.PUBLIC_URL + "review.png"}
+          src={process.env.PUBLIC_URL + "/review.png"}
           alt="Review"
           style={{ height: "auto", width: "auto" }}
         />
@@ -132,17 +131,17 @@ const SampleStickers = () => {
         </Typography>
         <Grid container spacing={2}>
           <img
-            src={process.env.PUBLIC_URL + "logo.png"}
+            src={process.env.PUBLIC_URL + "/logo.png"}
             alt="Review"
             style={{ height: "30px", width: "auto" }}
           />
           <img
-            src={process.env.PUBLIC_URL + "logo.png"}
+            src={process.env.PUBLIC_URL + "/logo.png"}
             alt="Review"
             style={{ height: "30px", width: "auto" }}
           />
           <img
-            src={process.env.PUBLIC_URL + "logo.png"}
+            src={process.env.PUBLIC_URL + "/logo.png"}
             alt="Review"
             style={{ height: "30px", width: "auto" }}
           />

@@ -5,7 +5,6 @@ import * as API from "../../utils/adminApi";
 import Notification from "../../utils/notification";
 import CategoryDetail from "./CategoryDetail";
 import DescriptionList from "./DescriptionList";
-import DescriptionModal from "./DescriptionModal";
 
 const Category = () => {
   const location = useLocation();

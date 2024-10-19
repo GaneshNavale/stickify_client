@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
-import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid2";
 import { Button, Container } from "@mui/material";
 import * as API from "../../utils/adminApi";
@@ -8,7 +7,6 @@ import AddIcon from "@mui/icons-material/Add";
 import { Link, NavLink } from "react-router-dom";
 import Notification from "../../utils/notification";
 import CategoryModal from "./CategoryModal";
-import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
