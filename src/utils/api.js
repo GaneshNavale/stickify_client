@@ -90,6 +90,6 @@ export const fetchProducts = (category_id, params = {}) => {
   return axios.get(`/categories/${category_id}/products`, { params: params });
 };
 
-export const fetchProduct = (category_id, id) => {
-  return axios.get(`/categories/${category_id}/products/${id}`);
+export const fetchProduct = (product_id) => {
+  return axios.get(`/products/${product_id}`);
 };

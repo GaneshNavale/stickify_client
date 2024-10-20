@@ -79,20 +79,18 @@ const NavBar = (props) => {
       <List sx={{ mx: 1 }}>
         {navItems.map((item) =>
           item.name === "Products" ? (
-            <>
-              <ListItem key={item.name} disablePadding>
-                <Button
-                  variant={activeTab === item.path ? "contained" : "text"}
-                  onClick={handleOpenProductMenu}
-                  sx={{
-                    mx: 1,
-                  }}
-                >
-                  {item.name}
-                  <KeyboardArrowDownIcon />
-                </Button>
-              </ListItem>
-            </>
+            <ListItem key={item.name} disablePadding>
+              <Button
+                variant={activeTab === item.path ? "contained" : "text"}
+                onClick={handleOpenProductMenu}
+                sx={{
+                  mx: 1,
+                }}
+              >
+                {item.name}
+                <KeyboardArrowDownIcon />
+              </Button>
+            </ListItem>
           ) : (
             <ListItem key={item.name} disablePadding>
               <Button
@@ -160,46 +158,21 @@ const NavBar = (props) => {
               <Box sx={{ display: { xs: "none", sm: "none", md: "block" } }}>
                 {navItems.map((item) =>
                   item.name === "Products" ? (
-                    <>
-                      <Button
-                        key={item.name}
-                        variant={activeTab === item.path ? "contained" : "text"}
-                        to={item.path}
-                        onClick={(event) => {
-                          handleOpenProductMenu(event);
-                        }}
-                        sx={{
-                          color: activeTab === item.path ? "white" : "black",
-                          mx: 1,
-                        }}
-                      >
-                        {item.name}
-                        <KeyboardArrowDownIcon />
-                      </Button>
-                      <Menu
-                        anchorEl={anchorElProduct}
-                        open={Boolean(anchorElProduct)}
-                        onClose={handleCloseProductMenu}
-                      >
-                        {productItems.map((product) => (
-                          <MenuItem
-                            key={product.name}
-                            onClick={() => {
-                              handleCloseProductMenu();
-                              handleTabChange("/categories");
-                              navigate(`/categories/${product.slug}`, {
-                                state: {
-                                  category: product,
-                                },
-                              });
-                            }}
-                            disableRipple
-                          >
-                            {product.name}
-                          </MenuItem>
-                        ))}
-                      </Menu>
-                    </>
+                    <Button
+                      key={item.name}
+                      variant={activeTab === item.path ? "contained" : "text"}
+                      to={item.path}
+                      onClick={(event) => {
+                        handleOpenProductMenu(event);
+                      }}
+                      sx={{
+                        color: activeTab === item.path ? "white" : "black",
+                        mx: 1,
+                      }}
+                    >
+                      {item.name}
+                      <KeyboardArrowDownIcon />
+                    </Button>
                   ) : (
                     <Button
                       key={item.name}
@@ -216,6 +189,29 @@ const NavBar = (props) => {
                     </Button>
                   )
                 )}
+                <Menu
+                  anchorEl={anchorElProduct}
+                  open={Boolean(anchorElProduct)}
+                  onClose={handleCloseProductMenu}
+                >
+                  {productItems.map((product) => (
+                    <MenuItem
+                      key={product.name}
+                      onClick={() => {
+                        handleCloseProductMenu();
+                        handleTabChange("/categories");
+                        navigate(`/categories/${product.slug}`, {
+                          state: {
+                            category: product,
+                          },
+                        });
+                      }}
+                      disableRipple
+                    >
+                      {product.name}
+                    </MenuItem>
+                  ))}
+                </Menu>
               </Box>
             </Box>
 

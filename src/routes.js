@@ -6,8 +6,8 @@ import ResetUserPassword from "./components/users/ResetUserPassword";
 import Tools from "./pages/Tools";
 import Deals from "./pages/Deals";
 import SampleStickers from "./pages/SampleSticker";
-import Category from "./pages/Category";
-import Product from "./pages/Product";
+import Category from "./pages/category/index";
+import Product from "./pages/product/index";
 
 const routes = [
   { path: "/", component: <SampleStickers />, exact: true },

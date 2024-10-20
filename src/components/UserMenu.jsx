@@ -40,13 +40,6 @@ const UserMenu = ({ user }) => {
         }}
         open={Boolean(anchorElUser)}
         onClose={handleCloseUserMenu}
-        SlotProps={{
-          paper: {
-            sx: {
-              width: 265,
-            },
-          },
-        }}
       >
         <UserMenuItems
           handleCloseUserMenu={handleCloseUserMenu}
