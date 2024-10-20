@@ -14,8 +14,6 @@ import { useEffect, useMemo, useState } from "react";
 import ClearIcon from "@mui/icons-material/Clear";
 
 const ProductPrice = ({ product }) => {
-  const [customWidth, setCustomWidth] = useState("");
-  const [customHeight, setCustomHeight] = useState("");
   const [customSize, setCustomSize] = useState({ width: "", height: "" });
   const [useCustomSize, setUseCustomSize] = useState(false);
   const [customQuantity, setCustomQuantity] = useState("");
@@ -63,7 +61,9 @@ const ProductPrice = ({ product }) => {
       increment_factor: quantityIncFactor,
     } = product.quantity_option;
 
-    const area = size.height * size.width;
+    const area = useCustomSize
+      ? customSize.height * customSize.width
+      : size.height * size.width;
     const qDiscount =
       quantity >= minQuantityDiscount
         ? Math.min(
@@ -92,15 +92,16 @@ const ProductPrice = ({ product }) => {
   };
 
   useEffect(() => {
-    setPricingWithDiscounts(quantityOptions.map(calculateDiscounts));
-  }, [size, product.price, quantityOptions]);
+    if (!useCustomSize || (customSize.height && customSize.width)) {
+      setPricingWithDiscounts(quantityOptions.map(calculateDiscounts));
+    }
+  }, [size, customSize, product.price, quantityOptions]);
 
   const handleSizeChange = (event) => {
     setSelectedSize(event.target.value);
     if (event.target.value === "customSize") {
       setUseCustomSize(true);
-      setCustomWidth("");
-      setCustomHeight("");
+      setCustomSize({ height: "", width: "" });
     } else {
       setUseCustomSize(false);
       const selectedSizeObj = sizeOptions.find(
@@ -144,10 +145,13 @@ const ProductPrice = ({ product }) => {
   };
 
   useEffect(() => {
-    if (customQuantity) {
+    if (
+      customQuantity &&
+      (!useCustomSize || (customSize.height && customSize.width))
+    ) {
       setCustomQuantityDiscount(calculateDiscounts(customQuantity));
     }
-  }, [customQuantity]);
+  }, [customQuantity, customSize]);
 
   return (
     <Grid container spacing={1} p={2} direction="column">
@@ -199,7 +203,7 @@ const ProductPrice = ({ product }) => {
                   variant="outlined"
                   size="small"
                   type="number"
-                  value={customWidth}
+                  value={customSize.width}
                   onChange={handleCustomWidthChange}
                   disabled={useCustomQuantity && !customQuantity}
                   slotProps={{
@@ -220,7 +224,7 @@ const ProductPrice = ({ product }) => {
                   variant="outlined"
                   size="small"
                   type="number"
-                  value={customHeight}
+                  value={customSize.height}
                   disabled={useCustomQuantity && !customQuantity}
                   onChange={handleCustomHeightChange}
                   slotProps={{
