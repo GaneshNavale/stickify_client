@@ -14,13 +14,19 @@ import { useEffect, useMemo, useState } from "react";
 import ClearIcon from "@mui/icons-material/Clear";
 
 const ProductPrice = ({ product }) => {
+  console.log("Product :", product);
   const [customSize, setCustomSize] = useState({ width: "", height: "" });
   const [useCustomSize, setUseCustomSize] = useState(false);
-  const [customQuantity, setCustomQuantity] = useState("");
+  const [customQuantity, setCustomQuantity] = useState(
+    product.quantity_option.min_quantity
+  );
+  const [widthError, setWidthError] = useState("");
+  const [heightError, setHeightError] = useState("");
   const [useCustomQuantity, setUseCustomQuantity] = useState(false);
   const [pricingWithDiscounts, setPricingWithDiscounts] = useState([]);
   const [customQuantityDiscount, setCustomQuantityDiscount] = useState({});
   const [size, setSize] = useState({ width: "", height: "" });
+  const [quantityError, setQuantityError] = useState("");
 
   const sizeOptions = useMemo(() => {
     return product.size_option.default_width_options.map((width, index) => ({
@@ -122,17 +128,35 @@ const ProductPrice = ({ product }) => {
   };
 
   const handleCustomWidthChange = (event) => {
-    setCustomSize((prevSize) => ({
-      ...prevSize,
-      width: event.target.value,
-    }));
+    if (event.target.value < product.size_option.min_width) {
+      setWidthError(`Width Cant Be Less Than ${product.size_option.min_width}`);
+    } else if (event.target.value > product.size_option.max_width) {
+      setWidthError(`Width Cant Be More Than ${product.size_option.max_width}`);
+    } else {
+      setWidthError("");
+      setCustomSize((prevSize) => ({
+        ...prevSize,
+        width: event.target.value,
+      }));
+    }
   };
 
   const handleCustomHeightChange = (event) => {
-    setCustomSize((prevSize) => ({
-      ...prevSize,
-      height: event.target.value,
-    }));
+    if (event.target.value < product.size_option.min_height) {
+      setHeightError(
+        `Height Cant Be Less Than ${product.size_option.min_height}`
+      );
+    } else if (event.target.value > product.size_option.max_height) {
+      setHeightError(
+        `Height Cant Be More Than ${product.size_option.max_height}`
+      );
+    } else {
+      setHeightError("");
+      setCustomSize((prevSize) => ({
+        ...prevSize,
+        height: event.target.value,
+      }));
+    }
   };
 
   const handleCustomQuantityToggle = () => {
@@ -141,6 +165,21 @@ const ProductPrice = ({ product }) => {
       setSelectedQuantity(""); // Clear selected quantity when toggling to custom quantity
     } else {
       setCustomQuantity("");
+    }
+  };
+
+  const customQuantityHandle = (event) => {
+    if (event.target.value < product.quantity_option.min_quantity) {
+      setQuantityError(
+        `Quantity Cant Be Less Than ${product.quantity_option.min_quantity}`
+      );
+    } else if (event.target.value > product.quantity_option.max_quantity) {
+      setQuantityError(
+        `Quantity Cant Be More Than ${product.quantity_option.max_quantity}`
+      );
+    } else {
+      setQuantityError("");
+      setCustomQuantity(event.target.value);
     }
   };
 
@@ -202,6 +241,8 @@ const ProductPrice = ({ product }) => {
                   label="Width"
                   variant="outlined"
                   size="small"
+                  error={!!widthError} // Show error state
+                  helperText={widthError}
                   type="number"
                   value={customSize.width}
                   onChange={handleCustomWidthChange}
@@ -223,6 +264,8 @@ const ProductPrice = ({ product }) => {
                   label="Height"
                   variant="outlined"
                   size="small"
+                  error={!!heightError} // Show error state
+                  helperText={heightError}
                   type="number"
                   value={customSize.height}
                   disabled={useCustomQuantity && !customQuantity}
@@ -309,6 +352,8 @@ const ProductPrice = ({ product }) => {
                       variant="outlined"
                       value={customQuantity}
                       type="number"
+                      error={!!quantityError} // Show error state
+                      helperText={quantityError} // Display error message
                       slotProps={{
                         htmlInput: {
                           step: product.quantity_option?.min_quantity || 10,
@@ -316,12 +361,12 @@ const ProductPrice = ({ product }) => {
                         },
                       }}
                       sx={{
-                        "width": 80,
+                        width: 80,
                         "& .MuiInputBase-input": {
                           padding: "2px", // Remove padding here
                         },
                       }}
-                      onChange={(e) => setCustomQuantity(e.target.value)}
+                      onChange={customQuantityHandle}
                     />
                   ) : (
                     "Custom Quantity"
