@@ -27,7 +27,7 @@ const ProductBannerSection = ({ product }) => {
     >
       <Container size="lg">
         <Grid container spacing={2} alignItems="top" px={3}>
-          <Grid size={{ xs: 12, sm: 6, md: 8 }}>
+          <Grid size={{ xs: 12, sm: 4.3, md: 6, lg: 8 }}>
             <Grid container alignItems="center">
               <Typography
                 variant="h3"
@@ -51,7 +51,7 @@ const ProductBannerSection = ({ product }) => {
               <Typography>{product.description}</Typography>
             </Grid>
           </Grid>
-          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+          <Grid size={{ xs: 12, sm: 7.7, md: 6, lg: 4 }}>
             <Card>
               <ProductPrice product={product} />
             </Card>
