@@ -62,8 +62,8 @@ const Checkout = () => {
     try {
       handleBackdropOpen();
       API.createOrder({
-        shipping_address_id: selectedShippingAddress,
-        billing_address_id: selectedBillingAddress,
+        shipping_address_id: selectedShippingAddress?.id,
+        billing_address_id: selectedBillingAddress?.id,
       })
         .then((response) => response.data)
         .then((data) => {
