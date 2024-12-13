@@ -5,9 +5,11 @@ import UserAccountSettings from "./pages/UserAccountSettings";
 import ResetUserPassword from "./components/users/ResetUserPassword";
 import Tools from "./pages/Tools";
 import Deals from "./pages/Deals";
+import Cart from "./pages/Cart";
 import SampleStickers from "./pages/SampleSticker";
 import Category from "./pages/category/index";
 import Product from "./pages/product/index";
+import Checkout from "./pages/Checkout";
 
 const routes = [
   { path: "/", component: <SampleStickers />, exact: true },
@@ -18,6 +20,8 @@ const routes = [
   { path: "/products/:slug", component: <Product />, exact: true },
   { path: "/tools", component: <Tools />, exact: true },
   { path: "/deals", component: <Deals />, exact: true },
+  { path: "/cart", component: <Cart />, exact: true },
+  { path: "/checkout", component: <Checkout />, exact: true },
   {
     path: "/user_account_settings",
     component: <UserAccountSettings />,

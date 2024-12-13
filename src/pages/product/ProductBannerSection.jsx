@@ -9,7 +9,7 @@ import {
 import ProductPrice from "./ProductPrice";
 import StarIcon from "@mui/icons-material/Star";
 
-const ProductBannerSection = ({ product }) => {
+const ProductBannerSection = ({ product, setProductConfig }) => {
   return (
     <Box
       py={3}
@@ -53,7 +53,10 @@ const ProductBannerSection = ({ product }) => {
           </Grid>
           <Grid size={{ xs: 12, sm: 6, md: 4 }}>
             <Card>
-              <ProductPrice product={product} />
+              <ProductPrice
+                product={product}
+                setProductConfig={setProductConfig}
+              />
             </Card>
           </Grid>
         </Grid>

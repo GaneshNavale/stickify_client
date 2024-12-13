@@ -27,7 +27,7 @@ const navItems = [
 ];
 
 const NavBar = (props) => {
-  const { user } = props;
+  const { user, cart } = props;
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [productItems, setProductItems] = useState([]);
@@ -245,7 +245,7 @@ const NavBar = (props) => {
                   </Button>
                 </>
               )}
-              {user && <UserMenu user={user} />}
+              {user && <UserMenu user={user} cart={cart} />}
             </Box>
 
             <IconButton

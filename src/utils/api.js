@@ -93,3 +93,33 @@ export const fetchProducts = (category_id, params = {}) => {
 export const fetchProduct = (product_id) => {
   return axios.get(`/products/${product_id}`);
 };
+
+export const addCartItem = (formData) => {
+  return axios.post("/cart_items", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+};
+
+export const fetchCart = () => {
+  return axios.get("/cart");
+};
+
+export const removeCartItem = (itemId) => {
+  return axios.delete(`/cart_items/${itemId}`);
+};
+
+export const updateCartItem = (itemId, params) => {
+  return axios.put(`/cart_items/${itemId}`, { cart_item: params });
+};
+
+export const createOrder = (data) => {
+  return axios.post("/orders", data);
+};
+
+export const confirmOrder = (id, data) => {
+  return axios.post(`/orders/${id}/confirm`, data);
+};
+
+export const getAddresses = () => {
+  return axios.get("/shipping_addresses");
+};

@@ -1,10 +1,13 @@
-import { Avatar, Box, IconButton, Menu, Tooltip } from "@mui/material";
+import { Avatar, Badge, Box, IconButton, Menu, Tooltip } from "@mui/material";
 import UserMenuItems from "./users/user_settings/UserMenuItems";
 import { useState } from "react";
 import { useAuth } from "../hooks/useAuth";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import { useNavigate } from "react-router-dom";
 
 const UserMenu = ({ user }) => {
-  const { logout } = useAuth();
+  const { logout, cart } = useAuth();
+  const navigate = useNavigate();
   const [anchorElUser, setAnchorElUser] = useState(null);
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
@@ -16,6 +19,14 @@ const UserMenu = ({ user }) => {
 
   return (
     <Box sx={{ flexGrow: 0 }}>
+      <IconButton
+        onClick={() => navigate("/cart")}
+        sx={{ paddingRight: 2, paddingTop: 1 }}
+      >
+        <Badge badgeContent={cart.items?.length} color="primary">
+          <ShoppingCartIcon color="action" fontSize="small" />
+        </Badge>
+      </IconButton>
       <Tooltip title="Open settings">
         <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
           <Avatar

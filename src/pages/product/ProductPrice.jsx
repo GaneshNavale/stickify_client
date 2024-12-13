@@ -13,7 +13,7 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import ClearIcon from "@mui/icons-material/Clear";
 
-const ProductPrice = ({ product }) => {
+const ProductPrice = ({ product, setProductConfig }) => {
   const [customSize, setCustomSize] = useState({ width: "", height: "" });
   const [useCustomSize, setUseCustomSize] = useState(false);
   const [customQuantity, setCustomQuantity] = useState("");
@@ -64,14 +64,14 @@ const ProductPrice = ({ product }) => {
     const area = useCustomSize
       ? customSize.height * customSize.width
       : size.height * size.width;
+
     const qDiscount =
       quantity >= minQuantityDiscount
         ? Math.min(
-            maxQuantityDiscount,
+            maxQuantityDiscount * 100,
             quantityIncFactor * Math.log10(quantity) ** quantityExpFactor * 100
           )
         : 0;
-
     const sDiscount =
       area >= minSizeDiscount
         ? Math.min(
@@ -79,10 +79,13 @@ const ProductPrice = ({ product }) => {
             sizeIncFactor * Math.log10(area) ** sizeExpFactor * 100
           )
         : 0;
-
+    console.log("qDiscount", qDiscount);
+    console.log("sDiscount", sDiscount);
+    console.log("qDiscount", qDiscount);
     const finalDiscount = qDiscount + sDiscount * (1 - qDiscount / 100.0);
+
     const finalPrice =
-      parseFloat(product.price) * quantity * (1 - finalDiscount / 100);
+      parseFloat(product.price) * area * quantity * (1 - finalDiscount / 100);
 
     return {
       quantity,
@@ -153,6 +156,13 @@ const ProductPrice = ({ product }) => {
     }
   }, [customQuantity, customSize]);
 
+  const configureProduct = () => {
+    setProductConfig({
+      width: useCustomSize ? customSize.width : size.width,
+      height: useCustomSize ? customSize.height : size.height,
+      qty: useCustomQuantity ? customQuantity : selectedQuantity,
+    });
+  };
   return (
     <Grid container spacing={1} p={2} direction="column">
       <Grid>
@@ -350,9 +360,19 @@ const ProductPrice = ({ product }) => {
         </RadioGroup>
       </Grid>
       <Grid>
-        <Button size="large" fullWidth variant="contained">
-          Continue
-        </Button>
+        <Grid size={6}>
+          <Button
+            size="large"
+            fullWidth
+            variant="contained"
+            onClick={() => configureProduct()}
+          >
+            Continue
+          </Button>
+        </Grid>
+        <Grid size={6} textAlign="center" sx={{ paddingTop: 2 }}>
+          <Typography>Next: upload artwork →</Typography>
+        </Grid>
       </Grid>
     </Grid>
   );
