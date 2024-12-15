@@ -79,9 +79,6 @@ const ProductPrice = ({ product, setProductConfig }) => {
             sizeIncFactor * Math.log10(area) ** sizeExpFactor * 100
           )
         : 0;
-    console.log("qDiscount", qDiscount);
-    console.log("sDiscount", sDiscount);
-    console.log("qDiscount", qDiscount);
     const finalDiscount = qDiscount + sDiscount * (1 - qDiscount / 100.0);
 
     const finalPrice =
@@ -371,7 +368,7 @@ const ProductPrice = ({ product, setProductConfig }) => {
           </Button>
         </Grid>
         <Grid size={6} textAlign="center" sx={{ paddingTop: 2 }}>
-          <Typography>Next: upload artwork →</Typography>
+          <Typography>Next: Upload Artwork →</Typography>
         </Grid>
       </Grid>
     </Grid>

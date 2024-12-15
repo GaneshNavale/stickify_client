@@ -117,7 +117,6 @@ const SignIn = () => {
             ...response.data?.data,
           };
           login(userInfo);
-          navigate("/");
         })
         .catch((error) => {
           console.log("User Error :", error);

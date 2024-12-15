@@ -56,8 +56,6 @@ const ProductSizeOptions = (props) => {
   };
 
   const handleFieldChange = (fieldName, value) => {
-    console.log("fieldName", fieldName);
-    console.log("value", value);
     setSizeOption({
       ...sizeOption,
       [fieldName]: value,

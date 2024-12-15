@@ -123,3 +123,7 @@ export const confirmOrder = (id, data) => {
 export const getAddresses = () => {
   return axios.get("/shipping_addresses");
 };
+
+export const fetchOrder = (orderId) => {
+  return axios.get(`/orders/${orderId}`);
+};

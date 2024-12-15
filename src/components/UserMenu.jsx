@@ -23,7 +23,7 @@ const UserMenu = ({ user }) => {
         onClick={() => navigate("/cart")}
         sx={{ paddingRight: 2, paddingTop: 1 }}
       >
-        <Badge badgeContent={cart.items?.length} color="primary">
+        <Badge badgeContent={cart.items?.length || "0"} color="primary">
           <ShoppingCartIcon color="action" fontSize="small" />
         </Badge>
       </IconButton>

@@ -7,6 +7,8 @@ import {
   Typography,
   Button,
   TextField,
+  Backdrop,
+  CircularProgress,
   Divider,
 } from "@mui/material";
 import { Delete } from "@mui/icons-material";
@@ -15,16 +17,16 @@ import { useAuth } from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 
 const Cart = () => {
-  const [isLoading, setIsLoading] = useState(false);
+  const [openBackdrop, setOpenBackdrop] = useState(false);
   const navigate = useNavigate();
-  const { cart, setCart } = useAuth();
+  const { user, cart, setCart } = useAuth();
   const removeCartItem = (itemId) => {
-    setIsLoading(true);
+    setOpenBackdrop(true);
     API.removeCartItem(itemId)
       .then((response) => response.data)
       .then((data) => {
         setCart(data);
-        setIsLoading(false);
+        setOpenBackdrop(false);
       });
   };
 
@@ -33,74 +35,85 @@ const Cart = () => {
   };
 
   const updateCartItem = (itemId, params) => {
-    setIsLoading(true);
+    setOpenBackdrop(true);
     API.updateCartItem(itemId, params)
       .then((response) => response.data)
       .then((data) => {
         setCart(data);
-        setIsLoading(false);
+        setOpenBackdrop(false);
       });
+  };
+
+  const handleCheckout = () => {
+    if (user) {
+      navigate("/checkout");
+    } else {
+      window.localStorage.setItem(
+        "stick_it_up_after_login_redirect_url",
+        "/checkout"
+      );
+      navigate("/sign_in");
+    }
   };
 
   return (
     <Container sx={{ paddingTop: 10 }}>
-      {!isLoading && cart.items?.length === 0 && (
+      {cart.items?.length === 0 && (
         <Typography variant="h4" align="center" gutterBottom>
           Your cart is empty
         </Typography>
       )}
-      {!isLoading && cart.items?.length > 0 && (
+      {cart.items?.length > 0 && (
         <Grid container spacing={3} direction="row">
           <Grid item size={{ sm: 6, md: 8 }}>
             {/* Cart Items */}
-            {!isLoading &&
-              cart.items.map((item) => (
-                <Grid item md={6} lg={4} key={item.id}>
-                  <Card>
-                    <CardContent>
-                      <Grid container spacing={2}>
-                        <Grid item xs={8}>
-                          <Typography variant="h6">{item.name}</Typography>
-                          <Typography variant="body2" color="textSecondary">
-                            Price: ₹{item.subtotal}
-                          </Typography>
-                          <Typography variant="body2" color="textSecondary">
-                            size: {item.height} * {item.width}
-                          </Typography>
-                        </Grid>
-                        <Grid
-                          item
-                          xs={4}
-                          container
-                          justifyContent="flex-end"
-                          alignItems="center"
-                        >
-                          <TextField
-                            label="Qty"
-                            type="number"
-                            value={item.quantity}
-                            onChange={(e) =>
-                              handleQuantityChange(
-                                item.id,
-                                parseInt(e.target.value)
-                              )
-                            }
-                            size="small"
-                          />
-                          <Button
-                            onClick={() => removeCartItem(item.id)}
-                            color="error"
-                            size="small"
-                            startIcon={<Delete />}
-                          >
-                            Remove
-                          </Button>
-                        </Grid>
+            {cart.items.map((item) => (
+              <Grid item md={6} lg={4} key={item.id}>
+                <Card>
+                  <CardContent>
+                    <Grid container spacing={2}>
+                      <Grid item xs={8}>
+                        <Typography variant="h6">{item.name}</Typography>
+                        <Typography variant="body2" color="textSecondary">
+                          Price: ₹{item.subtotal}
+                        </Typography>
+                        <Typography variant="body2" color="textSecondary">
+                          Size: {item.height} * {item.width}
+                        </Typography>
                       </Grid>
-                    </CardContent>
-                  </Card>
-                </Grid>
-              ))}
+                      <Grid
+                        item
+                        xs={4}
+                        container
+                        justifyContent="flex-end"
+                        alignItems="center"
+                      >
+                        <TextField
+                          label="Qty"
+                          type="number"
+                          value={item.quantity}
+                          onChange={(e) =>
+                            handleQuantityChange(
+                              item.id,
+                              parseInt(e.target.value)
+                            )
+                          }
+                          size="small"
+                        />
+                        <Button
+                          onClick={() => removeCartItem(item.id)}
+                          color="error"
+                          size="small"
+                          startIcon={<Delete />}
+                        >
+                          Remove
+                        </Button>
+                      </Grid>
+                    </Grid>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
           </Grid>
           <Grid size={{ sm: 6, md: 4 }}>
             <Card>
@@ -136,7 +149,7 @@ const Cart = () => {
                   variant="contained"
                   color="primary"
                   fullWidth
-                  onClick={() => navigate("/checkout")}
+                  onClick={() => handleCheckout()}
                   sx={{ marginTop: 2 }}
                 >
                   Proceed to Checkout
@@ -144,6 +157,12 @@ const Cart = () => {
               </CardContent>
             </Card>
           </Grid>
+          <Backdrop
+            sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}
+            open={openBackdrop}
+          >
+            <CircularProgress color="inherit" />
+          </Backdrop>
         </Grid>
       )}
     </Container>

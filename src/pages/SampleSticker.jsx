@@ -192,7 +192,7 @@ const SampleStickers = () => {
                 }}
               >
                 <Typography sx={{ fontWeight: "bold" }}>
-                  Prasad Shelke
+                  Ganesh Navale
                 </Typography>
                 <Divider sx={{ width: "100%", marginY: 1 }} />{" "}
                 {/* Divider below the name */}
@@ -209,25 +209,25 @@ const SampleStickers = () => {
           </Grid>
           <Grid item size={{ xs: 12, sm: 6, lg: 3 }}>
             <ReviewCard
-              name="Prasad Shelke"
+              name="Full Name"
               title="Software Engineer"
-              company="Google"
+              company="Abc, Inc"
               review="The concept is great, but I faced some connectivity issues. Hoping for a firmware update to fix this."
             />
           </Grid>
           <Grid item size={{ xs: 12, sm: 6, lg: 3 }}>
             <ReviewCard
-              name="Ram Kote"
+              name="Full Name"
               title="Frontend Developer"
-              company="Tech Mahindra"
+              company="Xyz Pvt Ltd"
               review="Steacker is a fantastic product that really delivers on its promises. The build quality is excellent, and it has made my daily tasks so much easier. However, I wish it had a few more customization options. Overall, I'm satisfied!"
             />
           </Grid>
           <Grid item size={{ xs: 12, sm: 6, lg: 3 }}>
             <ReviewCard
-              name="Mamta"
+              name="Full Name"
               title="Network Engineer"
-              company="Cisco"
+              company="Info tech."
               review="I've been using Steacker for a month now, and I absolutely love it! The design is sleek, and it performs flawlessly. Highly recommend!"
             />
           </Grid>

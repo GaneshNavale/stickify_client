@@ -1,7 +1,14 @@
 import { useEffect, useState, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import * as API from "../../utils/api";
-import { Typography, Container, Grid2 as Grid, Button } from "@mui/material";
+import {
+  Typography,
+  Container,
+  Grid2 as Grid,
+  Button,
+  Backdrop,
+  CircularProgress,
+} from "@mui/material";
 import DescriptionSection from "../DescriptionSection";
 import ProductBannerSection from "./ProductBannerSection";
 import ImageUploader from "../../utils/ImageUploader";
@@ -10,6 +17,7 @@ import { useAuth } from "../../hooks/useAuth";
 
 const Product = (props) => {
   const [product, setProduct] = useState({});
+  const [openBackdrop, setOpenBackdrop] = useState(false);
   const { setCart } = useAuth();
   const navigate = useNavigate();
   const { slug } = useParams();
@@ -43,6 +51,7 @@ const Product = (props) => {
   }
 
   const addToCart = async () => {
+    setOpenBackdrop(true);
     let cartItemParams = {
       product_id: product.id,
       height: productConfig.height,
@@ -122,12 +131,16 @@ const Product = (props) => {
                 size="large"
                 fullWidth
                 variant="contained"
+                disabled={openBackdrop}
                 onClick={() => addToCart()}
               >
                 Continue
               </Button>
             </Grid>
           </Grid>
+          <Backdrop open={openBackdrop}>
+            <CircularProgress color="inherit" />
+          </Backdrop>
         </Container>
       )}
     </div>

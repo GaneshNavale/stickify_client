@@ -12,11 +12,11 @@ import NavBar from "./components/NavBar";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
-  const { user } = useAuth();
+  const { user, cart } = useAuth();
   return (
     <ThemeProvider theme={main}>
       <CssBaseline />
-      <NavBar user={user} />
+      <NavBar user={user} cart={cart} />
       <Box marginTop={7.5}>
         <Routes>
           {routes.map((route, index) => (

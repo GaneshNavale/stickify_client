@@ -18,6 +18,8 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import Logo from "./Logo";
 import UserMenu from "./UserMenu";
 import * as API from "./../utils/api";
+import { Badge } from "@mui/material";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 
 const navItems = [
   { name: "Products", path: "/categories" },
@@ -223,6 +225,17 @@ const NavBar = (props) => {
             >
               {!user && (
                 <>
+                  <IconButton
+                    onClick={() => navigate("/cart")}
+                    sx={{ paddingTop: 1 }}
+                  >
+                    <Badge
+                      badgeContent={cart?.items?.length || "0"}
+                      color="primary"
+                    >
+                      <ShoppingCartIcon color="action" fontSize="small" />
+                    </Badge>
+                  </IconButton>
                   <Button
                     sx={{ color: "black" }}
                     onClick={() => {

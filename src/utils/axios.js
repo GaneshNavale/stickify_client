@@ -14,11 +14,17 @@ instance.interceptors.request.use(
   (config) => {
     // Get user data from localStorage
     let user = window.localStorage.getItem("stickify_user");
+    let guest_cart_id = window.localStorage.getItem("stickify_user_cart");
     user = user ? JSON.parse(user) : null;
+    guest_cart_id = guest_cart_id ? JSON.parse(guest_cart_id) : null;
 
     // If a token exists, add it to the request headers
     if (user?.token) {
       config.headers["Authorization"] = user.token;
+    }
+    if (guest_cart_id) {
+      console.log("guest_cart_id2", guest_cart_id);
+      config.headers["StickifyGuestCartId"] = guest_cart_id;
     }
     return config;
   },
