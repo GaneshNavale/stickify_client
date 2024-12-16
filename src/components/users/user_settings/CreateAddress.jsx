@@ -12,8 +12,8 @@ import { Grid, IconButton } from "@mui/material";
 import Notification from "../../../utils/notification";
 import CloseIcon from "@mui/icons-material/Close";
 
-const CreateBillingAddress = ({ open, onClose, onAddAddress, setAlert }) => {
-  const [billingAddress, setBillingAddress] = useState({
+const CreateAddress = ({ open, onClose, onUpdateAddress, setAlert }) => {
+  const [address, setAddress] = useState({
     full_name: "",
     mobile: "",
     address_line_1: "",
@@ -30,7 +30,7 @@ const CreateBillingAddress = ({ open, onClose, onAddAddress, setAlert }) => {
 
   useEffect(() => {
     // Reset form and errors when dialog opens
-    setBillingAddress({
+    setAddress({
       full_name: "",
       mobile: "",
       address_line_1: "",
@@ -45,7 +45,7 @@ const CreateBillingAddress = ({ open, onClose, onAddAddress, setAlert }) => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setBillingAddress((prev) => ({ ...prev, [name]: value }));
+    setAddress((prev) => ({ ...prev, [name]: value }));
   };
 
   const validateField = (fieldName, value) => {
@@ -105,8 +105,8 @@ const CreateBillingAddress = ({ open, onClose, onAddAddress, setAlert }) => {
 
   const validateAllFields = () => {
     const fieldErrors = {};
-    Object.keys(billingAddress).forEach((key) => {
-      const errorsForField = validateField(key, billingAddress[key]);
+    Object.keys(address).forEach((key) => {
+      const errorsForField = validateField(key, address[key]);
       fieldErrors[key] = errorsForField[key] || "";
     });
     return fieldErrors;
@@ -117,35 +117,36 @@ const CreateBillingAddress = ({ open, onClose, onAddAddress, setAlert }) => {
     validateField(name, value);
   };
 
+  // Handle form submission
   const handleSubmit = () => {
     const fieldErrors = validateAllFields();
     setErrors(fieldErrors);
-
     if (Object.values(fieldErrors).every((error) => error === "")) {
-      const billingParams = {
-        full_name: billingAddress.full_name,
-        mobile: billingAddress.mobile,
-        address_line_1: billingAddress.address_line_1,
-        address_line_2: billingAddress.address_line_2,
-        landmark: billingAddress.landmark,
-        city: billingAddress.city,
-        state: billingAddress.state,
-        zip_code: billingAddress.zip_code,
+      const shippingParams = {
+        full_name: address.full_name,
+        mobile: address.mobile,
+        address_line_1: address.address_line_1,
+        address_line_2: address.address_line_2,
+        landmark: address.landmark,
+        city: address.city,
+        state: address.state,
+        zip_code: address.zip_code,
       };
 
-      API.createBillingAddress(billingParams)
+      API.createAddress(shippingParams)
         .then((response) => {
-          onAddAddress(response.data.billing_address);
+          console.log("Shipping Address Created Successfully:", response);
+          onUpdateAddress(response.data.address);
           setAlert({
-            message: "New Billing Address Created Successfully.",
+            message: "New Shipping Address Created Successfully.",
             type: "success",
           });
           onClose();
         })
         .catch((error) => {
-          console.log("Error while creating billing address:", error);
+          console.log("Error while creating shipping address:", error);
           setAlert({
-            message: "Failed to create billing address.",
+            message: "Failed to create shipping address.",
             type: "error",
           });
         });
@@ -157,13 +158,10 @@ const CreateBillingAddress = ({ open, onClose, onAddAddress, setAlert }) => {
       open={open}
       onClose={onClose}
       fullScreen={fullScreen}
-      aria-labelledby="create-billing-address-title"
-      maxWidth="sm"
-      fullWidth
+      aria-labelledby="create-shipping-address-title"
     >
-      <Notification alert={alert} setAlert={setAlert} />
-      <DialogTitle id="create-billing-address-title">
-        Create New Billing Address
+      <DialogTitle id="create-shipping-address-title">
+        Create New Address
       </DialogTitle>
       <IconButton
         aria-label="close"
@@ -177,6 +175,8 @@ const CreateBillingAddress = ({ open, onClose, onAddAddress, setAlert }) => {
         <CloseIcon />
       </IconButton>
 
+      <Notification alert={alert} setAlert={setAlert} />
+
       <DialogContent>
         <Grid container spacing={2}>
           <Grid item xs={12}>
@@ -185,7 +185,7 @@ const CreateBillingAddress = ({ open, onClose, onAddAddress, setAlert }) => {
               name="full_name"
               size="small"
               fullWidth
-              value={billingAddress.full_name}
+              value={address.full_name}
               onChange={handleInputChange}
               onBlur={handleBlur}
               error={Boolean(errors.full_name)}
@@ -199,7 +199,7 @@ const CreateBillingAddress = ({ open, onClose, onAddAddress, setAlert }) => {
               name="mobile"
               size="small"
               fullWidth
-              value={billingAddress.mobile}
+              value={address.mobile}
               onChange={handleInputChange}
               onBlur={handleBlur}
               error={Boolean(errors.mobile)}
@@ -213,7 +213,7 @@ const CreateBillingAddress = ({ open, onClose, onAddAddress, setAlert }) => {
               name="address_line_1"
               size="small"
               fullWidth
-              value={billingAddress.address_line_1}
+              value={address.address_line_1}
               onChange={handleInputChange}
               onBlur={handleBlur}
               error={Boolean(errors.address_line_1)}
@@ -227,8 +227,11 @@ const CreateBillingAddress = ({ open, onClose, onAddAddress, setAlert }) => {
               name="address_line_2"
               size="small"
               fullWidth
-              value={billingAddress.address_line_2}
+              value={address.address_line_2}
               onChange={handleInputChange}
+              onBlur={handleBlur}
+              error={Boolean(errors.address_line_2)}
+              helperText={errors.address_line_2}
               margin="dense"
             />
           </Grid>
@@ -238,8 +241,11 @@ const CreateBillingAddress = ({ open, onClose, onAddAddress, setAlert }) => {
               name="landmark"
               size="small"
               fullWidth
-              value={billingAddress.landmark}
+              value={address.landmark}
               onChange={handleInputChange}
+              onBlur={handleBlur}
+              error={Boolean(errors.landmark)}
+              helperText={errors.landmark}
               margin="dense"
             />
           </Grid>
@@ -249,7 +255,7 @@ const CreateBillingAddress = ({ open, onClose, onAddAddress, setAlert }) => {
               name="city"
               size="small"
               fullWidth
-              value={billingAddress.city}
+              value={address.city}
               onChange={handleInputChange}
               onBlur={handleBlur}
               error={Boolean(errors.city)}
@@ -263,7 +269,7 @@ const CreateBillingAddress = ({ open, onClose, onAddAddress, setAlert }) => {
               name="state"
               size="small"
               fullWidth
-              value={billingAddress.state}
+              value={address.state}
               onChange={handleInputChange}
               onBlur={handleBlur}
               error={Boolean(errors.state)}
@@ -277,7 +283,7 @@ const CreateBillingAddress = ({ open, onClose, onAddAddress, setAlert }) => {
               name="zip_code"
               size="small"
               fullWidth
-              value={billingAddress.zip_code}
+              value={address.zip_code}
               onChange={handleInputChange}
               onBlur={handleBlur}
               error={Boolean(errors.zip_code)}
@@ -292,12 +298,7 @@ const CreateBillingAddress = ({ open, onClose, onAddAddress, setAlert }) => {
         <Button onClick={onClose} color="primary">
           Cancel
         </Button>
-        <Button
-          onClick={handleSubmit}
-          color="primary"
-          variant="contained"
-          disabled={!Object.values(billingAddress).some((field) => field)}
-        >
+        <Button onClick={handleSubmit} color="primary" variant="contained">
           Create Address
         </Button>
       </DialogActions>
@@ -305,4 +306,4 @@ const CreateBillingAddress = ({ open, onClose, onAddAddress, setAlert }) => {
   );
 };
 
-export default CreateBillingAddress;
+export default CreateAddress;

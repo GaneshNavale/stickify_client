@@ -18,17 +18,28 @@ import {
 import * as API from "../utils/api";
 import { useAuth } from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
-import ListOfAllShippingAddresses from "./ListOfAllShippingAddresses";
-import ListOfAllBillingAddresses from "./ListOfAllBillingAddresses";
+import ListOfAllAddresses from "./ListOfAllAddresses";
+
 const Checkout = () => {
   const navigate = useNavigate();
 
   const [openBackdrop, setOpenBackdrop] = useState(false);
   const [sameAsShipping, setSameAsShipping] = useState(true);
   const [loading, setLoading] = useState(true);
-  const [shippingAddressModalOpen, setShippingAddressModalOpen] =
-    useState(false);
-  const [billingAddressModalOpen, setBillingAddressModalOpen] = useState(false);
+  const [addressModal, setAddressModal] = useState({ type: "", open: false });
+
+  const setShippingAddressModalOpen = () => {
+    setAddressModal({ type: "shipping", open: true });
+  };
+
+  const setBillingAddressModalOpen = () => {
+    setAddressModal({ type: "billing", open: true });
+  };
+
+  const setAddressModalClose = () => {
+    setAddressModal({ type: "", open: false });
+  };
+
   const { cart, setCart } = useAuth();
   const [order, setOrder] = useState();
   const [addresses, setAddresses] = useState([]);
@@ -44,7 +55,7 @@ const Checkout = () => {
   }, []);
 
   const fetchAddresses = () => {
-    API.getAddresses()
+    API.listAllAddresses()
       .then((response) => response.data)
       .then((data) => {
         setAddresses(data);
@@ -53,7 +64,7 @@ const Checkout = () => {
         setLoading(false);
       })
       .catch((error) => {
-        console.log("Shipping address error", error);
+        console.log("Error while fetching addresses", error);
       });
   };
 
@@ -178,20 +189,28 @@ const Checkout = () => {
                   <Button
                     variant="contained"
                     size="small"
-                    onClick={() => setShippingAddressModalOpen(true)}
+                    onClick={() => setShippingAddressModalOpen()}
                   >
                     Change
                   </Button>
                 </ListItem>
-                <ListOfAllShippingAddresses
-                  open={shippingAddressModalOpen}
-                  onClose={() => setShippingAddressModalOpen(false)}
-                  shippingAddresses={addresses}
-                  setShippingAddresses={(data) => setAddresses(data)}
+                <ListOfAllAddresses
+                  open={addressModal.open}
+                  type={addressModal.type}
+                  onClose={() => setAddressModalClose()}
+                  addresses={addresses}
+                  setAddresses={(data) => setAddresses(data)}
                   setSelectedShippingAddress={(address) =>
                     setSelectedShippingAddress(address)
                   }
-                  selectedShippingAddressId={selectedShippingAddress.id}
+                  setSelectedBillingAddress={(address) =>
+                    setSelectedBillingAddress(address)
+                  }
+                  addressId={
+                    addressModal.type === "shipping"
+                      ? selectedShippingAddress.id
+                      : selectedBillingAddress.id
+                  }
                 />
               </Box>
             )}
@@ -239,21 +258,11 @@ const Checkout = () => {
                   <Button
                     variant="contained"
                     size="small"
-                    onClick={() => setBillingAddressModalOpen(true)}
+                    onClick={() => setBillingAddressModalOpen()}
                   >
                     Change
                   </Button>
                 </ListItem>
-                <ListOfAllBillingAddresses
-                  open={billingAddressModalOpen}
-                  onClose={() => setBillingAddressModalOpen(false)}
-                  shippingAddresses={addresses}
-                  setShippingAddresses={(data) => setAddresses(data)}
-                  selectedBillingAddressId={selectedBillingAddress?.id}
-                  setSelectedBillingAddress={(address) =>
-                    setSelectedBillingAddress(address)
-                  }
-                />
               </Box>
             )}
           </Card>

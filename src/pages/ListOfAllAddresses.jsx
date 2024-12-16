@@ -18,37 +18,37 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import * as API from "../utils/api";
-import UpdateShippingAddress from "../components/users/user_settings/updateShippingAddress";
-import CreateShippingAddress from "../components/users/user_settings/CreateShippingAddress";
+import UpdateAddress from "../components/users/user_settings/UpdateAddress";
+import CreateAddress from "../components/users/user_settings/CreateAddress";
 
 import Notification from "../utils/notification";
 
-const ListOfAllBillingAddresses = ({
+const ListOfAllAddresses = ({
   open,
+  type,
   onClose,
-  shippingAddresses,
-  setShippingAddresses,
+  addresses,
+  setAddresses,
+  setSelectedShippingAddress,
   setSelectedBillingAddress,
-  selectedBillingAddressId,
+  addressId,
 }) => {
   const [alert, setAlert] = useState({ message: "", type: "" });
-  const [selectedShippingAddress, setSelectedShippingAddress] = useState(null);
+  const [selectedAddress, setSelectedAddress] = useState(null);
   const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
 
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
 
-  const [selectedAddressId, setSelectedAddressId] = useState(
-    selectedBillingAddressId
-  );
+  const [selectedAddressId, setSelectedAddressId] = useState(addressId);
 
   const handleAddressSelect = (event) => {
     setSelectedAddressId(Number(event.target.value));
   };
 
   const handleAddressUpdate = (updatedAddress) => {
-    setShippingAddresses((prevAddresses) =>
+    setAddresses((prevAddresses) =>
       prevAddresses.map((address) =>
         address.id === updatedAddress.id ? updatedAddress : address
       )
@@ -56,18 +56,18 @@ const ListOfAllBillingAddresses = ({
     setIsUpdateDialogOpen(false);
   };
   const handleAddNewAddress = (newAddress) => {
-    setShippingAddresses((prevAddresses) => [...prevAddresses, newAddress]);
+    setAddresses((prevAddresses) => [...prevAddresses, newAddress]);
     setIsCreateDialogOpen(false);
   };
 
   const handleEditClick = (address) => {
-    setSelectedShippingAddress(address);
+    setSelectedAddress(address);
     setIsUpdateDialogOpen(true);
   };
 
   const handleCloseUpdateDialog = () => {
     setIsUpdateDialogOpen(false);
-    setSelectedShippingAddress(null);
+    setSelectedAddress(null);
   };
 
   const handleCreateClick = () => {
@@ -78,11 +78,13 @@ const ListOfAllBillingAddresses = ({
     setIsCreateDialogOpen(false);
   };
 
-  const handleBillingAddressUpdate = () => {
-    const address = shippingAddresses.find(
+  const handleShippingAddressUpdate = () => {
+    const address = addresses.find(
       (address) => address.id === selectedAddressId
     );
-    setSelectedBillingAddress(address);
+    type === "shipping"
+      ? setSelectedShippingAddress(address)
+      : setSelectedBillingAddress(address);
     onClose();
   };
 
@@ -97,7 +99,7 @@ const ListOfAllBillingAddresses = ({
       >
         <Notification alert={alert} setAlert={setAlert} />
         <DialogTitle id="list-shipping-address-title">
-          List of All Shipping Addresses
+          List of All Addresses
         </DialogTitle>
 
         <IconButton
@@ -113,13 +115,13 @@ const ListOfAllBillingAddresses = ({
         </IconButton>
         <Divider />
         <DialogContent sx={{ paddingBottom: 0 }}>
-          {shippingAddresses.length > 0 ? (
+          {addresses.length > 0 ? (
             <RadioGroup
               value={selectedAddressId}
               onChange={handleAddressSelect}
             >
               <Grid container direction="column">
-                {shippingAddresses.map((address, index) => (
+                {addresses.map((address, index) => (
                   <Grid item xs={12} key={address.id}>
                     <Box
                       sx={{
@@ -134,7 +136,13 @@ const ListOfAllBillingAddresses = ({
                     >
                       <FormControlLabel
                         value={address.id}
-                        control={<Radio />}
+                        control={
+                          <Radio
+                          // onChange={() => {
+                          //   handleShippingAddressUpdate(address);
+                          // }}
+                          />
+                        }
                         label={
                           <Typography>
                             {address.full_name} - {address.city},{" "}
@@ -165,7 +173,7 @@ const ListOfAllBillingAddresses = ({
                   }}
                 >
                   <Button
-                    onClick={handleBillingAddressUpdate}
+                    onClick={handleShippingAddressUpdate}
                     fullWidth={false}
                     disabled={!selectedAddressId}
                     sx={{
@@ -215,15 +223,15 @@ const ListOfAllBillingAddresses = ({
         </DialogActions>
       </Dialog>
 
-      <UpdateShippingAddress
+      <UpdateAddress
         open={isUpdateDialogOpen}
         onClose={handleCloseUpdateDialog}
-        address={selectedShippingAddress}
+        address={selectedAddress}
         onUpdateAddress={handleAddressUpdate}
         setAlert={setAlert}
       />
 
-      <CreateShippingAddress
+      <CreateAddress
         open={isCreateDialogOpen}
         onClose={handleCloseCreateDialog}
         onUpdateAddress={handleAddNewAddress}
@@ -233,4 +241,4 @@ const ListOfAllBillingAddresses = ({
   );
 };
 
-export default ListOfAllBillingAddresses;
+export default ListOfAllAddresses;

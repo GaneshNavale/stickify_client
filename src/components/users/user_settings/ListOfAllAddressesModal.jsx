@@ -6,7 +6,6 @@ import DialogTitle from "@mui/material/DialogTitle";
 import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
-import CloseIcon from "@mui/icons-material/Close";
 import { useTheme } from "@mui/material/styles";
 import {
   ListItem,
@@ -16,16 +15,17 @@ import {
   IconButton,
   Grid2,
 } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import * as API from "../../../utils/api";
-import UpdateBillingAddress from "./UpdateBillingAddress";
-import CreateBillingAddress from "./CreateBillingAddress";
+import UpdateAddress from "./UpdateAddress";
+import CreateAddress from "./CreateAddress";
 import Notification from "../../../utils/notification";
 
-const ListOfAllBillingAddressCard = ({ open, onClose }) => {
+const ListOfAllAddressesModal = ({ open, onClose }) => {
   const [alert, setAlert] = useState({ message: "", type: "" });
-  const [billingAddresses, setBillingAddresses] = useState([]);
-  const [selectedAddress, setSelectedAddress] = useState(null);
+  const [shippingAddresses, setShippingAddresses] = useState([]);
+  const [selectedShippingAddress, setSelectedShippingAddress] = useState(null);
   const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
 
@@ -34,24 +34,66 @@ const ListOfAllBillingAddressCard = ({ open, onClose }) => {
 
   useEffect(() => {
     if (open) {
-      API.listAllBillingAddress()
-        .then((response) => {
-          setBillingAddresses(response.data);
-        })
-        .catch((error) => {
-          console.log("Billing address error", error);
-        });
+      fetchShippingAddresses();
     }
   }, [open]);
 
+  const fetchShippingAddresses = () => {
+    API.listAllAddresses()
+      .then((response) => {
+        setShippingAddresses(response.data);
+      })
+      .catch((error) => {
+        console.log("Shipping address error", error);
+      });
+  };
+
+  const handleAddressUpdate = (updatedAddress) => {
+    setShippingAddresses((prevAddresses) =>
+      prevAddresses.map((address) =>
+        address.id === updatedAddress.id ? updatedAddress : address
+      )
+    );
+    setIsUpdateDialogOpen(false);
+  };
+
+  const handleAddNewAddress = (newAddress) => {
+    setShippingAddresses((prevAddresses) => [...prevAddresses, newAddress]);
+    setIsCreateDialogOpen(false);
+  };
+
+  const handleMakeDefaultClick = (id) => {
+    API.makeDefaulsShippingAddress(id)
+      .then((response) => {
+        setShippingAddresses((prevAddresses) =>
+          prevAddresses.map((address) =>
+            address.id === id
+              ? { ...address, default: true }
+              : { ...address, default: false }
+          )
+        );
+        setAlert({
+          message: "Default Address Changed Successfully.",
+          type: "success",
+        });
+      })
+      .catch((error) => {
+        console.error("Display Error :", error);
+        setAlert({
+          message: "Failed to change default address.",
+          type: "error",
+        });
+      });
+  };
+
   const handleEditClick = (address) => {
-    setSelectedAddress(address);
+    setSelectedShippingAddress(address);
     setIsUpdateDialogOpen(true);
   };
 
   const handleCloseUpdateDialog = () => {
     setIsUpdateDialogOpen(false);
-    setSelectedAddress(null);
+    setSelectedShippingAddress(null);
   };
 
   const handleCreateClick = () => {
@@ -62,33 +104,20 @@ const ListOfAllBillingAddressCard = ({ open, onClose }) => {
     setIsCreateDialogOpen(false);
   };
 
-  const handleAddNewAddress = (newAddress) => {
-    setBillingAddresses((prevAddresses) => {
-      return [...prevAddresses, newAddress];
-    });
-  };
-
-  const handleUpdateAddress = (updatedAddress) => {
-    setBillingAddresses((prevAddresses) =>
-      prevAddresses.map((address) =>
-        address.id === updatedAddress.id ? updatedAddress : address
-      )
-    );
-  };
-
   return (
     <>
       <Dialog
         fullScreen={fullScreen}
         open={open}
         onClose={onClose}
-        aria-labelledby="list-billing-address-title"
-        sx={{ "& .MuiDialog-paper": { width: "80%", maxWidth: "700px" } }} // Increase dialog width
+        aria-labelledby="list-shipping-address-title"
+        sx={{ "& .MuiDialog-paper": { width: "80%", maxWidth: "700px" } }}
       >
         <Notification alert={alert} setAlert={setAlert} />
-        <DialogTitle id="list-billing-address-title">
-          List of All Billing Addresses
+        <DialogTitle id="list-shipping-address-title">
+          List of All Addresses
         </DialogTitle>
+
         <IconButton
           aria-label="close"
           onClick={onClose}
@@ -100,12 +129,11 @@ const ListOfAllBillingAddressCard = ({ open, onClose }) => {
         >
           <CloseIcon />
         </IconButton>
-
         <Divider />
         <DialogContent>
-          {billingAddresses.length > 0 ? (
+          {shippingAddresses.length > 0 ? (
             <Grid container spacing={2}>
-              {billingAddresses.map((address, index) => (
+              {shippingAddresses.map((address, index) => (
                 <Grid item xs={12} key={address.id}>
                   <ListItem>
                     <ListItemText
@@ -154,6 +182,29 @@ const ListOfAllBillingAddressCard = ({ open, onClose }) => {
                       }
                     />
                     <Box sx={{ display: "flex", alignItems: "center" }}>
+                      {address.default ? (
+                        <Box sx={{ display: "flex", alignItems: "center" }}>
+                          <Button
+                            variant="outlined"
+                            color="primary"
+                            size="small"
+                            disabled={true}
+                          >
+                            Default
+                          </Button>
+                        </Box>
+                      ) : (
+                        <Box sx={{ display: "flex", alignItems: "center" }}>
+                          <Button
+                            variant="outlined"
+                            color="primary"
+                            size="small"
+                            onClick={() => handleMakeDefaultClick(address.id)}
+                          >
+                            Make Default
+                          </Button>
+                        </Box>
+                      )}
                       <Button
                         variant="contained"
                         color="primary"
@@ -165,7 +216,7 @@ const ListOfAllBillingAddressCard = ({ open, onClose }) => {
                       </Button>
                     </Box>
                   </ListItem>
-                  {index < billingAddresses.length - 1 && <Divider />}
+                  {index < shippingAddresses.length - 1 && <Divider />}
                 </Grid>
               ))}
             </Grid>
@@ -186,7 +237,7 @@ const ListOfAllBillingAddressCard = ({ open, onClose }) => {
                   color: "text.secondary",
                 }}
               >
-                No billing addresses found.
+                No addresses found.
               </Typography>
             </Box>
           )}
@@ -202,32 +253,33 @@ const ListOfAllBillingAddressCard = ({ open, onClose }) => {
         >
           <Grid2 item>
             <Button onClick={handleCreateClick} fullWidth={false}>
-              Add New Billing Address
+              Add New Address
             </Button>
           </Grid2>
         </Grid2>
+
         <Divider style={{ margin: "3px 0" }} />
         <DialogActions>
           <Button onClick={onClose}>Close</Button>
         </DialogActions>
       </Dialog>
 
-      <UpdateBillingAddress
+      <UpdateAddress
         open={isUpdateDialogOpen}
         onClose={handleCloseUpdateDialog}
-        address={selectedAddress}
-        onUpdateAddress={handleUpdateAddress}
+        address={selectedShippingAddress}
+        onUpdateAddress={handleAddressUpdate}
         setAlert={setAlert}
       />
 
-      <CreateBillingAddress
+      <CreateAddress
         open={isCreateDialogOpen}
         onClose={handleCloseCreateDialog}
-        onAddAddress={handleAddNewAddress}
+        onUpdateAddress={handleAddNewAddress}
         setAlert={setAlert}
       />
     </>
   );
 };
 
-export default ListOfAllBillingAddressCard;
+export default ListOfAllAddressesModal;

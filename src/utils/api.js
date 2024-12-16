@@ -17,11 +17,6 @@ export const signInUser = (params) => {
   return axios.post("/auth/sign_in", params);
 };
 
-// User Account Apis
-export const listAllBillingAddress = () => {
-  return axios.get("/billing_addresses");
-};
-
 export const sendResetPasswordInstruction = (params) => {
   return axios.post("/auth/password", params);
 };
@@ -30,36 +25,24 @@ export const resetUserPassword = (params, customHeaders) => {
   return axios.put("/auth/password", params, { headers: { ...customHeaders } });
 };
 
-export const createBillingAddress = (params) => {
-  return axios.post("/billing_addresses", params);
+export const listAllAddresses = () => {
+  return axios.get("/addresses");
 };
 
-export const updateBillingAddress = (id, params) => {
-  return axios.put(`/billing_addresses/${id}`, params);
+export const createAddress = (params) => {
+  return axios.post("/addresses", params);
 };
 
-export const deleteBillingAddress = (id) => {
-  return axios.get("/billing_addresses", id);
-};
-
-export const listAllShippingAddress = () => {
-  return axios.get("/shipping_addresses");
-};
-
-export const createShippingAddress = (params) => {
-  return axios.post("/shipping_addresses", params);
-};
-
-export const updateShippingAddress = (id, params) => {
-  return axios.put(`/shipping_addresses/${id}`, params);
+export const updateAddress = (id, params) => {
+  return axios.put(`/addresses/${id}`, params);
 };
 
 export const deleteShippingAddress = (id) => {
-  return axios.get("/shipping_addresses", id);
+  return axios.get("/addresses", id);
 };
 
 export const makeDefaulsShippingAddress = (id) => {
-  return axios.patch(`/shipping_addresses/${id}/mark_default`);
+  return axios.patch(`/addresses/${id}/mark_default`);
 };
 
 export const updateUserDetail = (formData) => {
@@ -118,10 +101,6 @@ export const createOrder = (data) => {
 
 export const confirmOrder = (id, data) => {
   return axios.post(`/orders/${id}/confirm`, data);
-};
-
-export const getAddresses = () => {
-  return axios.get("/shipping_addresses");
 };
 
 export const fetchOrder = (orderId) => {

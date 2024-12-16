@@ -13,8 +13,7 @@ import {
   Container,
 } from "@mui/material";
 import UpdateUserDetail from "../components/users/user_settings/UpdateUserDetail";
-import ListOfAllBillingAddressCard from "../components/users/user_settings/ListOfAllBillingAddressCard";
-import ListOfAllShippingAddressCard from "../components/users/user_settings/ListOfAllShippingAddressCard";
+import ListOfAllAddressesModal from "../components/users/user_settings/ListOfAllAddressesModal";
 import UpdateUserAccountPassword from "../components/users/user_settings/UpdateUserAccountPassword";
 import * as API from "../utils/api";
 import Notification from "../utils/notification";
@@ -24,15 +23,11 @@ const UserAccountSettings = () => {
   const { user } = useAuth();
 
   const [isUserDetailDialogOpen, setIsUserDetailDialogOpen] = useState(false);
-  const [isBillingAddressDialogOpen, setIsBillingAddressDialogOpen] =
-    useState(false);
-  const [isShippingAddressDialogOpen, setIsShippingAddressDialogOpen] =
-    useState(false);
+  const [isAddressDialogOpen, setIsAddressDialogOpen] = useState(false);
   const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
 
-  const [billingAddress, setBillingAddress] = useState([]);
-  const [shippingAddressLength, setShippingAddressLength] = useState(0);
-  const [defaultAddress, setDefaultAddress] = useState([]);
+  const [addressLength, setAddressLength] = useState(0);
+  const [defaultAddress, setDefaultAddress] = useState({});
   const [dialogClosed, setDialogClosed] = useState(true);
 
   const location = useLocation();
@@ -54,19 +49,13 @@ const UserAccountSettings = () => {
     setIsUserDetailDialogOpen(false);
   };
 
-  const handleOpenBillingAddressDialog = () =>
-    setIsBillingAddressDialogOpen(true);
-  const handleCloseBillingAddressDialog = (event, reason) => {
-    if (reason === "backdropClick") return;
-    setIsBillingAddressDialogOpen(false);
+  const handleOpenShippingAddressDialog = () => {
+    setIsAddressDialogOpen(true);
   };
 
-  const handleOpenShippingAddressDialog = () => {
-    setIsShippingAddressDialogOpen(true);
-  };
-  const handleCloseShippingAddressDialog = (event, reason) => {
+  const handleCloseAddressDialog = (event, reason) => {
     if (reason === "backdropClick") return;
-    setIsShippingAddressDialogOpen(false);
+    setIsAddressDialogOpen(false);
     setDialogClosed(true);
   };
 
@@ -77,21 +66,11 @@ const UserAccountSettings = () => {
   };
 
   useEffect(() => {
-    API.listAllBillingAddress()
-      .then((response) => {
-        setBillingAddress(response.data);
-      })
-      .catch((error) => {
-        console.error("Billing address error", error);
-      });
-  }, []);
-
-  useEffect(() => {
     if (dialogClosed) {
-      API.listAllShippingAddress()
+      API.listAllAddresses()
         .then((response) => {
           const addresses = response.data;
-          setShippingAddressLength(addresses.length);
+          setAddressLength(addresses.length);
           const defaultAddress = addresses.find(
             (address) => address.default === true
           );
@@ -259,7 +238,7 @@ const UserAccountSettings = () => {
           {/* Use Box for full control over flex layout */}
           <Box sx={{ display: "flex", flexDirection: "column", width: "100%" }}>
             {/* Primary Title */}
-            <Typography variant="subtitle1">Shipping Address</Typography>
+            <Typography variant="subtitle1">Addresses</Typography>
 
             {/* Secondary Content (Address and Chip) */}
             <Box
@@ -270,7 +249,7 @@ const UserAccountSettings = () => {
                 pr: { xs: 2, sm: 4 }, // Adds padding to prevent overlap with the button
               }}
             >
-              {defaultAddress && (
+              {Object.keys(defaultAddress).length !== 0 && (
                 <Typography variant="body2" color="text.secondary">
                   {[
                     defaultAddress.full_name,
@@ -291,9 +270,14 @@ const UserAccountSettings = () => {
                     sx={{ ml: 0.5 }} // Adjusts margin for smaller screens
                   />
                   <br />
-                  {shippingAddressLength > 1
-                    ? ` ${shippingAddressLength - 1} More Addresses`
+                  {addressLength > 1
+                    ? ` ${addressLength - 1} More Addresses`
                     : ""}
+                </Typography>
+              )}
+              {Object.keys(defaultAddress).length === 0 && (
+                <Typography variant="body2" color="text.secondary">
+                  You don't have any addresses yet.
                 </Typography>
               )}
             </Box>
@@ -301,38 +285,9 @@ const UserAccountSettings = () => {
         </ListItem>
       </Grid>
 
-      <ListOfAllShippingAddressCard
-        open={isShippingAddressDialogOpen}
-        onClose={handleCloseShippingAddressDialog}
-      />
-      <Divider />
-
-      <Grid item>
-        <ListItem
-          secondaryAction={
-            <Button
-              variant="outlined"
-              color="primary"
-              onClick={handleOpenBillingAddressDialog}
-            >
-              Edit
-            </Button>
-          }
-        >
-          <ListItemText
-            primary="Billing Address"
-            secondary={
-              <Typography variant="body2" color="text.secondary">
-                {billingAddress.length + " Addresses"}
-              </Typography>
-            }
-          />
-        </ListItem>
-      </Grid>
-
-      <ListOfAllBillingAddressCard
-        open={isBillingAddressDialogOpen}
-        onClose={handleCloseBillingAddressDialog}
+      <ListOfAllAddressesModal
+        open={isAddressDialogOpen}
+        onClose={handleCloseAddressDialog}
       />
       <Divider />
     </Container>

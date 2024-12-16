@@ -11,14 +11,14 @@ import { useTheme } from "@mui/material/styles";
 import { Grid, IconButton } from "@mui/material";
 import * as API from "../../../utils/api";
 
-const UpdateBillingAddress = ({
+const UpdateAddress = ({
   open,
   onClose,
   address,
   onUpdateAddress,
   setAlert,
 }) => {
-  const [billingAddress, setBillingAddress] = useState({
+  const [userAddress, setAddress] = useState({
     full_name: "",
     mobile: "",
     address_line_1: "",
@@ -35,7 +35,7 @@ const UpdateBillingAddress = ({
 
   useEffect(() => {
     if (address) {
-      setBillingAddress({
+      setAddress({
         full_name: address.full_name || "",
         mobile: address.mobile || "",
         address_line_1: address.address_line_1 || "",
@@ -48,6 +48,7 @@ const UpdateBillingAddress = ({
     }
   }, [address]);
 
+  // Reset alert when dialog is closed/opened
   useEffect(() => {
     if (open) {
       setAlert({ message: "", type: "" });
@@ -56,7 +57,7 @@ const UpdateBillingAddress = ({
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setBillingAddress((prev) => ({ ...prev, [name]: value }));
+    setAddress((prev) => ({ ...prev, [name]: value }));
   };
 
   const validateField = (fieldName, value) => {
@@ -116,8 +117,8 @@ const UpdateBillingAddress = ({
 
   const validateAllFields = () => {
     const fieldErrors = {};
-    Object.keys(billingAddress).forEach((key) => {
-      const errorsForField = validateField(key, billingAddress[key]);
+    Object.keys(userAddress).forEach((key) => {
+      const errorsForField = validateField(key, userAddress[key]);
       fieldErrors[key] = errorsForField[key] || "";
     });
     return fieldErrors;
@@ -132,33 +133,36 @@ const UpdateBillingAddress = ({
     const fieldErrors = validateAllFields();
     setErrors(fieldErrors);
     if (Object.values(fieldErrors).every((error) => error === "")) {
-      const billingParams = {
-        full_name: billingAddress.full_name,
-        mobile: billingAddress.mobile,
-        address_line_1: billingAddress.address_line_1,
-        address_line_2: billingAddress.address_line_2 || "",
-        landmark: billingAddress.landmark || "",
-        city: billingAddress.city,
-        state: billingAddress.state,
-        zip_code: billingAddress.zip_code,
+      const addressParams = {
+        full_name: userAddress.full_name,
+        mobile: userAddress.mobile,
+        address_line_1: userAddress.address_line_1,
+        address_line_2: userAddress.address_line_2,
+        landmark: userAddress.landmark,
+        city: userAddress.city,
+        state: userAddress.state,
+        zip_code: userAddress.zip_code,
       };
 
-      API.updateBillingAddress(address.id, billingParams)
+      API.updateAddress(address.id, addressParams)
         .then((response) => {
-          onUpdateAddress({ ...response.data.billing_address, id: address.id });
+          onUpdateAddress({
+            ...response.data.address,
+            id: address.id,
+          });
 
           setAlert({
-            message: "Billing Address Updated Successfully.",
+            message: "Address Updated Successfully.",
             type: "success",
           });
 
           onClose();
         })
         .catch((error) => {
-          console.error("Error while updating billing address:", error);
+          console.error("Error while updating address:", error);
 
           setAlert({
-            message: "Error updating billing address. Please try again.",
+            message: "Error updating address. Please try again.",
             type: "error",
           });
         });
@@ -169,17 +173,14 @@ const UpdateBillingAddress = ({
       });
     }
   };
-
   return (
     <Dialog
       open={open}
       onClose={onClose}
       fullScreen={fullScreen}
-      aria-labelledby="update-billing-address-title"
+      aria-labelledby="update-address-title"
     >
-      <DialogTitle id="update-billing-address-title">
-        Update Billing Address
-      </DialogTitle>
+      <DialogTitle id="update-address-title">Update Address</DialogTitle>
 
       <IconButton
         aria-label="close"
@@ -201,7 +202,7 @@ const UpdateBillingAddress = ({
               name="full_name"
               size="small"
               fullWidth
-              value={billingAddress.full_name}
+              value={userAddress.full_name}
               onChange={handleInputChange}
               onBlur={handleBlur}
               error={Boolean(errors.full_name)}
@@ -215,7 +216,7 @@ const UpdateBillingAddress = ({
               name="mobile"
               size="small"
               fullWidth
-              value={billingAddress.mobile}
+              value={userAddress.mobile}
               onChange={handleInputChange}
               onBlur={handleBlur}
               error={Boolean(errors.mobile)}
@@ -229,7 +230,7 @@ const UpdateBillingAddress = ({
               name="address_line_1"
               size="small"
               fullWidth
-              value={billingAddress.address_line_1}
+              value={userAddress.address_line_1}
               onChange={handleInputChange}
               onBlur={handleBlur}
               error={Boolean(errors.address_line_1)}
@@ -243,7 +244,7 @@ const UpdateBillingAddress = ({
               name="address_line_2"
               size="small"
               fullWidth
-              value={billingAddress.address_line_2}
+              value={userAddress.address_line_2}
               onChange={handleInputChange}
               onBlur={handleBlur}
               error={Boolean(errors.address_line_2)}
@@ -257,7 +258,7 @@ const UpdateBillingAddress = ({
               name="landmark"
               size="small"
               fullWidth
-              value={billingAddress.landmark}
+              value={userAddress.landmark}
               onChange={handleInputChange}
               onBlur={handleBlur}
               error={Boolean(errors.landmark)}
@@ -271,7 +272,7 @@ const UpdateBillingAddress = ({
               name="city"
               size="small"
               fullWidth
-              value={billingAddress.city}
+              value={userAddress.city}
               onChange={handleInputChange}
               onBlur={handleBlur}
               error={Boolean(errors.city)}
@@ -285,7 +286,7 @@ const UpdateBillingAddress = ({
               name="state"
               size="small"
               fullWidth
-              value={billingAddress.state}
+              value={userAddress.state}
               onChange={handleInputChange}
               onBlur={handleBlur}
               error={Boolean(errors.state)}
@@ -299,7 +300,7 @@ const UpdateBillingAddress = ({
               name="zip_code"
               size="small"
               fullWidth
-              value={billingAddress.zip_code}
+              value={userAddress.zip_code}
               onChange={handleInputChange}
               onBlur={handleBlur}
               error={Boolean(errors.zip_code)}
@@ -322,4 +323,4 @@ const UpdateBillingAddress = ({
   );
 };
 
-export default UpdateBillingAddress;
+export default UpdateAddress;
