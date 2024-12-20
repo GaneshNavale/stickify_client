@@ -47,7 +47,11 @@ const UserMenuItems = ({ handleCloseUserMenu, logout, user }) => {
         <ListItemText>Account Settings</ListItemText>
       </MenuItem>
 
-      <MenuItem onClick={handleCloseUserMenu}>
+      <MenuItem
+        component={Link}
+        to={`/user_orders`}
+        onClick={handleCloseUserMenu}
+      >
         <ListItemText>Orders</ListItemText>
       </MenuItem>
 

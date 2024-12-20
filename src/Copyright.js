@@ -14,7 +14,7 @@ function Copyright() {
         }}
       />{" "}
       {new Date().getFullYear()}{" "}
-      <Link underline="none" color="inherit" href="https://yourwebsite.com">
+      <Link underline="none" color="#006ce5" href="/">
         Stickify
       </Link>
       {"."}

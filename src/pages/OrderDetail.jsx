@@ -15,7 +15,6 @@ import {
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
-import PaymentIcon from "@mui/icons-material/Payment";
 import InfoIcon from "@mui/icons-material/Info";
 import { useParams, useLocation } from "react-router-dom";
 import Notification from "../utils/notification";

@@ -11,6 +11,7 @@ import Category from "./pages/category/index";
 import Product from "./pages/product/index";
 import Checkout from "./pages/Checkout";
 import OrderDetail from "./pages/OrderDetail";
+import UserOrders from "./pages/UserOrders";
 
 const routes = [
   { path: "/", component: <SampleStickers />, exact: true },
@@ -27,6 +28,12 @@ const routes = [
   {
     path: "/user_account_settings",
     component: <UserAccountSettings />,
+    exact: true,
+    isProtected: true,
+  },
+  {
+    path: "/user_orders",
+    component: <UserOrders />,
     exact: true,
     isProtected: true,
   },

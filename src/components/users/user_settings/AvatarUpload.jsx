@@ -9,8 +9,8 @@ const AvatarUpload = ({ avatarImageUrl, onImageUpload }) => {
     setImage(avatarImageUrl);
   }, [avatarImageUrl]);
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
+  const handleImageChange = (event) => {
+    const file = event.target.files[0];
 
     if (file) {
       const reader = new FileReader();

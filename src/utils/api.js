@@ -106,3 +106,7 @@ export const confirmOrder = (id, data) => {
 export const fetchOrder = (orderId) => {
   return axios.get(`/orders/${orderId}`);
 };
+
+export const fetchOrders = (params) => {
+  return axios.get("/orders", { params: params });
+};
