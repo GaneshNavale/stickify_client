@@ -74,7 +74,7 @@ const UserAccountSettings = () => {
           const defaultAddress = addresses.find(
             (address) => address.default === true
           );
-          setDefaultAddress(defaultAddress || null);
+          setDefaultAddress(defaultAddress || {});
           setDialogClosed(false);
         })
         .catch((error) => {
