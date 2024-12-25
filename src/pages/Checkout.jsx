@@ -28,6 +28,16 @@ const Checkout = () => {
   const [loading, setLoading] = useState(true);
   const [addressModal, setAddressModal] = useState({ type: "", open: false });
 
+  const { cart, setCart } = useAuth();
+  const [order, setOrder] = useState();
+  const [addresses, setAddresses] = useState([]);
+  const [selectedShippingAddress, setSelectedShippingAddress] = useState({});
+  const [selectedBillingAddress, setSelectedBillingAddress] = useState({});
+
+  const toggleSameAsShipping = () => setSameAsShipping(!sameAsShipping);
+  const handleBackdropClose = () => setOpenBackdrop(false);
+  const handleBackdropOpen = () => setOpenBackdrop(true);
+
   const setShippingAddressModalOpen = () => {
     setAddressModal({ type: "shipping", open: true });
   };
@@ -40,16 +50,6 @@ const Checkout = () => {
     setAddressModal({ type: "", open: false });
   };
 
-  const { cart, setCart } = useAuth();
-  const [order, setOrder] = useState();
-  const [addresses, setAddresses] = useState([]);
-  const [selectedShippingAddress, setSelectedShippingAddress] = useState(null);
-  const [selectedBillingAddress, setSelectedBillingAddress] = useState(null);
-
-  const toggleSameAsShipping = () => setSameAsShipping(!sameAsShipping);
-  const handleBackdropClose = () => setOpenBackdrop(false);
-  const handleBackdropOpen = () => setOpenBackdrop(true);
-
   useEffect(() => {
     fetchAddresses();
   }, []);
@@ -59,8 +59,12 @@ const Checkout = () => {
       .then((response) => response.data)
       .then((data) => {
         setAddresses(data);
-        setSelectedShippingAddress(data.find((address) => address.default));
-        setSelectedBillingAddress(data.find((address) => address.default));
+        setSelectedShippingAddress(
+          data.find((address) => address.default) || {}
+        );
+        setSelectedBillingAddress(
+          data.find((address) => address.default) || {}
+        );
         setLoading(false);
       })
       .catch((error) => {
@@ -167,25 +171,36 @@ const Checkout = () => {
             {!loading && (
               <Box>
                 <ListItem>
-                  <ListItemText
-                    primary={
-                      <Typography variant="subtitle1" fontWeight="bold">
-                        {selectedShippingAddress?.full_name}
-                      </Typography>
-                    }
-                    secondary={
-                      <Typography variant="body2" color="text.secondary">
-                        {[
-                          selectedShippingAddress?.address_line_1,
-                          selectedShippingAddress?.city,
-                          selectedShippingAddress?.state,
-                          selectedShippingAddress?.zip_code,
-                        ]
-                          .filter(Boolean)
-                          .join(", ")}
-                      </Typography>
-                    }
-                  />
+                  {Object.keys(selectedShippingAddress).length === 0 && (
+                    <ListItemText
+                      primary={
+                        <Typography variant="subtitle1" fontWeight="bold">
+                          No shipping address selected
+                        </Typography>
+                      }
+                    />
+                  )}
+                  {Object.keys(selectedShippingAddress).length !== 0 && (
+                    <ListItemText
+                      primary={
+                        <Typography variant="subtitle1" fontWeight="bold">
+                          {selectedShippingAddress?.full_name}
+                        </Typography>
+                      }
+                      secondary={
+                        <Typography variant="body2" color="text.secondary">
+                          {[
+                            selectedShippingAddress?.address_line_1,
+                            selectedShippingAddress?.city,
+                            selectedShippingAddress?.state,
+                            selectedShippingAddress?.zip_code,
+                          ]
+                            .filter(Boolean)
+                            .join(", ")}
+                        </Typography>
+                      }
+                    />
+                  )}
                   <Button
                     variant="contained"
                     size="small"
@@ -236,25 +251,36 @@ const Checkout = () => {
                   <Typography variant="h5">Billing Address</Typography>
                 </Grid>
                 <ListItem>
-                  <ListItemText
-                    primary={
-                      <Typography variant="subtitle1" fontWeight="bold">
-                        {selectedBillingAddress?.full_name}
-                      </Typography>
-                    }
-                    secondary={
-                      <Typography variant="body2" color="text.secondary">
-                        {[
-                          selectedBillingAddress?.address_line_1,
-                          selectedBillingAddress?.city,
-                          selectedBillingAddress?.state,
-                          selectedBillingAddress?.zip_code,
-                        ]
-                          .filter(Boolean)
-                          .join(", ")}
-                      </Typography>
-                    }
-                  />
+                  {Object.keys(selectedBillingAddress).length === 0 && (
+                    <ListItemText
+                      primary={
+                        <Typography variant="subtitle1" fontWeight="bold">
+                          No shipping address selected
+                        </Typography>
+                      }
+                    />
+                  )}
+                  {Object.keys(selectedBillingAddress).length !== 0 && (
+                    <ListItemText
+                      primary={
+                        <Typography variant="subtitle1" fontWeight="bold">
+                          {selectedBillingAddress?.full_name}
+                        </Typography>
+                      }
+                      secondary={
+                        <Typography variant="body2" color="text.secondary">
+                          {[
+                            selectedBillingAddress?.address_line_1,
+                            selectedBillingAddress?.city,
+                            selectedBillingAddress?.state,
+                            selectedBillingAddress?.zip_code,
+                          ]
+                            .filter(Boolean)
+                            .join(", ")}
+                        </Typography>
+                      }
+                    />
+                  )}
                   <Button
                     variant="contained"
                     size="small"
@@ -267,7 +293,15 @@ const Checkout = () => {
             )}
           </Card>
           <Grid sx={{ paddingLeft: 2, paddingTop: 2 }}>
-            <Button type="submit" variant="contained" onClick={handleCheckout}>
+            <Button
+              disabled={
+                Object.keys(selectedShippingAddress).length === 0 &&
+                Object.keys(selectedBillingAddress).length === 0
+              }
+              type="submit"
+              variant="contained"
+              onClick={handleCheckout}
+            >
               Place your order
             </Button>
           </Grid>

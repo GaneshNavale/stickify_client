@@ -18,7 +18,7 @@ import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import ReviewsIcon from "@mui/icons-material/Reviews";
 import { AppProvider } from "@toolpad/core/AppProvider";
 import { DashboardLayout } from "@toolpad/core/DashboardLayout";
-import Orders from "./orders";
+import Orders from "./components/order_management/Orders";
 import AdminSignIn from "./components/users/AdminSignIn";
 import Users from "./components/user_management/Users";
 import Categories from "./components/data_management/Categories";
@@ -35,7 +35,7 @@ const NAVIGATION = [
     icon: <DashboardIcon />,
   },
   {
-    segment: "admin/orders",
+    segment: "admin/order_management",
     title: "Order Management",
     icon: <ShoppingCartIcon />,
   },
@@ -168,7 +168,7 @@ function AdminApp(props) {
                 sx={{ display: "flex", flexDirection: "column", flexGrow: 1 }}
               >
                 <Routes>
-                  <Route path="/admin/orders" element={<Orders />} />
+                  <Route path="/admin/order_management" element={<Orders />} />
                   <Route path="/admin/users_management/*" element={<Users />} />
                   <Route
                     path="/admin/data_management/*"

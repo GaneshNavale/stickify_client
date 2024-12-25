@@ -85,3 +85,7 @@ export const updateProduct = (id, formData) => {
     headers: { "Content-Type": "multipart/form-data" },
   });
 };
+
+export const fetchOrders = (params) => {
+  return axios.get("/admin/orders", { params: params });
+};
