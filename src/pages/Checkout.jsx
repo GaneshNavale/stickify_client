@@ -329,9 +329,9 @@ const Checkout = () => {
                     <Typography variant="subtitle1">{item.subtotal}</Typography>
                   </Grid>
                 </Grid>
-                <Divider sx={{ margin: "10px 0 0 0" }} />
               </Grid>
             ))}
+            <Divider sx={{ margin: "10px 0 0 0" }} />
             <Grid
               container
               justifyContent="space-between"

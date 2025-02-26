@@ -3,7 +3,6 @@ import main from "./themes/main";
 import { useAdminAuth } from "./hooks/useAdminAuth";
 import { useLocation, useNavigate, Route, Routes } from "react-router-dom";
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
 import CssBaseline from "@mui/material/CssBaseline";
 import { ThemeProvider } from "@mui/material/styles";
 import DashboardIcon from "@mui/icons-material/Dashboard";
@@ -27,6 +26,7 @@ import ResetUserPassword from "./components/users/ResetUserPassword";
 import Category from "./components/data_management/Category";
 import Products from "./components/data_management/Products";
 import Product from "./components/data_management/Product";
+import OrderDetail from "./pages/OrderDetail";
 
 const NAVIGATION = [
   {
@@ -169,6 +169,10 @@ function AdminApp(props) {
               >
                 <Routes>
                   <Route path="/admin/order_management" element={<Orders />} />
+                  <Route
+                    path="/admin/order_management/order_details/:orderId"
+                    element={<OrderDetail />}
+                  />
                   <Route path="/admin/users_management/*" element={<Users />} />
                   <Route
                     path="/admin/data_management/*"
