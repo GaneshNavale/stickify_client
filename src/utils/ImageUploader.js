@@ -4,12 +4,14 @@ import PhotoCamera from "@mui/icons-material/PhotoCamera";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 const ImageUploader = ({
+  id = 'image-upload',
   imageUrl,
   onImageChange,
   width = "100%", // Default width as 100%
   height = 200, // Default height as 200px
   helperText = "",
   error = false,
+  showDeleteButton = true,
 }) => {
   const [preview, setPreview] = useState(imageUrl); // State to manage preview
   const [dragging, setDragging] = useState(false); // State to manage drag behavior
@@ -65,7 +67,7 @@ const ImageUploader = ({
   };
 
   const handleClick = () => {
-    document.getElementById("image-upload").click();
+    document.getElementById(id).click();
   };
 
   return (
@@ -116,9 +118,9 @@ const ImageUploader = ({
           accept="image/*"
           onChange={handleImageChange}
           style={{ display: "none" }}
-          id="image-upload"
+          id={id}
         />
-        {preview && (
+        {preview && showDeleteButton && (
           <label htmlFor="image-delete">
             <Tooltip title="Delete Image">
               <IconButton

@@ -105,3 +105,9 @@ export const createShipment = (params) => {
 export const fetchOrderItem = (id) => {
   return axios.get('/admin/order_items/' + id);
 };
+
+export const updateOrderItem = (id, formData) => {
+  return axios.put(`/admin/order_items/${id}`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+};
