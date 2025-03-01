@@ -98,9 +98,7 @@ const OrderItemModal = (props) => {
       maxWidth="md"
       fullWidth
     >
-      <DialogTitle sx={{}} id="new_user">
-        Order Item Details
-      </DialogTitle>
+      <DialogTitle id="new_user">Order Item #{state?.order_id}</DialogTitle>
       <IconButton
         aria-label="close"
         onClick={handleClose}
@@ -114,117 +112,117 @@ const OrderItemModal = (props) => {
         <CloseIcon />
       </IconButton>
       <DialogContent dividers>
-        <Container sx={{ pt: 5, pb: 5 }}>
-          <Grid container spacing={4}>
-            {/* Order Summary Section */}
-            <Grid item size={{ xs: 12, sm: 12, md: 8 }}>
-              <Card sx={{ mb: 3 }}>
-                <CardContent>
+        <Grid container spacing={4}>
+          {/* Payment and Order Status Section */}
+          <Grid item size={{ xs: 12, sm: 4, md: 4.5 }}>
+            <Card>
+              <CardContent sx={{ padding: '0 16px !important' }}>
+                <Grid item py={1}>
                   <Typography variant="h6" gutterBottom fontWeight="bold">
                     Initial Artwork
                   </Typography>
-                  <Grid item>
-                    <ImageUploader
-                      id="initial-artwork"
-                      imageUrl={state?.image_url}
-                      showDeleteButton={false}
-                      onImageChange={handleImageChange}
-                    />
-                  </Grid>
-                </CardContent>
-              </Card>
-              <Card sx={{ mb: 3 }}>
-                <CardContent>
+                </Grid>
+                <Grid item>
+                  <ImageUploader
+                    height={175}
+                    id="initial-artwork"
+                    imageUrl={state?.image_url}
+                    showDeleteButton={false}
+                    onImageChange={handleImageChange}
+                  />
+                </Grid>
+                <Grid item py={1}>
                   <Typography variant="h6" gutterBottom fontWeight="bold">
                     Final Artwork
                   </Typography>
-                  <Grid item>
-                    <ImageUploader
-                      id="final-artwork"
-                      imageUrl={state?.final_artwork_url}
-                      onImageChange={handleFinalArtworkChange}
-                      error={!!errors.final_artwork}
-                      helperText={errors.final_artwork}
-                    />
-                  </Grid>
-                </CardContent>
-              </Card>
-            </Grid>
-
-            {/* Payment and Order Status Section */}
-            <Grid item size={{ xs: 12, sm: 12, md: 4 }}>
-              <Card sx={{ mb: 3 }}>
-                <CardContent>
-                  <Typography variant="body1" gutterBottom fontWeight="bold">
-                    Customer Info
-                  </Typography>
-                  <Divider sx={{ mt: 2, mb: 2 }} />
-                  <Typography variant="body1" gutterBottom>
-                    <strong> Name: </strong>
-                    {state?.customer_name}
-                  </Typography>
-                  <Typography variant="body1" gutterBottom>
-                    {/* <strong>Initial Artwork</strong> */}
-                    <strong>Placed On: </strong>
-                    Pune
-                  </Typography>
-                  <Typography variant="body1" gutterBottom>
-                    {/* <strong>Initial Artwork</strong> */}
-                    <strong>Payment Status: </strong>
-                    {state?.payment_status}
-                  </Typography>
-                  <Typography variant="body1" gutterBottom>
-                    <strong>Order ID: </strong>
-                    {state?.order_id}
-                  </Typography>
-                </CardContent>
-              </Card>
-
-              <Card sx={{ mb: 3 }}>
-                <CardContent>
-                  <Typography variant="body1" gutterBottom fontWeight="bold">
-                    Product Info
-                  </Typography>
-                  <Divider sx={{ mt: 2, mb: 2 }} />
-                  <Typography variant="body1" gutterBottom>
-                    <Typography variant="body1" gutterBottom>
-                      <strong>Item Name: </strong> {state?.product_name}
+                </Grid>
+                <Grid item>
+                  <ImageUploader
+                    id="final-artwork"
+                    height={175}
+                    imageUrl={state?.final_artwork_url}
+                    onImageChange={handleFinalArtworkChange}
+                    error={!!errors.final_artwork}
+                    helperText={errors.final_artwork}
+                  />
+                </Grid>
+                <Grid item py={1}>
+                  <DialogActions>
+                    <Grid sx={{ padding: '2px 0 0 0' }}>
+                      <Button
+                        variant="outlined"
+                        onClick={() => handleSubmit()}
+                        disabled={openBackdrop}
+                      >
+                        Submit
+                      </Button>
+                    </Grid>
+                  </DialogActions>
+                </Grid>
+              </CardContent>
+            </Card>
+          </Grid>
+          {/* Order Summary Section */}
+          <Grid item size={{ xs: 12, sm: 8, md: 7.5 }}>
+            <Card>
+              <CardContent>
+                <Grid
+                  container
+                  spacing={4}
+                  direction="row"
+                  sx={{
+                    justifyContent: 'space-between',
+                    alignItems: 'top',
+                  }}
+                >
+                  <Grid item size={6}>
+                    <Typography variant="body1" gutterBottom fontWeight="bold">
+                      Customer Info
                     </Typography>
-
+                    <Divider sx={{ mt: 2, mb: 2 }} />
+                    <Typography variant="body1" gutterBottom>
+                      <strong> Name: </strong>
+                      {state?.customer_name}
+                    </Typography>
                     <Typography variant="body1" gutterBottom>
                       <strong>Order ID: </strong>
                       {state?.order_id}
                     </Typography>
-                    <Typography variant="body1" gutterBottom>
-                      <strong>Height: </strong>
-                      {state?.height}
+                  </Grid>
+                  <Grid item size={6}>
+                    <Typography variant="body1" gutterBottom fontWeight="bold">
+                      Product Info
                     </Typography>
+                    <Divider sx={{ mt: 2, mb: 2 }} />
                     <Typography variant="body1" gutterBottom>
-                      <strong>Width: </strong>
-                      {state?.width}
+                      <Typography variant="body1" gutterBottom>
+                        <strong>Item Name: </strong> {state?.product_name}
+                      </Typography>
+
+                      <Typography variant="body1" gutterBottom>
+                        <strong>Order ID: </strong>
+                        {state?.order_id}
+                      </Typography>
+                      <Typography variant="body1" gutterBottom>
+                        <strong>Height: </strong>
+                        {state?.height}
+                      </Typography>
+                      <Typography variant="body1" gutterBottom>
+                        <strong>Width: </strong>
+                        {state?.width}
+                      </Typography>
+                      <Typography variant="body1" gutterBottom>
+                        <strong>Quantity: </strong>
+                        {state?.quantity}
+                      </Typography>
                     </Typography>
-                    <Typography variant="body1" gutterBottom>
-                      <strong>Quantity: </strong>
-                      {state?.quantity}
-                    </Typography>
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
+                  </Grid>
+                </Grid>
+              </CardContent>
+            </Card>
           </Grid>
-        </Container>
-      </DialogContent>
-      <DialogActions>
-        <Grid py={0.5}>
-          <Button
-            variant="outlined"
-            onClick={() => handleSubmit()}
-            disabled={openBackdrop}
-          >
-            Submit changes
-          </Button>
         </Grid>
-      </DialogActions>
+      </DialogContent>
       <Backdrop
         sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
         open={openBackdrop}
