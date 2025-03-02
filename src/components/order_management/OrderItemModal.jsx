@@ -19,6 +19,7 @@ import {
   Typography,
 } from '@mui/material';
 import * as API from '../../utils/adminApi';
+import OrderCommentsCard from './OrderCommentsModal';
 
 const OrderItemModal = (props) => {
   const { itemId, open, onClose } = props;
@@ -33,7 +34,6 @@ const OrderItemModal = (props) => {
     try {
       setOpenBackdrop(true);
       const response = await API.fetchOrderItem(itemId);
-      console.log('order', response.data);
       setState(response.data);
     } catch (error) {
       console.log('Failed to fetch Order Item.', error);
@@ -67,7 +67,6 @@ const OrderItemModal = (props) => {
   };
 
   const handleSubmit = async () => {
-    console.log('Handle Submit');
     if (!state.final_artwork) {
       console.error('No file selected for final artwork upload.');
       return;
@@ -176,24 +175,26 @@ const OrderItemModal = (props) => {
                   }}
                 >
                   <Grid item size={6}>
-                    <Typography variant="body1" gutterBottom fontWeight="bold">
+                    {/* <Typography variant="body1" gutterBottom fontWeight="bold">
                       Customer Info
-                    </Typography>
-                    <Divider sx={{ mt: 2, mb: 2 }} />
+                    </Typography> */}
                     <Typography variant="body1" gutterBottom>
-                      <strong> Name: </strong>
+                      <strong>User Name: </strong>
                       {state?.customer_name}
                     </Typography>
                     <Typography variant="body1" gutterBottom>
-                      <strong>Order ID: </strong>
-                      {state?.order_id}
+                      <strong>Price: </strong>
+                      {state?.price}
+                    </Typography>
+                    <Typography variant="body1" gutterBottom>
+                      <strong>Quantity: </strong>
+                      {state?.quantity}
                     </Typography>
                   </Grid>
                   <Grid item size={6}>
-                    <Typography variant="body1" gutterBottom fontWeight="bold">
+                    {/* <Typography variant="body1" gutterBottom fontWeight="bold">
                       Product Info
-                    </Typography>
-                    <Divider sx={{ mt: 2, mb: 2 }} />
+                    </Typography> */}
                     <Typography variant="body1" gutterBottom>
                       <Typography variant="body1" gutterBottom>
                         <strong>Item Name: </strong> {state?.product_name}
@@ -204,22 +205,15 @@ const OrderItemModal = (props) => {
                         {state?.order_id}
                       </Typography>
                       <Typography variant="body1" gutterBottom>
-                        <strong>Height: </strong>
-                        {state?.height}
-                      </Typography>
-                      <Typography variant="body1" gutterBottom>
-                        <strong>Width: </strong>
-                        {state?.width}
-                      </Typography>
-                      <Typography variant="body1" gutterBottom>
-                        <strong>Quantity: </strong>
-                        {state?.quantity}
+                        <strong>Dimension: </strong>
+                        {state?.height} * {state?.width}
                       </Typography>
                     </Typography>
                   </Grid>
                 </Grid>
               </CardContent>
             </Card>
+            <OrderCommentsCard itemId={state?.id} />
           </Grid>
         </Grid>
       </DialogContent>

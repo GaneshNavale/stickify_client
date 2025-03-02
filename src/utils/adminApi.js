@@ -111,3 +111,11 @@ export const updateOrderItem = (id, formData) => {
     headers: { 'Content-Type': 'multipart/form-data' },
   });
 };
+
+export const getAdminOrderItemMessages = (id) => {
+  return axios.get(`/admin/order_items/${id}/messages`);
+};
+
+export const sendOrderItemMessage = (id, message) => {
+  return axios.post(`/admin/order_items/${id}/messages`, { message });
+};
