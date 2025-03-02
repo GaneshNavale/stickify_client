@@ -8,23 +8,23 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import Grid from '@mui/material/Grid2';
 import ImageUploader from '../../utils/ImageUploader';
+import Notification from '../../utils/notification';
 
 import {
   Backdrop,
   Card,
   CardContent,
   CircularProgress,
-  Container,
-  Divider,
   Typography,
 } from '@mui/material';
 import * as API from '../../utils/adminApi';
-import OrderCommentsCard from './OrderCommentsModal';
+import StickerChangeMessenger from './DesignDiscussion';
 
 const OrderItemModal = (props) => {
   const { itemId, open, onClose } = props;
   const [state, setState] = useState({});
   const [errors, setErrors] = useState({});
+  const [alert, setAlert] = useState({ message: '', type: '' });
 
   useEffect(() => {
     fetchOrderItem(itemId);
@@ -52,7 +52,7 @@ const OrderItemModal = (props) => {
     if (image) {
       setState((prevState) => ({ ...prevState, image: image }));
       let newErrors = { ...errors };
-      delete newErrors.image; // Clear image error if an image is selected
+      delete newErrors.image;
       setErrors(newErrors);
     }
   };
@@ -61,27 +61,38 @@ const OrderItemModal = (props) => {
     if (image) {
       setState((prevState) => ({ ...prevState, final_artwork: image }));
       let newErrors = { ...errors };
-      delete newErrors.image; // Clear image error if an image is selected
+      delete newErrors.image;
       setErrors(newErrors);
     }
   };
 
   const handleSubmit = async () => {
-    if (!state.final_artwork) {
-      console.error('No file selected for final artwork upload.');
+    if (!state.final_artwork && !state.image) {
+      console.error('No file selected');
+      setAlert({ message: 'No File Selected', type: 'error' });
       return;
     }
 
     try {
       setOpenBackdrop(true);
       const formData = new FormData();
-      formData.append('order_item[final_artwork]', state.final_artwork);
+      if (state.final_artwork) {
+        formData.append('order_item[final_artwork]', state.final_artwork);
+      }
       if (state.image) {
         formData.append('order_item[image]', state.image);
       }
       const response = await API.updateOrderItem(state.id, formData);
       console.log('Final artwork updated successfully:', response.data);
-      setState(response.data);
+      setState((prevState) => ({
+        ...prevState,
+        final_artwork_url:
+          response.data.final_artwork_url || prevState.final_artwork_url,
+        image_url: response.data.image_url || prevState.image_url,
+        final_artwork: null,
+        image: null,
+      }));
+      setAlert({ message: 'File Uploaded Successfully', type: 'success' });
     } catch (error) {
       console.error('Failed to update final artwork:', error);
     } finally {
@@ -97,6 +108,9 @@ const OrderItemModal = (props) => {
       maxWidth="md"
       fullWidth
     >
+      <Grid item>
+        <Notification alert={alert} setAlert={setAlert} />
+      </Grid>
       <DialogTitle id="new_user">Order Item #{state?.order_id}</DialogTitle>
       <IconButton
         aria-label="close"
@@ -175,9 +189,6 @@ const OrderItemModal = (props) => {
                   }}
                 >
                   <Grid item size={6}>
-                    {/* <Typography variant="body1" gutterBottom fontWeight="bold">
-                      Customer Info
-                    </Typography> */}
                     <Typography variant="body1" gutterBottom>
                       <strong>User Name: </strong>
                       {state?.customer_name}
@@ -192,9 +203,6 @@ const OrderItemModal = (props) => {
                     </Typography>
                   </Grid>
                   <Grid item size={6}>
-                    {/* <Typography variant="body1" gutterBottom fontWeight="bold">
-                      Product Info
-                    </Typography> */}
                     <Typography variant="body1" gutterBottom>
                       <Typography variant="body1" gutterBottom>
                         <strong>Item Name: </strong> {state?.product_name}
@@ -213,7 +221,7 @@ const OrderItemModal = (props) => {
                 </Grid>
               </CardContent>
             </Card>
-            <OrderCommentsCard itemId={state?.id} />
+            <StickerChangeMessenger itemId={state?.id} />
           </Grid>
         </Grid>
       </DialogContent>

@@ -10,9 +10,8 @@ import SendIcon from '@mui/icons-material/Send';
 import Grid from '@mui/material/Grid2';
 import { useState, useRef, useEffect } from 'react';
 import * as API from '../../utils/adminApi';
-import { sha256 } from 'crypto-hash';
 
-const OrderCommentsCard = ({ itemId }) => {
+const StickerChangeMessenger = ({ itemId }) => {
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState([]);
 
@@ -26,7 +25,7 @@ const OrderCommentsCard = ({ itemId }) => {
   useEffect(() => {
     const fetchMessages = async () => {
       try {
-        const response = await API.getAdminOrderItemMessages(itemId);
+        const response = await API.getOrderItemMessages(itemId);
         setMessages(response.data);
       } catch (error) {
         console.error('Error fetching messages:', error);
@@ -41,13 +40,22 @@ const OrderCommentsCard = ({ itemId }) => {
 
     try {
       await API.sendOrderItemMessage(itemId, {
-        message: { content: input },
-      });
+        message: {
+          content: input,
+        },
+      }).then((response) => {
+        const senderName = response?.data?.sender_name || 'Admin';
 
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        { id: prevMessages.length + 1, sender: 'admin', text: input },
-      ]);
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          {
+            id: prevMessages.length + 1,
+            sender_type: 'Admin',
+            content: input,
+            sender_name: senderName,
+          },
+        ]);
+      });
 
       setInput('');
     } catch (error) {
@@ -95,7 +103,7 @@ const OrderCommentsCard = ({ itemId }) => {
                   <Typography
                     variant="caption"
                     sx={{
-                      display: 'block', // Ensures sender name appears on top
+                      display: 'block',
                       fontWeight: 'bold',
                       fontSize: '0.75rem',
                       color: 'lightgray',
@@ -149,4 +157,4 @@ const OrderCommentsCard = ({ itemId }) => {
   );
 };
 
-export default OrderCommentsCard;
+export default StickerChangeMessenger;
