@@ -110,3 +110,18 @@ export const fetchOrder = (orderId) => {
 export const fetchOrders = (params) => {
   return axios.get("/orders", { params: params });
 };
+
+export const createReview = (productId, params) => {
+  return axios.post(`/customer/products/${productId}/reviews`, params);
+};
+
+export const updateReview = (productId, reviewId, params) => {
+  return axios.put(
+    `/customer/products/${productId}/reviews/${reviewId}`,
+    params
+  );
+};
+
+export const deleteReview = (productId, reviewId) => {
+  return axios.delete(`/customer/products/${productId}/reviews/${reviewId}`);
+};
