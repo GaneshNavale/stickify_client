@@ -193,8 +193,6 @@ const OrderItems = () => {
     setSortModel(model);
   };
 
-  useEffect(() => {}, [state.order_items]);
-
   return (
     <Grid container spacing={2} direction="column">
       <Grid>

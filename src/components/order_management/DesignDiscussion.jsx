@@ -11,7 +11,7 @@ import Grid from '@mui/material/Grid2';
 import { useState, useRef, useEffect } from 'react';
 import * as API from '../../utils/adminApi';
 
-const StickerChangeMessenger = ({ itemId }) => {
+const DesignDiscussion = ({ itemId }) => {
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState([]);
 
@@ -25,7 +25,7 @@ const StickerChangeMessenger = ({ itemId }) => {
   useEffect(() => {
     const fetchMessages = async () => {
       try {
-        const response = await API.getOrderItemMessages(itemId);
+        const response = await API.getAllMessages(itemId);
         setMessages(response.data);
       } catch (error) {
         console.error('Error fetching messages:', error);
@@ -39,20 +39,18 @@ const StickerChangeMessenger = ({ itemId }) => {
     if (input.trim() === '') return;
 
     try {
-      await API.sendOrderItemMessage(itemId, {
+      await API.createMessage(itemId, {
         message: {
           content: input,
         },
       }).then((response) => {
-        const senderName = response?.data?.sender_name || 'Admin';
-
         setMessages((prevMessages) => [
           ...prevMessages,
           {
-            id: prevMessages.length + 1,
+            id: response?.data?.id,
             sender_type: 'Admin',
             content: input,
-            sender_name: senderName,
+            sender_name: response?.data?.sender_name,
           },
         ]);
       });
@@ -65,7 +63,7 @@ const StickerChangeMessenger = ({ itemId }) => {
 
   return (
     <Grid container spacing={2} sx={{ mt: 3 }}>
-      <Grid size={{ xs: 12, sm: 12, md: 12 }}>
+      <Grid size={12}>
         <Card
           sx={{ mb: 3, display: 'flex', flexDirection: 'column', height: 380 }}
         >
@@ -157,4 +155,4 @@ const StickerChangeMessenger = ({ itemId }) => {
   );
 };
 
-export default StickerChangeMessenger;
+export default DesignDiscussion;

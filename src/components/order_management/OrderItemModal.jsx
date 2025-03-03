@@ -18,7 +18,7 @@ import {
   Typography,
 } from '@mui/material';
 import * as API from '../../utils/adminApi';
-import StickerChangeMessenger from './DesignDiscussion';
+import DesignDiscussion from './DesignDiscussion';
 
 const OrderItemModal = (props) => {
   const { itemId, open, onClose } = props;
@@ -68,7 +68,6 @@ const OrderItemModal = (props) => {
 
   const handleSubmit = async () => {
     if (!state.final_artwork && !state.image) {
-      console.error('No file selected');
       setAlert({ message: 'No File Selected', type: 'error' });
       return;
     }
@@ -83,7 +82,6 @@ const OrderItemModal = (props) => {
         formData.append('order_item[image]', state.image);
       }
       const response = await API.updateOrderItem(state.id, formData);
-      console.log('Final artwork updated successfully:', response.data);
       setState((prevState) => ({
         ...prevState,
         final_artwork_url:
@@ -111,7 +109,7 @@ const OrderItemModal = (props) => {
       <Grid item>
         <Notification alert={alert} setAlert={setAlert} />
       </Grid>
-      <DialogTitle id="new_user">Order Item #{state?.order_id}</DialogTitle>
+      <DialogTitle id="new_user">Order Item #{state?.id}</DialogTitle>
       <IconButton
         aria-label="close"
         onClick={handleClose}
@@ -126,7 +124,6 @@ const OrderItemModal = (props) => {
       </IconButton>
       <DialogContent dividers>
         <Grid container spacing={4}>
-          {/* Payment and Order Status Section */}
           <Grid item size={{ xs: 12, sm: 4, md: 4.5 }}>
             <Card>
               <CardContent sx={{ padding: '0 16px !important' }}>
@@ -155,6 +152,7 @@ const OrderItemModal = (props) => {
                     height={175}
                     imageUrl={state?.final_artwork_url}
                     onImageChange={handleFinalArtworkChange}
+                    showDeleteButton={false}
                     error={!!errors.final_artwork}
                     helperText={errors.final_artwork}
                   />
@@ -175,7 +173,6 @@ const OrderItemModal = (props) => {
               </CardContent>
             </Card>
           </Grid>
-          {/* Order Summary Section */}
           <Grid item size={{ xs: 12, sm: 8, md: 7.5 }}>
             <Card>
               <CardContent>
@@ -221,7 +218,7 @@ const OrderItemModal = (props) => {
                 </Grid>
               </CardContent>
             </Card>
-            <StickerChangeMessenger itemId={state?.id} />
+            <DesignDiscussion itemId={state?.id} />
           </Grid>
         </Grid>
       </DialogContent>

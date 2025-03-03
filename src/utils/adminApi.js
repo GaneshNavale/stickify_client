@@ -112,10 +112,10 @@ export const updateOrderItem = (id, formData) => {
   });
 };
 
-export const getOrderItemMessages = (id) => {
+export const getAllMessages = (id) => {
   return axios.get(`/admin/order_items/${id}/messages`);
 };
 
-export const sendOrderItemMessage = (id, message) => {
+export const createMessage = (id, message) => {
   return axios.post(`/admin/order_items/${id}/messages`, message);
 };
