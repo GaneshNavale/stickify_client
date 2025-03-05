@@ -1,127 +1,278 @@
-import { useState, useEffect } from 'react';
-import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
-import DialogActions from '@mui/material/DialogActions';
-import IconButton from '@mui/material/IconButton';
+import React, { useState, useEffect } from 'react';
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  IconButton,
+  Typography,
+  Box,
+  TextField,
+  Button,
+  MenuItem,
+  Select,
+  FormControl,
+  InputLabel,
+  Rating,
+  CircularProgress,
+} from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import Grid from '@mui/material/Grid2';
-import Typography from '@mui/material/Typography';
-import TextField from '@mui/material/TextField';
 import * as API from '../utils/api';
-import Notification from '../utils/notification';
-import Rating from '@mui/material/Rating';
 
-const UserReviewModal = ({
-  productId,
-  reviewId,
-  operation,
-  open,
-  onClose,
-  review,
-}) => {
-  const [reviewData, setReviewData] = useState({
-    rating: 0,
-    comment: '',
-  });
-  const [alert, setAlert] = useState({ message: '', type: '' });
+const UserReviewModal = ({ orderId, open, onClose }) => {
+  const [order, setOrder] = useState(null);
+  const [selectedProductId, setSelectedProductId] = useState('');
+  const [reviewData, setReviewData] = useState({ rating: 0, comment: '' });
+  const [loading, setLoading] = useState(false);
+  const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
 
+  // Fetch order details when the modal opens
   useEffect(() => {
-    if (operation === 'edit' && review) {
-      setReviewData({
-        rating: parseInt(review.rating, 10),
-        comment: review.comment || '',
-      });
+    if (open && orderId) {
+      fetchOrderDetails();
     }
-  }, [operation, review]);
+  }, [open, orderId]);
 
-  const handleClose = () => {
-    onClose();
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setReviewData((prev) => ({
-      ...prev,
-      [name]: name === 'rating' ? parseInt(value, 10) : value,
-    }));
-  };
-
-  const handleSubmit = async () => {
+  // Fetch order details
+  const fetchOrderDetails = async () => {
+    setLoading(true);
     try {
-      if (operation === 'create') {
-        await API.createReview(productId, reviewData);
-        onClose('Review added successfully!', 'success');
-      } else if (operation === 'edit') {
-        await API.updateReview(productId, reviewId, reviewData);
+      const response = await API.fetchOrder(orderId);
+      setOrder(response.data);
+      if (response.data?.items?.length > 0) {
+        const uniqueProducts = getUniqueProducts(response.data.items);
+        setSelectedProductId(uniqueProducts[0].product_id);
+        const firstProduct = uniqueProducts[0];
+        if (firstProduct?.review) {
+          setReviewData({
+            rating: parseFloat(firstProduct.review.rating),
+            comment: firstProduct.review.comment,
+          });
+        } else {
+          setReviewData({ rating: 0, comment: '' });
+        }
+      }
+    } catch (error) {
+      console.error('Failed to fetch order details:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Get unique products based on product_id
+  const getUniqueProducts = (items) => {
+    const uniqueProducts = [];
+    const productIds = new Set();
+
+    items.forEach((item) => {
+      if (!productIds.has(item.product_id)) {
+        productIds.add(item.product_id);
+        uniqueProducts.push(item);
+      }
+    });
+
+    return uniqueProducts;
+  };
+
+  // Handle product selection
+  const handleProductChange = (event) => {
+    setSelectedProductId(event.target.value);
+    const product = order.items.find(
+      (item) => item.product_id === event.target.value
+    );
+    if (product?.review) {
+      setReviewData({
+        rating: parseFloat(product.review.rating),
+        comment: product.review.comment,
+      });
+    } else {
+      setReviewData({ rating: 0, comment: '' });
+    }
+  };
+
+  // Handle form submission
+  const handleSubmit = async () => {
+    if (!selectedProductId) return;
+
+    try {
+      if (
+        order.items.find((item) => item.product_id === selectedProductId)
+          ?.review
+      ) {
+        await API.updateReview(
+          selectedProductId,
+          order.items.find((item) => item.product_id === selectedProductId)
+            .review.id,
+          reviewData
+        );
         onClose('Review updated successfully!', 'success');
-      } else if (operation === 'delete') {
-        await API.deleteReview(productId, reviewId);
-        onClose('Review deleted successfully!', 'success');
+      } else {
+        await API.createReview(selectedProductId, reviewData);
+        onClose('Review added successfully!', 'success');
       }
     } catch (error) {
       onClose('Something went wrong!', 'error');
     }
   };
 
-  return (
-    <Dialog onClose={handleClose} open={open} maxWidth="sm" fullWidth>
-      <Grid item>
-        <Notification alert={alert} setAlert={setAlert} />
-      </Grid>
-      <DialogTitle>
-        {operation === 'create'
-          ? 'Create Review'
-          : operation === 'edit'
-            ? 'Update Review'
-            : 'Delete Review'}
-      </DialogTitle>
-      <IconButton
-        aria-label="close"
-        onClick={handleClose}
-        sx={{ position: 'absolute', right: 8, top: 8 }}
-      >
-        <CloseIcon />
-      </IconButton>
-      <DialogContent dividers>
-        {operation === 'delete' ? (
-          <Typography>Are you sure you want to delete this review?</Typography>
-        ) : (
-          <>
-            <Rating
-              name="rating"
-              value={reviewData.rating}
-              onChange={(event, newValue) => {
-                setReviewData((prev) => ({ ...prev, rating: newValue }));
-              }}
-            />
-            <TextField
-              label="Comment"
-              name="comment"
-              value={reviewData.comment}
-              onChange={handleChange}
-              fullWidth
-              multiline
-              rows={3}
-              margin="normal"
-            />
-          </>
-        )}
+  // Handle review deletion
+  const handleDeleteReview = async () => {
+    if (!selectedProductId) return;
+
+    try {
+      const product = order.items.find(
+        (item) => item.product_id === selectedProductId
+      );
+      if (product?.review) {
+        await API.deleteReview(selectedProductId, product.review.id);
+        onClose('Review deleted successfully!', 'success');
+      }
+    } catch (error) {
+      onClose('Something went wrong!', 'error');
+    } finally {
+      setDeleteConfirmationOpen(false);
+    }
+  };
+
+  // Delete Confirmation Model
+  const DeleteConfirmationModal = () => (
+    <Dialog
+      open={deleteConfirmationOpen}
+      onClose={() => setDeleteConfirmationOpen(false)}
+      maxWidth="xs"
+      fullWidth
+    >
+      <DialogTitle>Delete Review</DialogTitle>
+      <DialogContent>
+        <Typography>Are you sure you want to delete this review?</Typography>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose} variant="outlined">
+        <Button
+          onClick={() => setDeleteConfirmationOpen(false)}
+          variant="outlined"
+        >
           Cancel
         </Button>
-        <Button onClick={handleSubmit} variant="contained" color="primary">
-          {operation === 'create'
-            ? 'Submit'
-            : operation === 'edit'
-              ? 'Update'
-              : 'Delete'}
+        <Button onClick={handleDeleteReview} variant="contained" color="error">
+          Delete
         </Button>
       </DialogActions>
     </Dialog>
+  );
+
+  // Get unique products for the dropdown
+  const uniqueProducts = order ? getUniqueProducts(order.items) : [];
+
+  return (
+    <>
+      <Dialog
+        onClose={() => onClose('', '')}
+        open={open}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle>
+          {order?.items.find((item) => item.product_id === selectedProductId)
+            ?.review
+            ? 'Update Review'
+            : 'Create Review'}
+        </DialogTitle>
+        <IconButton
+          aria-label="close"
+          onClick={() => onClose('', '')}
+          sx={{ position: 'absolute', right: 8, top: 8 }}
+        >
+          <CloseIcon />
+        </IconButton>
+        <DialogContent dividers>
+          {loading ? (
+            <Box display="flex" justifyContent="center">
+              <CircularProgress />
+            </Box>
+          ) : (
+            <>
+              {/* Product Selection Dropdown */}
+              <FormControl fullWidth sx={{ mb: 3 }}>
+                <InputLabel id="product-select-label">
+                  Select Product
+                </InputLabel>
+                <Select
+                  labelId="product-select-label"
+                  id="product-select"
+                  value={selectedProductId}
+                  onChange={handleProductChange}
+                  label="Select Product"
+                >
+                  {uniqueProducts.map((item) => (
+                    <MenuItem key={item.product_id} value={item.product_id}>
+                      {item.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+
+              {/* form */}
+              {selectedProductId && (
+                <>
+                  <Rating
+                    name="rating"
+                    value={reviewData.rating}
+                    onChange={(event, newValue) => {
+                      setReviewData((prev) => ({ ...prev, rating: newValue }));
+                    }}
+                    precision={0.5}
+                    sx={{ mb: 2 }}
+                  />
+                  <TextField
+                    label="Comment"
+                    name="comment"
+                    value={reviewData.comment}
+                    onChange={(e) =>
+                      setReviewData((prev) => ({
+                        ...prev,
+                        comment: e.target.value,
+                      }))
+                    }
+                    fullWidth
+                    multiline
+                    rows={3}
+                    margin="normal"
+                  />
+                </>
+              )}
+            </>
+          )}
+        </DialogContent>
+        <DialogActions>
+          {order?.items.find((item) => item.product_id === selectedProductId)
+            ?.review && (
+            <Button
+              onClick={() => setDeleteConfirmationOpen(true)}
+              variant="contained"
+              color="error"
+            >
+              Delete Review
+            </Button>
+          )}
+          <Button onClick={() => onClose('', '')} variant="outlined">
+            Cancel
+          </Button>
+          <Button
+            onClick={handleSubmit}
+            variant="contained"
+            color="primary"
+            disabled={!selectedProductId}
+          >
+            {order?.items.find((item) => item.product_id === selectedProductId)
+              ?.review
+              ? 'Update'
+              : 'Submit'}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <DeleteConfirmationModal />
+    </>
   );
 };
 
