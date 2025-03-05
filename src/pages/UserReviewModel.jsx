@@ -15,9 +15,11 @@ import {
   InputLabel,
   Rating,
   CircularProgress,
+  Grid2 as Grid,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import * as API from '../utils/api';
+import Notification from '../utils/notification';
 
 const UserReviewModal = ({ orderId, open, onClose }) => {
   const [order, setOrder] = useState(null);
@@ -25,6 +27,10 @@ const UserReviewModal = ({ orderId, open, onClose }) => {
   const [reviewData, setReviewData] = useState({ rating: 0, comment: '' });
   const [loading, setLoading] = useState(false);
   const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
+  const [alert, setAlert] = useState({
+    message: '',
+    type: '',
+  });
 
   // Fetch order details when the modal opens
   useEffect(() => {
@@ -94,6 +100,25 @@ const UserReviewModal = ({ orderId, open, onClose }) => {
   const handleSubmit = async () => {
     if (!selectedProductId) return;
 
+    // Validate rating
+    if (
+      reviewData.rating < 1 ||
+      reviewData.rating > 5 ||
+      !Number.isInteger(reviewData.rating)
+    ) {
+      setAlert({
+        message: 'Rating must be a whole number between 1 and 5.',
+        type: 'error',
+      });
+      return;
+    }
+
+    // Validate comment
+    if (!reviewData.comment.trim()) {
+      setAlert({ message: 'Please enter a comment.', type: 'error' });
+      return;
+    }
+
     try {
       if (
         order.items.find((item) => item.product_id === selectedProductId)
@@ -111,7 +136,10 @@ const UserReviewModal = ({ orderId, open, onClose }) => {
         onClose('Review added successfully!', 'success');
       }
     } catch (error) {
-      onClose('Something went wrong!', 'error');
+      setAlert({
+        message: error?.response?.data?.errors?.[0] || 'Something Went Wrong!',
+        type: 'error',
+      });
     }
   };
 
@@ -171,6 +199,9 @@ const UserReviewModal = ({ orderId, open, onClose }) => {
         maxWidth="sm"
         fullWidth
       >
+        <Grid item>
+          <Notification alert={alert} setAlert={setAlert} />
+        </Grid>
         <DialogTitle>
           {order?.items.find((item) => item.product_id === selectedProductId)
             ?.review
@@ -192,24 +223,31 @@ const UserReviewModal = ({ orderId, open, onClose }) => {
           ) : (
             <>
               {/* Product Selection Dropdown */}
-              <FormControl fullWidth sx={{ mb: 3 }}>
-                <InputLabel id="product-select-label">
-                  Select Product
-                </InputLabel>
-                <Select
-                  labelId="product-select-label"
-                  id="product-select"
-                  value={selectedProductId}
-                  onChange={handleProductChange}
-                  label="Select Product"
-                >
-                  {uniqueProducts.map((item) => (
-                    <MenuItem key={item.product_id} value={item.product_id}>
-                      {item.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+              {/* if length is less than 2 then display the name directly */}
+              {uniqueProducts.length < 2 ? (
+                <Typography variant="body1" sx={{ mb: 3 }}>
+                  <strong>{uniqueProducts[0]?.name}</strong>
+                </Typography>
+              ) : (
+                <FormControl fullWidth sx={{ mb: 3 }}>
+                  <InputLabel id="product-select-label">
+                    Select Product
+                  </InputLabel>
+                  <Select
+                    labelId="product-select-label"
+                    id="product-select"
+                    value={selectedProductId}
+                    onChange={handleProductChange}
+                    label="Select Product"
+                  >
+                    {uniqueProducts.map((item) => (
+                      <MenuItem key={item.product_id} value={item.product_id}>
+                        {item.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              )}
 
               {/* form */}
               {selectedProductId && (
@@ -220,7 +258,7 @@ const UserReviewModal = ({ orderId, open, onClose }) => {
                     onChange={(event, newValue) => {
                       setReviewData((prev) => ({ ...prev, rating: newValue }));
                     }}
-                    precision={0.5}
+                    precision={1} // Set precision to 1 to allow only whole numbers
                     sx={{ mb: 2 }}
                   />
                   <TextField
