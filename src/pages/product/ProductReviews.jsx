@@ -12,9 +12,15 @@ import {
   PaginationItem,
   Stack,
   CircularProgress,
+  FormControl,
+  InputLabel,
+  Select,
+  Grid2 as Grid,
+  MenuItem,
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { useAuth } from '../../hooks/useAuth';
@@ -26,6 +32,7 @@ const ProductReviews = ({ productId }) => {
   const [totalPages, setTotalPages] = useState(1);
   const [sortBy, setSortBy] = useState('rating');
   const [sortOrder, setSortOrder] = useState('asc');
+  const [perPage, setPerPage] = useState(10);
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
 
@@ -34,11 +41,10 @@ const ProductReviews = ({ productId }) => {
     try {
       const response = await API.getProductReviews(productId, {
         page,
-        per_page: 2, // for now
+        per_page: perPage,
         sort_by: sortBy,
         sort_order: sortOrder,
       });
-      console.log('Review Response:', response);
       setReviews(response?.data?.reviews || []);
       setTotalPages(response?.data?.total_pages || 1);
     } catch (err) {
@@ -51,15 +57,13 @@ const ProductReviews = ({ productId }) => {
 
   useEffect(() => {
     fetchReviews();
-  }, [productId, page, sortBy, sortOrder]);
+  }, [productId, page, sortBy, sortOrder, perPage]);
 
-  // Handle page change
   const handlePageChange = (event, newPage) => {
     setPage(newPage - 1);
   };
 
-  // Handle sorting button click
-  const handleSort = async (field) => {
+  const handleSort = (field) => {
     if (field === sortBy) {
       const newOrder = sortOrder === 'asc' ? 'desc' : 'asc';
       setSortOrder(newOrder);
@@ -67,6 +71,11 @@ const ProductReviews = ({ productId }) => {
       setSortBy(field);
       setSortOrder('asc');
     }
+  };
+
+  const handlePerPageChange = (event) => {
+    setPerPage(event.target.value);
+    setPage(0);
   };
 
   if (error) return <Typography color="error">Error: {error}</Typography>;
@@ -87,45 +96,76 @@ const ProductReviews = ({ productId }) => {
           width: '100%',
           maxWidth: '900px',
           bgcolor: 'background.paper',
-          p: 3,
           borderRadius: 2,
         }}
       >
-        <Typography variant="h5" gutterBottom>
-          Product Reviews
-          <Box sx={{ display: 'flex', gap: 1, mt: 1 }}>
-            <Button
-              variant={sortBy === 'rating' ? 'contained' : 'outlined'}
-              onClick={() => handleSort('rating')}
-              startIcon={
-                sortBy === 'rating' ? (
-                  sortOrder === 'asc' ? (
-                    <ArrowDownwardIcon />
-                  ) : (
-                    <ArrowUpwardIcon />
-                  )
-                ) : null
-              }
-            >
-              Rating
-            </Button>
-            <Button
-              variant={sortBy === 'created_at' ? 'contained' : 'outlined'}
-              onClick={() => handleSort('created_at')}
-              startIcon={
-                sortBy === 'created_at' ? (
-                  sortOrder === 'asc' ? (
-                    <ArrowUpwardIcon />
-                  ) : (
-                    <ArrowDownwardIcon />
-                  )
-                ) : null
-              }
-            >
-              Posted On
-            </Button>
-          </Box>
-        </Typography>
+        <Grid container spacing={2} alignItems="center">
+          <Grid item size={{ xs: 6, md: 6 }}>
+            <Typography variant="h5" gutterBottom>
+              Product Reviews
+            </Typography>
+          </Grid>
+          <Grid
+            item
+            size={{ xs: 6, md: 6 }}
+            container
+            direction="row"
+            justifyContent="flex-end"
+            alignItems="center"
+          >
+            <Box sx={{ display: 'flex', gap: 1 }}>
+              <FormControl size="small" sx={{ minWidth: 120 }}>
+                <InputLabel>Per Page</InputLabel>
+                <Select
+                  value={perPage}
+                  onChange={handlePerPageChange}
+                  label="Per Page"
+                >
+                  <MenuItem value={5}>5</MenuItem>
+                  <MenuItem value={10}>10</MenuItem>
+                  <MenuItem value={20}>20</MenuItem>
+                  <MenuItem value={30}>30</MenuItem>
+                  <MenuItem value={40}>40</MenuItem>
+                  <MenuItem value={50}>50</MenuItem>
+                </Select>
+              </FormControl>
+
+              <Button
+                variant={sortBy === 'rating' ? 'contained' : 'outlined'}
+                onClick={() => handleSort('rating')}
+                size="small"
+                startIcon={
+                  sortBy === 'rating' ? (
+                    sortOrder === 'asc' ? (
+                      <ArrowDownwardIcon />
+                    ) : (
+                      <ArrowUpwardIcon />
+                    )
+                  ) : null
+                }
+              >
+                Rating
+              </Button>
+              <Button
+                variant={sortBy === 'created_at' ? 'contained' : 'outlined'}
+                onClick={() => handleSort('created_at')}
+                size="small"
+                startIcon={
+                  sortBy === 'created_at' ? (
+                    sortOrder === 'asc' ? (
+                      <ArrowUpwardIcon />
+                    ) : (
+                      <ArrowDownwardIcon />
+                    )
+                  ) : null
+                }
+              >
+                Posted On
+              </Button>
+            </Box>
+          </Grid>
+        </Grid>
+
         <Divider sx={{ my: 2 }} />
         {loading ? (
           <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
@@ -144,7 +184,12 @@ const ProductReviews = ({ productId }) => {
                 </Avatar>
                 <Typography variant="subtitle1">{review.user.name}</Typography>
               </Box>
-              <Rating value={parseFloat(review.rating)} precision={0.5} readOnly size="small" />
+              <Rating
+                value={parseFloat(review.rating)}
+                precision={0.5}
+                readOnly
+                size="small"
+              />
               <Typography variant="body1" sx={{ mt: 1 }}>
                 {review.comment}
               </Typography>
@@ -157,8 +202,11 @@ const ProductReviews = ({ productId }) => {
         ) : (
           <Typography variant="body1">No reviews available.</Typography>
         )}
-        {/* Pagination ilpitation*/}
-        <Stack spacing={2} sx={{ mt: 3, display: 'flex', justifyContent: 'center' }}>
+        {/* Pagination */}
+        <Stack
+          spacing={2}
+          sx={{ mt: 3, display: 'flex', justifyContent: 'center' }}
+        >
           <Pagination
             count={totalPages}
             page={page + 1}

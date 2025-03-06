@@ -120,14 +120,15 @@ const UserReviewModal = ({ orderId, open, onClose }) => {
     }
 
     try {
-      if (
-        order.items.find((item) => item.product_id === selectedProductId)
-          ?.review
-      ) {
+      const selectedItem = order.items.find(
+        (item) => item.product_id === selectedProductId
+      );
+      const existingReview = selectedItem?.review;
+
+      if (existingReview) {
         await API.updateReview(
           selectedProductId,
-          order.items.find((item) => item.product_id === selectedProductId)
-            .review.id,
+          existingReview.id,
           reviewData
         );
         onClose('Review updated successfully!', 'success');
@@ -225,12 +226,20 @@ const UserReviewModal = ({ orderId, open, onClose }) => {
               {/* Product Selection Dropdown */}
               {/* if length is less than 2 then display the name directly */}
               {uniqueProducts.length < 2 ? (
-                <Typography variant="body1" sx={{ mb: 3 }}>
+                <Typography variant="body1" sx={{ mb: 3, mt: 2 }}>
                   <strong>{uniqueProducts[0]?.name}</strong>
                 </Typography>
               ) : (
-                <FormControl fullWidth sx={{ mb: 3 }}>
-                  <InputLabel id="product-select-label">
+                <FormControl fullWidth sx={{ mb: 3, mt: 1 }}>
+                  <InputLabel
+                    id="product-select-label"
+                    size="small"
+                    sx={{
+                      fontSize: '0.875rem',
+                      paddingTop: '4px',
+                      lineHeight: '1.5',
+                    }}
+                  >
                     Select Product
                   </InputLabel>
                   <Select
@@ -239,6 +248,7 @@ const UserReviewModal = ({ orderId, open, onClose }) => {
                     value={selectedProductId}
                     onChange={handleProductChange}
                     label="Select Product"
+                    size="small"
                   >
                     {uniqueProducts.map((item) => (
                       <MenuItem key={item.product_id} value={item.product_id}>
@@ -282,6 +292,9 @@ const UserReviewModal = ({ orderId, open, onClose }) => {
           )}
         </DialogContent>
         <DialogActions>
+          <Button onClick={() => onClose('', '')} variant="outlined">
+            Cancel
+          </Button>
           {order?.items.find((item) => item.product_id === selectedProductId)
             ?.review && (
             <Button
@@ -292,9 +305,7 @@ const UserReviewModal = ({ orderId, open, onClose }) => {
               Delete Review
             </Button>
           )}
-          <Button onClick={() => onClose('', '')} variant="outlined">
-            Cancel
-          </Button>
+
           <Button
             onClick={handleSubmit}
             variant="contained"

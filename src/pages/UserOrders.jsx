@@ -61,7 +61,7 @@ const UserOrders = () => {
   }, [page]);
 
   const handlePageChange = (event, value) => {
-    setPage(value - 1); // Adjust page number (1-based to 0-based index)
+    setPage(value - 1);
   };
 
   const shippingAddress = (address) => {
@@ -72,7 +72,7 @@ const UserOrders = () => {
       address.city,
       address.state,
       address.zip_code,
-    ].filter(Boolean); // Filter out empty values
+    ].filter(Boolean);
 
     return (
       <Box p={1}>
@@ -86,21 +86,15 @@ const UserOrders = () => {
     );
   };
 
-  // Function to handle opening the review modal
   const handleOpenReviewModal = (orderId) => {
-    setSelectedOrderId(orderId); // Set the selected order ID
-    setModalOpen(true); // Open the modal
+    setSelectedOrderId(orderId);
+    setModalOpen(true);
   };
 
-  // Function to handle closing the review modal
   const handleCloseModal = (message, type) => {
-    if (message === '' && type === '') {
-      setModalOpen(false);
-    } else {
-      setModalOpen(false);
-      if (message) {
-        setAlert({ message, type });
-      }
+    setModalOpen(false);
+    if (message) {
+      setAlert({ message, type });
     }
   };
 
@@ -123,7 +117,7 @@ const UserOrders = () => {
                 variant="outlined"
                 size="small"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)} // Directly update searchQuery
+                onChange={(e) => setSearchQuery(e.target.value)}
                 sx={{
                   borderRadius: '4px',
                 }}
@@ -142,7 +136,7 @@ const UserOrders = () => {
                   ml: 1,
                   borderRadius: '20px',
                 }}
-                onClick={fetchOrders} // Trigger search on button click
+                onClick={fetchOrders}
                 variant="contained"
               >
                 Search
@@ -151,14 +145,13 @@ const UserOrders = () => {
           </Grid>
         </Grid>
 
-        {/* Order List using Accordion */}
         {orders.map((order) => (
           <Accordion
             key={order.id}
             sx={{
               borderRadius: '4px',
             }}
-            expanded={true} // Disable expand/collapse behavior
+            expanded={true}
           >
             <AccordionSummary
               expandIcon={null}
@@ -167,7 +160,7 @@ const UserOrders = () => {
               sx={{
                 'backgroundColor': '#eff2f2',
                 '&:hover': {
-                  cursor: 'auto !important', // Prevent the hand pointer on hover
+                  cursor: 'auto !important',
                 },
                 'userSelect': 'text',
               }}
@@ -298,7 +291,7 @@ const UserOrders = () => {
                       variant="outlined"
                       color="primary"
                       size="small"
-                      onClick={() => handleOpenReviewModal(order.order_id)} // Pass the order ID
+                      onClick={() => handleOpenReviewModal(order.order_id)}
                     >
                       Write a product review
                     </Button>
@@ -336,9 +329,8 @@ const UserOrders = () => {
         )}
       </Grid>
 
-      {/* UserReviewModal */}
       <UserReviewModal
-        orderId={selectedOrderId} // Pass the order ID
+        orderId={selectedOrderId}
         open={modalOpen}
         onClose={handleCloseModal}
       />
