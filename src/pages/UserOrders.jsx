@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   Container,
   Grid2 as Grid,
@@ -14,21 +14,29 @@ import {
   Tooltip,
   Button,
   Backdrop,
-} from "@mui/material";
-import { InputAdornment } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
-import Link from "@mui/material/Link";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import { NavLink, useNavigate } from "react-router-dom";
-import * as API from "../utils/api";
-import Zoom from "@mui/material/Zoom";
+} from '@mui/material';
+import { InputAdornment } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
+import Link from '@mui/material/Link';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import { NavLink, useNavigate } from 'react-router-dom';
+import * as API from '../utils/api';
+import Zoom from '@mui/material/Zoom';
+import UserReviewModal from './UserReviewModel';
+import Notification from '../utils/notification';
 
 const UserOrders = () => {
   const [orders, setOrders] = useState([]);
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [openBackdrop, setOpenBackdrop] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState('');
+  const [alert, setAlert] = useState({
+    message: '',
+    type: '',
+  });
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedOrderId, setSelectedOrderId] = useState(null);
   const navigate = useNavigate();
 
   const fetchOrders = async () => {
@@ -42,7 +50,7 @@ const UserOrders = () => {
       setOrders(response.data.orders);
       setTotalPages(response.data.total_pages);
     } catch (error) {
-      console.error("Failed to fetch orders:", error);
+      console.error('Failed to fetch orders:', error);
     } finally {
       setOpenBackdrop(false);
     }
@@ -53,7 +61,7 @@ const UserOrders = () => {
   }, [page]);
 
   const handlePageChange = (event, value) => {
-    setPage(value - 1); // Adjust page number (1-based to 0-based index)
+    setPage(value - 1);
   };
 
   const shippingAddress = (address) => {
@@ -64,39 +72,54 @@ const UserOrders = () => {
       address.city,
       address.state,
       address.zip_code,
-    ].filter(Boolean); // Filter out empty values
+    ].filter(Boolean);
 
     return (
       <Box p={1}>
         <Typography variant="body1" gutterBottom>
           <strong>{address.full_name}</strong>
         </Typography>
-        <Box component="span" sx={{ display: "block", width: "180px" }}>
-          <Typography variant="body1">{addressParts.join(", ")}</Typography>
+        <Box component="span" sx={{ display: 'block', width: '180px' }}>
+          <Typography variant="body1">{addressParts.join(', ')}</Typography>
         </Box>
       </Box>
     );
+  };
+
+  const handleOpenReviewModal = (orderId) => {
+    setSelectedOrderId(orderId);
+    setModalOpen(true);
+  };
+
+  const handleCloseModal = (message, type) => {
+    setModalOpen(false);
+    if (message) {
+      setAlert({ message, type });
+    }
   };
 
   return (
     <Container>
       <Grid container display="flex" direction="column" sx={{ px: 7 }}>
         <Grid item py={2}>
+          <Grid item>
+            <Notification alert={alert} setAlert={setAlert} />
+          </Grid>
           <Grid container justifyContent="space-between" alignItems="center">
             <Grid item>
               <Typography variant="h4" color="primary">
                 Your Orders
               </Typography>
             </Grid>
-            <Grid item sx={{ display: "flex", alignItems: "center" }}>
+            <Grid item sx={{ display: 'flex', alignItems: 'center' }}>
               <TextField
                 placeholder="Search all orders"
                 variant="outlined"
                 size="small"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)} // Directly update searchQuery
+                onChange={(e) => setSearchQuery(e.target.value)}
                 sx={{
-                  borderRadius: "4px",
+                  borderRadius: '4px',
                 }}
                 slotProps={{
                   input: {
@@ -111,9 +134,9 @@ const UserOrders = () => {
               <Button
                 sx={{
                   ml: 1,
-                  borderRadius: "20px",
+                  borderRadius: '20px',
                 }}
-                onClick={fetchOrders} // Trigger search on button click
+                onClick={fetchOrders}
                 variant="contained"
               >
                 Search
@@ -122,25 +145,24 @@ const UserOrders = () => {
           </Grid>
         </Grid>
 
-        {/* Order List using Accordion */}
         {orders.map((order) => (
           <Accordion
             key={order.id}
             sx={{
-              borderRadius: "4px",
+              borderRadius: '4px',
             }}
-            expanded={true} // Disable expand/collapse behavior
+            expanded={true}
           >
             <AccordionSummary
               expandIcon={null}
               aria-controls={`panel-${order.id}-content`}
               id={`panel-${order.id}-header`}
               sx={{
-                "backgroundColor": "#eff2f2",
-                "&:hover": {
-                  cursor: "auto !important", // Prevent the hand pointer on hover
+                'backgroundColor': '#eff2f2',
+                '&:hover': {
+                  cursor: 'auto !important',
                 },
-                "userSelect": "text",
+                'userSelect': 'text',
               }}
             >
               <Grid
@@ -173,10 +195,10 @@ const UserOrders = () => {
                     title={shippingAddress(order.shipping_address)}
                     TransitionComponent={Zoom}
                     sx={{
-                      "& .MuiTooltip-tooltip": {
-                        backgroundColor: "#006ce5",
-                        color: "white",
-                        fontSize: "14px",
+                      '& .MuiTooltip-tooltip': {
+                        backgroundColor: '#006ce5',
+                        color: 'white',
+                        fontSize: '14px',
                       },
                     }}
                     arrow
@@ -187,8 +209,8 @@ const UserOrders = () => {
                       color="#006ce5"
                       variant="body2"
                       sx={{
-                        display: "inline-flex",
-                        alignItems: "flex-end",
+                        display: 'inline-flex',
+                        alignItems: 'flex-end',
                       }}
                     >
                       {order.shipping_address.full_name}
@@ -212,19 +234,19 @@ const UserOrders = () => {
                 </Grid>
               </Grid>
             </AccordionSummary>
-            <AccordionDetails sx={{ backgroundColor: "#fff" }}>
+            <AccordionDetails sx={{ backgroundColor: '#fff' }}>
               <Grid
                 container
                 spacing={3}
                 justifyContent="space-between"
-                sx={{ flexGrow: 1, alignItems: "top" }}
+                sx={{ flexGrow: 1, alignItems: 'top' }}
               >
                 <Grid item>
                   <Typography variant="h6" gutterBottom fontWeight="bold">
                     Items Ordered
                   </Typography>
                   {order.items.map((item) => (
-                    <Box key={item.id} sx={{ display: "flex", mb: 3 }}>
+                    <Box key={item.id} sx={{ display: 'flex', mb: 3 }}>
                       <Avatar
                         src={item.image_url}
                         alt={item.name}
@@ -236,7 +258,7 @@ const UserOrders = () => {
                           {item.name}
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
-                          Qty: {item.quantity}, Size: {item.height} *{" "}
+                          Qty: {item.quantity}, Size: {item.height} *{' '}
                           {item.width}
                         </Typography>
                         <Typography variant="body2">
@@ -265,7 +287,12 @@ const UserOrders = () => {
                     <Button variant="outlined" color="primary" size="small">
                       Cancel order
                     </Button>
-                    <Button variant="outlined" color="primary" size="small">
+                    <Button
+                      variant="outlined"
+                      color="primary"
+                      size="small"
+                      onClick={() => handleOpenReviewModal(order.order_id)}
+                    >
                       Write a product review
                     </Button>
                   </Grid>
@@ -280,9 +307,9 @@ const UserOrders = () => {
             justifyContent="center"
             mt={3}
             sx={{
-              backgroundColor: "#ffffff",
-              padding: "10px",
-              borderRadius: "10px",
+              backgroundColor: '#ffffff',
+              padding: '10px',
+              borderRadius: '10px',
             }}
           >
             <Pagination
@@ -293,14 +320,21 @@ const UserOrders = () => {
               variant="outlined"
               shape="rounded"
               sx={{
-                "& .MuiPaginationItem-root": {
-                  borderRadius: "20px",
+                '& .MuiPaginationItem-root': {
+                  borderRadius: '20px',
                 },
               }}
             />
           </Box>
         )}
       </Grid>
+
+      <UserReviewModal
+        orderId={selectedOrderId}
+        open={modalOpen}
+        onClose={handleCloseModal}
+      />
+
       <Backdrop open={openBackdrop}>
         <CircularProgress color="inherit" />
       </Backdrop>

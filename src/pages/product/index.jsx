@@ -14,6 +14,7 @@ import ProductBannerSection from "./ProductBannerSection";
 import ImageUploader from "../../utils/ImageUploader";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
+import ProductReviews from './ProductReviews';
 
 const Product = (props) => {
   const [product, setProduct] = useState({});
@@ -25,9 +26,9 @@ const Product = (props) => {
   const [isProductLoading, setIsProductLoading] = useState(true);
   const [artWork, setArtWork] = useState();
   const [productConfig, setProductConfig] = useState({
-    height: "",
-    width: "",
-    qty: "",
+    height: '',
+    width: '',
+    qty: '',
   });
 
   const fetchProduct = useCallback(async () => {
@@ -36,7 +37,7 @@ const Product = (props) => {
       const data = await API.fetchProduct(slug);
       setProduct(data.data.product);
     } catch (error) {
-      console.log("Failed to fetch Product");
+      console.log('Failed to fetch Product');
     } finally {
       setIsProductLoading(false);
     }
@@ -66,23 +67,23 @@ const Product = (props) => {
     }
 
     if (artWork) {
-      formData.append("cart_item[image]", artWork);
+      formData.append('cart_item[image]', artWork);
     }
 
     try {
       const response = await API.addCartItem(formData);
       setCart(response.data);
-      navigate("/cart", {
+      navigate('/cart', {
         replace: true,
         state: {
           alert: {
-            message: "Item added Successfully.",
-            type: "success",
+            message: 'Item added Successfully.',
+            type: 'success',
           },
         },
       });
     } catch (error) {
-      console.log("Failed to add item in cart");
+      console.log('Failed to add item in cart');
     }
   };
 
@@ -106,6 +107,7 @@ const Product = (props) => {
             descriptions={product?.descriptions || []}
             videoThumbnail={product.category_image_url}
           />
+          <ProductReviews productId={product?.id} />
         </>
       )}
       {productConfig.height && productConfig.width && productConfig.qty && (
@@ -119,7 +121,7 @@ const Product = (props) => {
             alignItems="center"
           >
             <Grid py={2}>
-              <Typography variant="h3" sx={{ fontWeight: "bold" }}>
+              <Typography variant="h3" sx={{ fontWeight: 'bold' }}>
                 Upload your artwork
               </Typography>
             </Grid>

@@ -1,24 +1,24 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import {
   Container,
-  Grid2 as Grid,
   Card,
   CardContent,
   Typography,
   Divider,
   Box,
-  Avatar,
   Chip,
+  Avatar,
   Backdrop,
   CircularProgress,
-} from "@mui/material";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import CancelIcon from "@mui/icons-material/Cancel";
-import LocalShippingIcon from "@mui/icons-material/LocalShipping";
-import InfoIcon from "@mui/icons-material/Info";
-import { useParams, useLocation } from "react-router-dom";
-import Notification from "../utils/notification";
-import * as API from "../utils/api";
+} from '@mui/material';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CancelIcon from '@mui/icons-material/Cancel';
+import LocalShippingIcon from '@mui/icons-material/LocalShipping';
+import InfoIcon from '@mui/icons-material/Info';
+import { useParams, useLocation } from 'react-router-dom';
+import Notification from '../utils/notification';
+import Grid from '@mui/material/Grid2';
+import * as API from '../utils/api';
 
 const OrderDetail = () => {
   const location = useLocation();
@@ -42,10 +42,10 @@ const OrderDetail = () => {
     try {
       setOpenBackdrop(true);
       const response = await API.fetchOrder(orderId);
-      console.log("order", response.data);
       setOrder(response.data);
     } catch (error) {
-      setAlert({ message: "Failed to fetch Order.", type: "error" });
+      console.log('error:', error);
+      setAlert({ message: 'Failed to fetch Order.', type: 'error' });
     } finally {
       setOpenBackdrop(false);
     }
@@ -53,7 +53,7 @@ const OrderDetail = () => {
 
   const renderStatusChip = (status) => {
     switch (status) {
-      case "Delivered":
+      case 'Delivered':
         return (
           <Chip
             label="Delivered"
@@ -62,7 +62,7 @@ const OrderDetail = () => {
             size="small"
           />
         );
-      case "Pending":
+      case 'Pending':
         return (
           <Chip
             label="Pending"
@@ -71,7 +71,7 @@ const OrderDetail = () => {
             size="small"
           />
         );
-      case "Canceled":
+      case 'Canceled':
         return (
           <Chip
             label="Canceled"
@@ -80,7 +80,7 @@ const OrderDetail = () => {
             size="small"
           />
         );
-      case "Not Received":
+      case 'Not Received':
         return (
           <Chip
             label="Not Received"
@@ -89,7 +89,7 @@ const OrderDetail = () => {
             size="small"
           />
         );
-      case "Confirmed":
+      case 'Confirmed':
         return (
           <Chip
             label="Confirmed"
@@ -98,7 +98,7 @@ const OrderDetail = () => {
             size="small"
           />
         );
-      case "Paid":
+      case 'Paid':
         return (
           <Chip
             label="paid"
@@ -107,7 +107,7 @@ const OrderDetail = () => {
             size="small"
           />
         );
-      case "Created":
+      case 'Created':
         return (
           <Chip label="Created" color="info" icon={<InfoIcon />} size="small" />
         );
@@ -147,10 +147,10 @@ const OrderDetail = () => {
                 <br />
                 {order.shipping_address.full_name}
                 <br />
-                {order.shipping_address.address_line_1},{" "}
+                {order.shipping_address.address_line_1},{' '}
                 {order.shipping_address.city}
                 <br />
-                {order.shipping_address.state},{" "}
+                {order.shipping_address.state},{' '}
                 {order.shipping_address.zip_code}
               </Typography>
               <Divider sx={{ mt: 2, mb: 2 }} />
@@ -159,7 +159,7 @@ const OrderDetail = () => {
                 <br />
                 {order.billing_address.full_name}
                 <br />
-                {order.billing_address.address_line_1},{" "}
+                {order.billing_address.address_line_1},{' '}
                 {order.billing_address.city}
                 <br />
                 {order.billing_address.state}, {order.billing_address.zip_code}
@@ -173,25 +173,30 @@ const OrderDetail = () => {
                 Items Ordered
               </Typography>
               {order.items.map((item) => (
-                <Box key={item.id} sx={{ display: "flex", mb: 3 }}>
-                  <Avatar
-                    src={item.image_url}
-                    alt={item.name}
-                    variant="square"
-                    sx={{ width: 105, height: 70, mr: 2 }}
-                  />
-                  <Box>
-                    <Typography variant="subtitle1" fontWeight="bold">
-                      {item.name}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      Qty: {item.quantity}, Size: {item.height} * {item.width}
-                    </Typography>
-                    <Typography variant="body2">
-                      Price: ₹{item.final_price}
-                    </Typography>
-                  </Box>
-                </Box>
+                <Grid container spacing={1}>
+                  <Grid size={5}>
+                    <Box key={item.id} sx={{ display: 'flex', mb: 3 }}>
+                      <Avatar
+                        src={item.image_url}
+                        alt={item.name}
+                        variant="square"
+                        sx={{ width: 105, height: 70, mr: 2 }}
+                      />
+                      <Box>
+                        <Typography variant="subtitle1" fontWeight="bold">
+                          {item.name}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          Qty: {item.quantity}, Size: {item.height} *{' '}
+                          {item.width}
+                        </Typography>
+                        <Typography variant="body2">
+                          Price: ₹{item.final_price}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </Grid>
+                </Grid>
               ))}
             </CardContent>
           </Card>
@@ -206,7 +211,7 @@ const OrderDetail = () => {
               </Typography>
               <Divider sx={{ mt: 2, mb: 2 }} />
               <Typography variant="body1">
-                <strong>Status:</strong>{" "}
+                <strong>Status:</strong>{' '}
                 {renderStatusChip(order.payment_status)}
               </Typography>
               <Typography variant="body1" sx={{ mt: 2 }}>
