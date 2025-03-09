@@ -5,24 +5,25 @@ import {
   Grid2 as Grid,
   Rating,
   Typography,
-} from "@mui/material";
-import ProductPrice from "./ProductPrice";
+} from '@mui/material';
 import StarIcon from "@mui/icons-material/Star";
+
+import ProductPrice from './ProductPrice';
 
 const ProductBannerSection = ({ product, setProductConfig }) => {
   return (
     <Box
       py={3}
       sx={{
-        position: "relative",
-        width: "100%",
-        height: "auto",
-        overflow: "hidden",
-        minHeight: "500px",
-        backgroundImage: `url(${process.env.PUBLIC_URL + "/product_banner.jpg"})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
+        position: 'relative',
+        width: '100%',
+        height: 'auto',
+        overflow: 'hidden',
+        minHeight: '500px',
+        backgroundImage: `url(${process.env.PUBLIC_URL + '/product_banner.jpg'})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
       }}
     >
       <Container size="lg">
@@ -32,14 +33,14 @@ const ProductBannerSection = ({ product, setProductConfig }) => {
               <Typography
                 variant="h3"
                 sx={{
-                  fontWeight: "bold",
+                  fontWeight: 'bold',
                 }}
               >
                 {product.name}
               </Typography>
               <Rating
                 name="text-feedback"
-                value={4.5}
+                value={product.average_rating}
                 readOnly
                 precision={0.5}
                 sx={{ paddingLeft: 2 }}
@@ -47,7 +48,9 @@ const ProductBannerSection = ({ product, setProductConfig }) => {
                   <StarIcon style={{ opacity: 0.55 }} fontSize="inherit" />
                 }
               />
-              <Typography sx={{ paddingLeft: 1 }}>567 Reviews</Typography>
+              <Typography sx={{ paddingLeft: 1 }}>
+                {product.reviews_count} Reviews
+              </Typography>
               <Typography>{product.description}</Typography>
             </Grid>
           </Grid>

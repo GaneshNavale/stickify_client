@@ -7,11 +7,12 @@ const ImageUploader = ({
   id = 'image-upload',
   imageUrl,
   onImageChange,
-  width = "100%", // Default width as 100%
+  width = '100%', // Default width as 100%
   height = 200, // Default height as 200px
-  helperText = "",
+  helperText = '',
   error = false,
   showDeleteButton = true,
+  showUploadButton = true,
 }) => {
   const [preview, setPreview] = useState(imageUrl); // State to manage preview
   const [dragging, setDragging] = useState(false); // State to manage drag behavior
@@ -77,18 +78,18 @@ const ImageUploader = ({
         justifyContent="center"
         alignItems="center"
         sx={{
-          "position": "relative",
-          "width": width, // Dynamic width from props
-          "height": height, // Dynamic height from props
-          "overflow": "hidden", // Hide overflow
-          "border": "2px dashed #ccc",
-          "borderColor": error ? "red" : dragging ? "#007BFF" : "#ccc",
-          "borderRadius": "8px",
-          "backgroundColor": "#f5f5f5",
-          "&:hover": {
-            backgroundColor: "transparent",
-            borderColor: "#007BFF",
-            cursor: "default",
+          'position': 'relative',
+          'width': width, // Dynamic width from props
+          'height': height, // Dynamic height from props
+          'overflow': 'hidden', // Hide overflow
+          'border': '2px dashed #ccc',
+          'borderColor': error ? 'red' : dragging ? '#007BFF' : '#ccc',
+          'borderRadius': '8px',
+          'backgroundColor': '#f5f5f5',
+          '&:hover': {
+            backgroundColor: 'transparent',
+            borderColor: '#007BFF',
+            cursor: 'default',
           },
         }}
         onDragOver={handleDragOver}
@@ -101,13 +102,13 @@ const ImageUploader = ({
             src={preview}
             alt="Category Preview"
             style={{
-              objectFit: "contain", // Maintain aspect ratio of the image
-              width: "100%", // Ensure the image fits within the container
-              height: "100%",
+              objectFit: 'contain', // Maintain aspect ratio of the image
+              width: '100%', // Ensure the image fits within the container
+              height: '100%',
             }}
           />
         ) : (
-          <Grid item sx={{ color: "#aaa", textAlign: "center" }}>
+          <Grid item sx={{ color: '#aaa', textAlign: 'center' }}>
             No Image Selected
           </Grid>
         )}
@@ -117,7 +118,7 @@ const ImageUploader = ({
           type="file"
           accept="image/*"
           onChange={handleImageChange}
-          style={{ display: "none" }}
+          style={{ display: 'none' }}
           id={id}
         />
         {preview && showDeleteButton && (
@@ -130,12 +131,12 @@ const ImageUploader = ({
                 }}
                 component="span"
                 sx={{
-                  position: "absolute",
+                  position: 'absolute',
                   top: 10,
                   right: 10,
-                  backgroundColor: "#fff",
-                  borderRadius: "50%",
-                  boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+                  backgroundColor: '#fff',
+                  borderRadius: '50%',
+                  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
                 }}
               >
                 <DeleteIcon color="primary" />
@@ -144,23 +145,25 @@ const ImageUploader = ({
           </label>
         )}
         {/* File upload button */}
-        <label htmlFor="image-upload">
-          <Tooltip title="Upload Image">
-            <IconButton
-              component="span"
-              sx={{
-                position: "absolute",
-                bottom: 10,
-                right: 10,
-                backgroundColor: "#fff",
-                borderRadius: "50%",
-                boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
-              }}
-            >
-              <PhotoCamera fontSize="large" color="primary" />
-            </IconButton>
-          </Tooltip>
-        </label>
+        {showUploadButton && (
+          <label htmlFor="image-upload">
+            <Tooltip title="Upload Image">
+              <IconButton
+                component="span"
+                sx={{
+                  position: 'absolute',
+                  bottom: 10,
+                  right: 10,
+                  backgroundColor: '#fff',
+                  borderRadius: '50%',
+                  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
+                }}
+              >
+                <PhotoCamera fontSize="large" color="primary" />
+              </IconButton>
+            </Tooltip>
+          </label>
+        )}
       </Grid>
       {/* Show error message below the image uploader */}
       {helperText && (
