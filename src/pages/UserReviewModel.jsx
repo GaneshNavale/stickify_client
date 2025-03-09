@@ -14,12 +14,16 @@ import {
   FormControl,
   InputLabel,
   Rating,
+  Chip,
   CircularProgress,
   Grid2 as Grid,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import * as API from '../utils/api';
 import Notification from '../utils/notification';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import PendingIcon from '@mui/icons-material/Pending';
 
 const UserReviewModal = ({ orderId, open, onClose }) => {
   const [order, setOrder] = useState(null);
@@ -32,14 +36,12 @@ const UserReviewModal = ({ orderId, open, onClose }) => {
     type: '',
   });
 
-  // Fetch order details when the modal opens
   useEffect(() => {
     if (open && orderId) {
       fetchOrderDetails();
     }
   }, [open, orderId]);
 
-  // Fetch order details
   const fetchOrderDetails = async () => {
     setLoading(true);
     try {
@@ -65,7 +67,6 @@ const UserReviewModal = ({ orderId, open, onClose }) => {
     }
   };
 
-  // Get unique products based on product_id
   const getUniqueProducts = (items) => {
     const uniqueProducts = [];
     const productIds = new Set();
@@ -80,7 +81,6 @@ const UserReviewModal = ({ orderId, open, onClose }) => {
     return uniqueProducts;
   };
 
-  // Handle product selection
   const handleProductChange = (event) => {
     setSelectedProductId(event.target.value);
     const product = order.items.find(
@@ -96,11 +96,9 @@ const UserReviewModal = ({ orderId, open, onClose }) => {
     }
   };
 
-  // Handle form submission
   const handleSubmit = async () => {
     if (!selectedProductId) return;
 
-    // Validate rating
     if (
       reviewData.rating < 1 ||
       reviewData.rating > 5 ||
@@ -113,7 +111,6 @@ const UserReviewModal = ({ orderId, open, onClose }) => {
       return;
     }
 
-    // Validate comment
     if (!reviewData.comment.trim()) {
       setAlert({ message: 'Please enter a comment.', type: 'error' });
       return;
@@ -144,7 +141,6 @@ const UserReviewModal = ({ orderId, open, onClose }) => {
     }
   };
 
-  // Handle review deletion
   const handleDeleteReview = async () => {
     if (!selectedProductId) return;
 
@@ -163,7 +159,6 @@ const UserReviewModal = ({ orderId, open, onClose }) => {
     }
   };
 
-  // Delete Confirmation Model
   const DeleteConfirmationModal = () => (
     <Dialog
       open={deleteConfirmationOpen}
@@ -189,8 +184,11 @@ const UserReviewModal = ({ orderId, open, onClose }) => {
     </Dialog>
   );
 
-  // Get unique products for the dropdown
   const uniqueProducts = order ? getUniqueProducts(order.items) : [];
+
+  const selectedProduct = order?.items.find(
+    (item) => item.product_id === selectedProductId
+  );
 
   return (
     <>
@@ -204,10 +202,7 @@ const UserReviewModal = ({ orderId, open, onClose }) => {
           <Notification alert={alert} setAlert={setAlert} />
         </Grid>
         <DialogTitle>
-          {order?.items.find((item) => item.product_id === selectedProductId)
-            ?.review
-            ? 'Update Review'
-            : 'Create Review'}
+          {selectedProduct?.review ? 'Update Review' : 'Create Review'}
         </DialogTitle>
         <IconButton
           aria-label="close"
@@ -223,8 +218,39 @@ const UserReviewModal = ({ orderId, open, onClose }) => {
             </Box>
           ) : (
             <>
-              {/* Product Selection Dropdown */}
-              {/* if length is less than 2 then display the name directly */}
+              {selectedProduct?.review && (
+                <Chip
+                  label={selectedProduct.review.status || 'No Status'}
+                  size="small"
+                  variant="outlined"
+                  icon={
+                    selectedProduct.review.status === 'pending' ? (
+                      <PendingIcon />
+                    ) : selectedProduct.review.status === 'approved' ? (
+                      <CheckCircleOutlineIcon />
+                    ) : (
+                      <HighlightOffIcon />
+                    )
+                  }
+                  sx={{
+                    backgroundColor:
+                      selectedProduct.review.status === 'pending'
+                        ? '#fff3e0'
+                        : selectedProduct.review.status === 'approved'
+                          ? '#e8f5e9'
+                          : '#ffebee',
+                    color:
+                      selectedProduct.review.status === 'pending'
+                        ? '#ff9800'
+                        : selectedProduct.review.status === 'approved'
+                          ? '#4caf50'
+                          : '#f44336',
+                    mr: 1,
+                    mb: 1,
+                  }}
+                />
+              )}
+
               {uniqueProducts.length < 2 ? (
                 <Typography variant="body1" sx={{ mb: 3, mt: 2 }}>
                   <strong>{uniqueProducts[0]?.name}</strong>
@@ -259,7 +285,6 @@ const UserReviewModal = ({ orderId, open, onClose }) => {
                 </FormControl>
               )}
 
-              {/* form */}
               {selectedProductId && (
                 <>
                   <Rating
@@ -268,7 +293,7 @@ const UserReviewModal = ({ orderId, open, onClose }) => {
                     onChange={(event, newValue) => {
                       setReviewData((prev) => ({ ...prev, rating: newValue }));
                     }}
-                    precision={1} // Set precision to 1 to allow only whole numbers
+                    precision={1}
                     sx={{ mb: 2 }}
                   />
                   <TextField
@@ -295,8 +320,7 @@ const UserReviewModal = ({ orderId, open, onClose }) => {
           <Button onClick={() => onClose('', '')} variant="outlined">
             Cancel
           </Button>
-          {order?.items.find((item) => item.product_id === selectedProductId)
-            ?.review && (
+          {selectedProduct?.review && (
             <Button
               onClick={() => setDeleteConfirmationOpen(true)}
               variant="contained"
@@ -312,10 +336,7 @@ const UserReviewModal = ({ orderId, open, onClose }) => {
             color="primary"
             disabled={!selectedProductId}
           >
-            {order?.items.find((item) => item.product_id === selectedProductId)
-              ?.review
-              ? 'Update'
-              : 'Submit'}
+            {selectedProduct?.review ? 'Update' : 'Submit'}
           </Button>
         </DialogActions>
       </Dialog>

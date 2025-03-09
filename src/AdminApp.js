@@ -1,86 +1,87 @@
-import React, { useState, useMemo, useEffect } from "react";
-import main from "./themes/main";
-import { useAdminAuth } from "./hooks/useAdminAuth";
-import { useLocation, useNavigate, Route, Routes } from "react-router-dom";
-import Box from "@mui/material/Box";
-import CssBaseline from "@mui/material/CssBaseline";
-import { ThemeProvider } from "@mui/material/styles";
-import DashboardIcon from "@mui/icons-material/Dashboard";
-import CategoryIcon from "@mui/icons-material/Category";
-import DatasetIcon from "@mui/icons-material/Dataset";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
-import InventoryIcon from "@mui/icons-material/Inventory";
-import FormatColorFillIcon from "@mui/icons-material/FormatColorFill";
-import PeopleIcon from "@mui/icons-material/People";
-import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
-import ReviewsIcon from "@mui/icons-material/Reviews";
-import { AppProvider } from "@toolpad/core/AppProvider";
-import { DashboardLayout } from "@toolpad/core/DashboardLayout";
-import Orders from "./components/order_management/Orders";
-import AdminSignIn from "./components/users/AdminSignIn";
-import Users from "./components/user_management/Users";
-import Categories from "./components/data_management/Categories";
-import AdminUsers from "./components/user_management/AdminUsers";
-import ResetUserPassword from "./components/users/ResetUserPassword";
-import Category from "./components/data_management/Category";
-import Products from "./components/data_management/Products";
-import Product from "./components/data_management/Product";
-import OrderDetail from "./pages/OrderDetail";
+import React, { useState, useMemo, useEffect } from 'react';
+import main from './themes/main';
+import { useAdminAuth } from './hooks/useAdminAuth';
+import { useLocation, useNavigate, Route, Routes } from 'react-router-dom';
+import Box from '@mui/material/Box';
+import CssBaseline from '@mui/material/CssBaseline';
+import { ThemeProvider } from '@mui/material/styles';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import CategoryIcon from '@mui/icons-material/Category';
+import DatasetIcon from '@mui/icons-material/Dataset';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+import InventoryIcon from '@mui/icons-material/Inventory';
+import FormatColorFillIcon from '@mui/icons-material/FormatColorFill';
+import PeopleIcon from '@mui/icons-material/People';
+import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
+import ReviewsIcon from '@mui/icons-material/Reviews';
+import { AppProvider } from '@toolpad/core/AppProvider';
+import { DashboardLayout } from '@toolpad/core/DashboardLayout';
+import Orders from './components/order_management/Orders';
+import AdminSignIn from './components/users/AdminSignIn';
+import Users from './components/user_management/Users';
+import Categories from './components/data_management/Categories';
+import AdminUsers from './components/user_management/AdminUsers';
+import ResetUserPassword from './components/users/ResetUserPassword';
+import Category from './components/data_management/Category';
+import Products from './components/data_management/Products';
+import Product from './components/data_management/Product';
+import OrderDetail from './pages/OrderDetail';
+import ReviewManagement from './components/ReviewManagement';
 
 const NAVIGATION = [
   {
-    segment: "admin/dashboard",
-    title: "Dashboard",
+    segment: 'admin/dashboard',
+    title: 'Dashboard',
     icon: <DashboardIcon />,
   },
   {
-    segment: "admin/order_management",
-    title: "Order Management",
+    segment: 'admin/order_management',
+    title: 'Order Management',
     icon: <ShoppingCartIcon />,
   },
   {
-    segment: "admin/data_management",
-    title: "Catalog Management",
+    segment: 'admin/data_management',
+    title: 'Catalog Management',
     icon: <DatasetIcon />,
     children: [
       {
-        segment: "",
-        title: "Categories",
+        segment: '',
+        title: 'Categories',
         icon: <CategoryIcon />,
       },
       {
-        segment: "products",
-        title: "Products",
+        segment: 'products',
+        title: 'Products',
         icon: <InventoryIcon />,
       },
       {
-        segment: "customization",
-        title: "Customization",
+        segment: 'customization',
+        title: 'Customization',
         icon: <FormatColorFillIcon />,
       },
     ],
   },
   {
-    segment: "admin/users_management",
-    title: "User Management",
+    segment: 'admin/users_management',
+    title: 'User Management',
     icon: <ManageAccountsIcon color="primary" />,
     children: [
       {
-        segment: "",
-        title: "Users",
+        segment: '',
+        title: 'Users',
         icon: <PeopleIcon color="primary" />,
       },
       {
-        segment: "admin_users",
-        title: "Admin Users",
+        segment: 'admin_users',
+        title: 'Admin Users',
         icon: <AdminPanelSettingsIcon />,
       },
     ],
   },
   {
-    segment: "admin/reviews",
-    title: "Reviews",
+    segment: 'admin/reviews',
+    title: 'Reviews',
     icon: <ReviewsIcon />,
   },
 ];
@@ -94,7 +95,7 @@ function AdminApp(props) {
     const matchingNav = NAVIGATION.find(({ segment }) =>
       location.pathname.startsWith(`/${segment}`)
     );
-    return matchingNav ? `/${matchingNav.segment}` : "/admin/dashboard";
+    return matchingNav ? `/${matchingNav.segment}` : '/admin/dashboard';
   });
 
   const router = useMemo(
@@ -157,15 +158,15 @@ function AdminApp(props) {
             router={router}
             branding={{
               logo: <img src="/logo.png" alt="Stick IT Up logo" />,
-              title: "",
+              title: '',
             }}
             theme={main}
           >
             <DashboardLayout
-              sx={{ width: "100%", flexGrow: 1, position: "relative" }}
+              sx={{ width: '100%', flexGrow: 1, position: 'relative' }}
             >
               <Box
-                sx={{ display: "flex", flexDirection: "column", flexGrow: 1 }}
+                sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}
               >
                 <Routes>
                   <Route path="/admin/order_management" element={<Orders />} />
@@ -194,6 +195,7 @@ function AdminApp(props) {
                     path="/admin/users_management/admin_users"
                     element={<AdminUsers />}
                   />
+                  <Route path="/admin/reviews" element={<ReviewManagement />} />
                 </Routes>
               </Box>
             </DashboardLayout>

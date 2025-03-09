@@ -121,12 +121,10 @@ const ProductReviews = ({ productId }) => {
                   onChange={handlePerPageChange}
                   label="Per Page"
                 >
-                  <MenuItem value={5}>5</MenuItem>
                   <MenuItem value={10}>10</MenuItem>
-                  <MenuItem value={20}>20</MenuItem>
-                  <MenuItem value={30}>30</MenuItem>
-                  <MenuItem value={40}>40</MenuItem>
+                  <MenuItem value={25}>25</MenuItem>
                   <MenuItem value={50}>50</MenuItem>
+                  <MenuItem value={100}>100</MenuItem>
                 </Select>
               </FormControl>
 
@@ -172,33 +170,38 @@ const ProductReviews = ({ productId }) => {
             <CircularProgress />
           </Box>
         ) : reviews.length > 0 ? (
-          reviews.map((review) => (
-            <Box key={review.id} sx={{ mb: 3 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                <Avatar
-                  sx={{ mr: 2 }}
-                  alt={user.name}
-                  src={user.avatar_image_url}
-                >
-                  {review.user.name.charAt(0)}
-                </Avatar>
-                <Typography variant="subtitle1">{review.user.name}</Typography>
-              </Box>
-              <Rating
-                value={parseFloat(review.rating)}
-                precision={0.5}
-                readOnly
-                size="small"
-              />
-              <Typography variant="body1" sx={{ mt: 1 }}>
-                {review.comment}
-              </Typography>
-              <Typography variant="caption" color="textSecondary">
-                {new Date(review.created_at).toLocaleString()}
-              </Typography>
-              <Divider sx={{ my: 2 }} />
-            </Box>
-          ))
+          reviews.map(
+            (review) =>
+              review.status === 'approved' && (
+                <Box key={review.id} sx={{ mb: 3 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                    <Avatar
+                      sx={{ mr: 2 }}
+                      alt={user.name}
+                      src={user.avatar_image_url}
+                    >
+                      {review.user.name.charAt(0)}
+                    </Avatar>
+                    <Typography variant="subtitle1">
+                      {review.user.name}
+                    </Typography>
+                  </Box>
+                  <Rating
+                    value={parseFloat(review.rating)}
+                    precision={0.5}
+                    readOnly
+                    size="small"
+                  />
+                  <Typography variant="body1" sx={{ mt: 1 }}>
+                    {review.comment}
+                  </Typography>
+                  <Typography variant="caption" color="textSecondary">
+                    {new Date(review.created_at).toLocaleString()}
+                  </Typography>
+                  <Divider sx={{ my: 2 }} />
+                </Box>
+              )
+          )
         ) : (
           <Typography variant="body1">No reviews available.</Typography>
         )}

@@ -119,3 +119,29 @@ export const getAllMessages = (id) => {
 export const createMessage = (id, message) => {
   return axios.post(`/admin/order_items/${id}/messages`, message);
 };
+
+export const getReviews = ({
+  page,
+  per_page,
+  sort_by,
+  sort_order,
+  status,
+  product_id,
+  category_id,
+}) => {
+  return axios.get('/admin/reviews', {
+    params: {
+      page,
+      per_page,
+      sort_by,
+      sort_order,
+      status,
+      product_id,
+      category_id,
+    },
+  });
+};
+
+export const updateReviewStatus = (reviewId, { status }) => {
+  return axios.patch(`/admin/reviews/${reviewId}`, { status });
+};
