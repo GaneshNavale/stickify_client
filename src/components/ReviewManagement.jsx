@@ -374,6 +374,7 @@ const ReviewManagement = () => {
         onRowsPerPageChange={handlePerPageChange}
       />
 
+      {/* Review Details Modal */}
       <Modal open={openModal} onClose={handleCloseModal}>
         <Box
           sx={{
