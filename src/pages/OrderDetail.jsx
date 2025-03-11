@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+
 import {
   Container,
   Card,
@@ -10,6 +11,7 @@ import {
   Avatar,
   Backdrop,
   CircularProgress,
+  Button,
 } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
@@ -18,7 +20,9 @@ import InfoIcon from '@mui/icons-material/Info';
 import { useParams, useLocation } from 'react-router-dom';
 import Notification from '../utils/notification';
 import Grid from '@mui/material/Grid2';
+
 import * as API from '../utils/api';
+import DesignDiscussion from './DesignDiscussion';
 
 const OrderDetail = () => {
   const location = useLocation();
@@ -33,6 +37,12 @@ const OrderDetail = () => {
     shipping_address: {},
     billing_address: {},
   });
+
+  // State for the modal
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedItemId, setSelectedItemId] = useState();
+  const [imageUrl, setImageUrl] = useState('');
+  const [finalArtwork, setFinalArtwork] = useState('');
 
   useEffect(() => {
     fetchOrder(orderId);
@@ -49,6 +59,18 @@ const OrderDetail = () => {
     } finally {
       setOpenBackdrop(false);
     }
+  };
+
+  const handleOpenModal = (itemId, imageUrl, final_artwork, status) => {
+    setSelectedItemId(itemId);
+    setImageUrl(imageUrl);
+    setFinalArtwork(final_artwork);
+    setOpenModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+    setSelectedItemId(null);
   };
 
   const renderStatusChip = (status) => {
@@ -173,9 +195,10 @@ const OrderDetail = () => {
                 Items Ordered
               </Typography>
               {order.items.map((item) => (
-                <Grid container spacing={1}>
-                  <Grid size={5}>
-                    <Box key={item.id} sx={{ display: 'flex', mb: 3 }}>
+                <Grid container spacing={1} key={item.id} alignItems="center">
+                  {/* Item Details (Image, Name, Quantity, Size, Price) */}
+                  <Grid item size={{ xs: 12, md: 9, sm: 8 }}>
+                    <Box sx={{ display: 'flex', mb: 3 }}>
                       <Avatar
                         src={item.image_url}
                         alt={item.name}
@@ -196,13 +219,40 @@ const OrderDetail = () => {
                       </Box>
                     </Box>
                   </Grid>
+
+                  {/* View Design Button */}
+                  {item.status === 'Design Approval Requested' && (
+                    <Grid
+                      item
+                      sx={{ display: 'flex', justifyContent: 'flex-end' }}
+                    >
+                      <Button
+                        variant="outlined"
+                        onClick={() =>
+                          handleOpenModal(
+                            item.id,
+                            item.image_url,
+                            item.final_artwork_url
+                          )
+                        }
+                        size="small"
+                        sx={{
+                          height: '32px',
+                          padding: '6px 12px',
+                          fontSize: '0.875rem',
+                          textTransform: 'none',
+                        }}
+                      >
+                        View Design →
+                      </Button>
+                    </Grid>
+                  )}
                 </Grid>
               ))}
             </CardContent>
           </Card>
         </Grid>
 
-        {/* Payment and Order Status Section */}
         <Grid item size={{ xs: 12, sm: 5, md: 4 }}>
           <Card sx={{ mb: 3 }}>
             <CardContent>
@@ -239,6 +289,16 @@ const OrderDetail = () => {
           </Card>
         </Grid>
       </Grid>
+
+      {selectedItemId && (
+        <DesignDiscussion
+          open={openModal}
+          handleClose={handleCloseModal}
+          itemId={selectedItemId}
+          imageUrl={imageUrl}
+          finalArtwork={finalArtwork}
+        />
+      )}
     </Container>
   );
 };

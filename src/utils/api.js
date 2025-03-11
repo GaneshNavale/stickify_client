@@ -9,7 +9,6 @@ export const googleLogin = (params) => {
 };
 
 export const signUpUser = (params) => {
-  console.log('You are in API.js');
   return axios.post('/auth', params);
 };
 
@@ -134,8 +133,20 @@ export const getProductReviews = (
     params: {
       page,
       per_page,
-      sort_by, // Optional: Sorting field (e.g., 'rating' or 'created_at')
-      sort_order, // Optional: Sorting order (e.g., 'asc' or 'desc')
+      sort_by,
+      sort_order,
     },
   });
+};
+
+export const getAllMessages = (id) => {
+  return axios.get(`/customer/order_items/${id}/messages`);
+};
+
+export const createMessage = (id, message) => {
+  return axios.post(`/customer/order_items/${id}/messages`, message);
+};
+
+export const aproveArtwork = (id, status) => {
+  return axios.put(`/customer/order_items/${id}`, { status: status });
 };

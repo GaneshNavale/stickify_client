@@ -12,10 +12,10 @@ const CategoryHeader = ({ category }) => {
     <Box
       py={3}
       sx={{
-        position: "relative",
-        width: "100%",
-        overflow: "hidden",
-        bgcolor: "primary.main",
+        position: 'relative',
+        width: '100%',
+        overflow: 'hidden',
+        bgcolor: 'primary.main',
       }}
     >
       <Container size="lg">
@@ -24,8 +24,8 @@ const CategoryHeader = ({ category }) => {
             <Typography
               variant="h3"
               sx={{
-                fontWeight: "bold",
-                color: "#fff",
+                fontWeight: 'bold',
+                color: '#fff',
               }}
             >
               {category.name}
@@ -33,7 +33,7 @@ const CategoryHeader = ({ category }) => {
 
             <Typography
               sx={{
-                color: "#fff",
+                color: '#fff',
               }}
             >
               {category.description}
@@ -42,13 +42,13 @@ const CategoryHeader = ({ category }) => {
           <Grid size={{ xs: 12, sm: 3, md: 4 }}>
             <Grid
               container
-              justifyContent={{ xs: "center", sm: "flex-end" }}
+              justifyContent={{ xs: 'center', sm: 'flex-end' }}
               spacing={{ xs: 2, sm: 0, md: 1, lg: 2 }}
             >
               <Grid>
                 <Rating
                   name="text-feedback"
-                  value={4.5}
+                  value={category.average_rating}
                   readOnly
                   precision={0.5}
                   emptyIcon={
@@ -57,8 +57,8 @@ const CategoryHeader = ({ category }) => {
                 />
               </Grid>
               <Grid>
-                <Typography sx={{ marginBottom: 0.5, color: "#fff" }}>
-                  567 Reviews
+                <Typography sx={{ marginBottom: 0.5, color: '#fff' }}>
+                  {category.reviews_count} Reviews
                 </Typography>
               </Grid>
             </Grid>

@@ -78,7 +78,6 @@ const ReviewManagement = () => {
     try {
       // Fetch all products
       const productsResponse = await API.fetchProducts({ filter: 'all' });
-      console.log('Products Response:', productsResponse);
       if (productsResponse.data && Array.isArray(productsResponse.data)) {
         setProducts(productsResponse.data);
       } else {
@@ -91,7 +90,6 @@ const ReviewManagement = () => {
 
       // Fetch all Categories
       const categoriesResponse = await API.fetchCategories({ filter: 'all' });
-      console.log('Categories Response:', categoriesResponse);
       if (categoriesResponse.data && Array.isArray(categoriesResponse.data)) {
         setCategories(categoriesResponse.data);
       } else {
@@ -167,10 +165,6 @@ const ReviewManagement = () => {
   const handleCloseModal = () => {
     setOpenModal(false);
     setSelectedReview(null);
-  };
-
-  const handleOpenConfirmationModal = () => {
-    setOpenConfirmationModal(true);
   };
 
   const handleCloseConfirmationModal = () => {
@@ -416,68 +410,20 @@ const ReviewManagement = () => {
                   variant="contained"
                   color="success"
                   sx={{ mr: 1 }}
-                  onClick={handleOpenConfirmationModal}
+                  onClick={() => handleConfirmStatusUpdate('approved')}
                 >
                   Approve
                 </Button>
                 <Button
                   variant="contained"
                   color="error"
-                  onClick={handleOpenConfirmationModal}
+                  onClick={() => handleConfirmStatusUpdate('rejected')}
                 >
                   Reject
                 </Button>
               </Box>
             </>
           )}
-        </Box>
-      </Modal>
-
-      {/* Confirmation Modal */}
-      <Modal
-        open={openConfirmationModal}
-        onClose={handleCloseConfirmationModal}
-      >
-        <Box
-          sx={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            width: 400,
-            bgcolor: 'background.paper',
-            boxShadow: 24,
-            p: 4,
-          }}
-        >
-          <IconButton
-            sx={{ position: 'absolute', top: 8, right: 8 }}
-            onClick={handleCloseConfirmationModal}
-          >
-            <CloseIcon />
-          </IconButton>
-          <Typography variant="h6" gutterBottom>
-            Are you sure?
-          </Typography>
-          <Typography variant="body1" sx={{ mb: 2 }}>
-            Do you want to update the status of this review?
-          </Typography>
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
-            <Button
-              variant="contained"
-              color="success"
-              onClick={() => handleConfirmStatusUpdate('approved')}
-            >
-              Approve
-            </Button>
-            <Button
-              variant="contained"
-              color="error"
-              onClick={() => handleConfirmStatusUpdate('rejected')}
-            >
-              Reject
-            </Button>
-          </Box>
         </Box>
       </Modal>
     </Container>
