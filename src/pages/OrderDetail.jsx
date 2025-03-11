@@ -20,8 +20,8 @@ import InfoIcon from '@mui/icons-material/Info';
 import { useParams, useLocation } from 'react-router-dom';
 import Notification from '../utils/notification';
 import Grid from '@mui/material/Grid2';
-import * as API from '../utils/api';
 
+import * as API from '../utils/api';
 import DesignDiscussion from './DesignDiscussion';
 
 const OrderDetail = () => {
@@ -61,7 +61,7 @@ const OrderDetail = () => {
     }
   };
 
-  const handleOpenModal = (itemId, imageUrl, final_artwork) => {
+  const handleOpenModal = (itemId, imageUrl, final_artwork, status) => {
     setSelectedItemId(itemId);
     setImageUrl(imageUrl);
     setFinalArtwork(final_artwork);
@@ -195,8 +195,9 @@ const OrderDetail = () => {
                 Items Ordered
               </Typography>
               {order.items.map((item) => (
-                <Grid container spacing={1} key={item.id}>
-                  <Grid size={5}>
+                <Grid container spacing={1} key={item.id} alignItems="center">
+                  {/* Item Details (Image, Name, Quantity, Size, Price) */}
+                  <Grid item size={{ xs: 12, md: 9, sm: 8 }}>
                     <Box sx={{ display: 'flex', mb: 3 }}>
                       <Avatar
                         src={item.image_url}
@@ -218,25 +219,34 @@ const OrderDetail = () => {
                       </Box>
                     </Box>
                   </Grid>
-                  <Button
-                    variant="outlined"
-                    onClick={() =>
-                      handleOpenModal(
-                        item.id,
-                        item.image_url,
-                        item.final_artwork_url
-                      )
-                    }
-                    size="small"
-                    sx={{
-                      height: '32px',
-                      padding: '6px 12px',
-                      fontSize: '0.875rem',
-                      textTransform: 'none',
-                    }}
-                  >
-                    Design Discussion →
-                  </Button>
+
+                  {/* View Design Button */}
+                  {item.status === 'Design Approval Requested' && (
+                    <Grid
+                      item
+                      sx={{ display: 'flex', justifyContent: 'flex-end' }}
+                    >
+                      <Button
+                        variant="outlined"
+                        onClick={() =>
+                          handleOpenModal(
+                            item.id,
+                            item.image_url,
+                            item.final_artwork_url
+                          )
+                        }
+                        size="small"
+                        sx={{
+                          height: '32px',
+                          padding: '6px 12px',
+                          fontSize: '0.875rem',
+                          textTransform: 'none',
+                        }}
+                      >
+                        View Design →
+                      </Button>
+                    </Grid>
+                  )}
                 </Grid>
               ))}
             </CardContent>

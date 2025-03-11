@@ -1,19 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
 
-import {
-  CardContent,
-  IconButton,
-  Typography,
-  Box,
-  TextField,
-  Modal,
-  Divider,
-  Button,
-} from '@mui/material';
-import SendIcon from '@mui/icons-material/Send';
+import { Modal, IconButton, Grid2 as Grid } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
+import InitialView from './Design/InitialView';
+import ChatView from './Design/ChatView';
 import * as API from '../utils/api';
 
 const DesignDiscussion = ({
@@ -26,14 +18,6 @@ const DesignDiscussion = ({
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState([]);
   const [showChat, setShowChat] = useState(false);
-
-  const chatEndRef = useRef(null);
-
-  useEffect(() => {
-    if (chatEndRef.current) {
-      chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, [messages, showChat]);
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -75,8 +59,13 @@ const DesignDiscussion = ({
     }
   };
 
-  const handleApprove = () => {
-    handleClose();
+  const handleApprove = async () => {
+    try {
+      await API.aproveArtwork(itemId, 'design_approved');
+      handleClose();
+    } catch (error) {
+      console.error('Error approving artwork:', error);
+    }
   };
 
   const handleSuggestChanges = () => {
@@ -88,223 +77,67 @@ const DesignDiscussion = ({
   };
 
   return (
-    <Modal open={open} onClose={handleClose}>
-      <Box
+    <Modal
+      open={open}
+      onClose={handleClose}
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <Grid
+        container
         sx={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          width: '80%',
-          maxWidth: '50%',
-          height: '80%',
           bgcolor: 'background.paper',
           boxShadow: 24,
           p: 2,
           borderRadius: 2,
-          display: 'flex',
-          flexDirection: 'column',
+          maxWidth: !showChat ? '550px' : '800px',
+          margin: 'auto',
+          height: 'auto',
         }}
       >
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            width: '100%',
-            mb: 2,
-          }}
+        <Grid
+          container
+          justifyContent="space-between"
+          alignItems="center"
+          sx={{ width: '100%' }}
         >
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 1,
-            }}
-          >
-            {showChat &&
+          <Grid item>
+            {showChat && (
               <IconButton onClick={handleBack}>
                 <ArrowBackIcon />
               </IconButton>
-            }
-          </Box>
-          <IconButton onClick={handleClose}>
-            <CloseIcon />
-          </IconButton>
-        </Box>
-        <Divider sx={{ mb: 2 }} />
-        {!showChat ? (
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 2,
-              alignItems: 'center',
-            }}
-          >
-            <Box
-              sx={{
-                display: 'flex',
-                gap: 2,
-                width: '100%',
-                justifyContent: 'space-around',
-              }}
-            >
-              <Box>
-                <Typography variant="h6">User Uploaded Image</Typography>
-                {imageUrl && (
-                  <img
-                    src={imageUrl}
-                    alt="User Uploaded"
-                    style={{ width: '200px', height: '200px', objectFit: 'cover' }}
-                  />
-                )}
-              </Box>
-              <Box>
-                <Typography variant="h6">Final Artwork</Typography>
-                {finalArtwork && (
-                  <img
-                    src={finalArtwork}
-                    alt="Final Artwork"
-                    style={{ width: '200px', height: '200px', objectFit: 'cover' }}
-                  />
-                )}
-              </Box>
-            </Box>
-            <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
-              {/* API calling on button click */}
-              <Button variant="contained" color="primary" onClick={handleApprove}>
-                Approve
-              </Button>
-              <Button
-                variant="contained"
-                color="secondary"
-                onClick={handleSuggestChanges}
-              >
-                Suggest Changes
-              </Button>
-            </Box>
-          </Box>
-        ) : (
-          <Box sx={{ display: 'flex', gap: 2, height: '100%' }}>
-            <Box sx={{ width: '50%' }}>
-              <Box
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 1,
-                  mb: 2,
-                }}
-              >
-              </Box>
-              <Typography variant="h6" align="center">User Uploaded Image</Typography>
-              <Box
-                sx={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  mt: 1,
-                }}
-              >
-                {imageUrl && (
-                  <img
-                    src={imageUrl}
-                    alt="User Uploaded"
-                    style={{ width: '175px', height: '175px', objectFit: 'cover' }}
-                  />
-                )}
-              </Box>
-              <Typography variant="h6" align="center" sx={{ mt: 2 }}>Final Artwork</Typography>
-              <Box
-                sx={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  mt: 1,
-                }}
-              >
-                {finalArtwork && (
-                  <img
-                    src={finalArtwork}
-                    alt="Final Artwork"
-                    style={{ width: '175px', height: '175px', objectFit: 'cover' }}
-                  />
-                )}
-              </Box>
-            </Box>
-            <Box sx={{ width: '60%', maxHeight: '88%', display: 'flex', flexDirection: 'column' }}>
-              <CardContent
-                sx={{
-                  flexGrow: 1,
-                  overflowY: 'auto',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  
-                  gap: 1,
-                }}
-              >
-                {messages.map((msg) => (
-                  <Box
-                    key={msg.id}
-                    sx={{
-                      display: 'flex',
-                      justifyContent:
-                        msg.sender_type === 'Admin' ? 'flex-start' : 'flex-end',
-                    }}
-                  >
-                    <Typography
-                      sx={{
-                        p: 1,
-                        borderRadius: 2,
-                        maxWidth: '70%',
-                        color: 'white',
-                        bgcolor:
-                          msg.sender_type === 'Admin'
-                            ? 'secondary.main'
-                            : 'primary.main',
-                      }}
-                    >
-                      <Typography
-                        variant="caption"
-                        sx={{
-                          display: 'block',
-                          fontWeight: 'bold',
-                          fontSize: '0.75rem',
-                          color: 'lightgray',
-                          mb: 0.3,
-                        }}
-                      >
-                        {msg.sender_name}
-                      </Typography>
-                      {msg.content}
-                    </Typography>
-                  </Box>
-                ))}
-                <div ref={chatEndRef} />
-              </CardContent>
-              <Box
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  p: 1,
-                  borderTop: '1px solid #ddd',
-                }}
-              >
-                <TextField
-                  fullWidth
-                  variant="outlined"
-                  size="small"
-                  placeholder="Type a message..."
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-                />
-                <IconButton color="primary" onClick={handleSend}>
-                  <SendIcon />
-                </IconButton>
-              </Box>
-            </Box>
-          </Box>
-        )}
-      </Box>
+            )}
+          </Grid>
+          <Grid item>
+            <IconButton onClick={handleClose}>
+              <CloseIcon />
+            </IconButton>
+          </Grid>
+        </Grid>
+
+        <Grid item xs={12}>
+          {!showChat ? (
+            <InitialView
+              imageUrl={imageUrl}
+              finalArtwork={finalArtwork}
+              handleApprove={handleApprove}
+              handleSuggestChanges={handleSuggestChanges}
+            />
+          ) : (
+            <ChatView
+              messages={messages}
+              input={input}
+              setInput={setInput}
+              handleSend={handleSend}
+              imageUrl={imageUrl}
+              finalArtwork={finalArtwork}
+            />
+          )}
+        </Grid>
+      </Grid>
     </Modal>
   );
 };

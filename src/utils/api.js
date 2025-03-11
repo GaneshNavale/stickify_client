@@ -146,3 +146,7 @@ export const getAllMessages = (id) => {
 export const createMessage = (id, message) => {
   return axios.post(`/customer/order_items/${id}/messages`, message);
 };
+
+export const aproveArtwork = (id, status) => {
+  return axios.put(`/customer/order_items/${id}`, { status: status });
+};
