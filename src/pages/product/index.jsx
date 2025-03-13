@@ -1,6 +1,8 @@
 import { useEffect, useState, useCallback } from "react";
 import { useParams } from "react-router-dom";
-import * as API from "../../utils/api";
+import { useAuth } from '../../hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
+
 import {
   Typography,
   Container,
@@ -8,13 +10,16 @@ import {
   Button,
   Backdrop,
   CircularProgress,
-} from "@mui/material";
-import DescriptionSection from "../DescriptionSection";
-import ProductBannerSection from "./ProductBannerSection";
-import ImageUploader from "../../utils/ImageUploader";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../hooks/useAuth";
+  Box,
+  Breadcrumbs,
+  Link,
+} from '@mui/material';
+
+import DescriptionSection from '../DescriptionSection';
+import ProductBannerSection from './ProductBannerSection';
+import ImageUploader from '../../utils/ImageUploader';
 import ProductReviews from './ProductReviews';
+import * as API from '../../utils/api';
 
 const Product = (props) => {
   const [product, setProduct] = useState({});
@@ -93,6 +98,11 @@ const Product = (props) => {
     }
   };
 
+  const handleClick = (event, routeTo) => {
+    event.preventDefault();
+    navigate(routeTo); // Use navigate to change the route
+  };
+
   return (
     <div>
       {(!productConfig.height ||
@@ -120,6 +130,31 @@ const Product = (props) => {
             textAlign="center"
             alignItems="center"
           >
+            <Container>
+              <Box role="presentation" sx={{ mb: 2 }} px={3}>
+                <Breadcrumbs aria-label="breadcrumb">
+                  <Link
+                    underline="hover"
+                    color="inherit"
+                    href="/"
+                    onClick={(e) => handleClick(e, '/')}
+                  >
+                    Home
+                  </Link>
+                  <Link
+                    underline="hover"
+                    color="inherit"
+                    href={`/categories/${product.category_slug}`}
+                    onClick={(e) =>
+                      handleClick(e, `/categories/${product.category_slug}`)
+                    }
+                  >
+                    {product.category_name}
+                  </Link>
+                  <Typography color="text.primary">{product.name}</Typography>
+                </Breadcrumbs>
+              </Box>
+            </Container>
             <Grid py={2}>
               <Typography variant="h3" sx={{ fontWeight: 'bold' }}>
                 Upload your artwork

@@ -71,8 +71,8 @@ const Cart = () => {
               <Grid item md={6} lg={4} key={item.id}>
                 <Card>
                   <CardContent>
-                    <Grid container spacing={2}>
-                      <Grid item xs={8}>
+                    <Grid container justifyContent="space-between" spacing={2}>
+                      <Grid item xs={4}>
                         <Typography variant="h6">{item.name}</Typography>
                         <Typography variant="body2" color="textSecondary">
                           Price: ₹{item.subtotal}
@@ -83,7 +83,7 @@ const Cart = () => {
                       </Grid>
                       <Grid
                         item
-                        xs={4}
+                        xs={8}
                         container
                         justifyContent="flex-end"
                         alignItems="center"
@@ -127,7 +127,7 @@ const Cart = () => {
                     <Typography variant="body1">₹{cart.subtotal}</Typography>
                   </Grid>
                 </Grid>
-                <Divider sx={{ margin: "10px 0" }} />
+                <Divider sx={{ margin: '10px 0' }} />
                 <Grid container justifyContent="space-between">
                   <Grid item xs={6}>
                     <Typography variant="body1">Discount</Typography>
@@ -136,7 +136,7 @@ const Cart = () => {
                     <Typography variant="body1">₹{cart.discount}</Typography>
                   </Grid>
                 </Grid>
-                <Divider sx={{ margin: "10px 0" }} />
+                <Divider sx={{ margin: '10px 0' }} />
                 <Grid container justifyContent="space-between">
                   <Grid item xs={6}>
                     <Typography variant="h6">Total</Typography>
@@ -158,7 +158,7 @@ const Cart = () => {
             </Card>
           </Grid>
           <Backdrop
-            sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}
+            sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
             open={openBackdrop}
           >
             <CircularProgress color="inherit" />
