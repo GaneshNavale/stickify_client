@@ -1,13 +1,24 @@
+import { useNavigate } from 'react-router-dom';
+
 import {
   Box,
   Container,
   Grid2 as Grid,
   Rating,
   Typography,
-} from "@mui/material";
-import StarIcon from "@mui/icons-material/Star";
+  Breadcrumbs,
+  Link,
+} from '@mui/material';
+import StarIcon from '@mui/icons-material/Star';
 
 const CategoryHeader = ({ category }) => {
+  const navigate = useNavigate();
+
+  const handleClick = (event, routeTo) => {
+    event.preventDefault();
+    navigate(routeTo);
+  };
+
   return (
     <Box
       py={3}
@@ -18,9 +29,30 @@ const CategoryHeader = ({ category }) => {
         bgcolor: 'primary.main',
       }}
     >
+      <Container>
+        <Box role="presentation" sx={{ mb: 2 }} px={3}>
+          <Breadcrumbs aria-label="breadcrumb">
+            <Link
+              underline="hover"
+              href="/"
+              onClick={(e) => handleClick(e, '/')}
+              sx={{ color: 'rgb(143, 217, 251) !important' }}
+            >
+              Home
+            </Link>
+            <Typography
+              color="text.primary"
+              sx={{ color: `rgb(255, 255, 255)` }}
+            >
+              {category.name}
+            </Typography>
+          </Breadcrumbs>
+        </Box>
+      </Container>
+
       <Container size="lg">
         <Grid container spacing={2} alignItems="center" px={3}>
-          <Grid size={{ xs: 12, sm: 9, md: 8 }}>
+          <Grid item size={{ xs: 12, sm: 9, md: 8 }}>
             <Typography
               variant="h3"
               sx={{
@@ -30,7 +62,6 @@ const CategoryHeader = ({ category }) => {
             >
               {category.name}
             </Typography>
-
             <Typography
               sx={{
                 color: '#fff',
@@ -39,13 +70,13 @@ const CategoryHeader = ({ category }) => {
               {category.description}
             </Typography>
           </Grid>
-          <Grid size={{ xs: 12, sm: 3, md: 4 }}>
+          <Grid item size={{ xs: 12, sm: 3, md: 4 }}>
             <Grid
               container
               justifyContent={{ xs: 'center', sm: 'flex-end' }}
               spacing={{ xs: 2, sm: 0, md: 1, lg: 2 }}
             >
-              <Grid>
+              <Grid item>
                 <Rating
                   name="text-feedback"
                   value={category.average_rating}
@@ -56,7 +87,7 @@ const CategoryHeader = ({ category }) => {
                   }
                 />
               </Grid>
-              <Grid>
+              <Grid item>
                 <Typography sx={{ marginBottom: 0.5, color: '#fff' }}>
                   {category.reviews_count} Reviews
                 </Typography>

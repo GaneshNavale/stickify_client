@@ -1,3 +1,5 @@
+import { useEffect, useMemo, useState } from 'react';
+
 import {
   Box,
   Button,
@@ -9,18 +11,18 @@ import {
   RadioGroup,
   TextField,
   Typography,
-} from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
-import ClearIcon from "@mui/icons-material/Clear";
+} from '@mui/material';
+import ClearIcon from '@mui/icons-material/Clear';
+import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
 
 const ProductPrice = ({ product, setProductConfig }) => {
-  const [customSize, setCustomSize] = useState({ width: "", height: "" });
+  const [customSize, setCustomSize] = useState({ width: '', height: '' });
   const [useCustomSize, setUseCustomSize] = useState(false);
-  const [customQuantity, setCustomQuantity] = useState("");
+  const [customQuantity, setCustomQuantity] = useState('');
   const [useCustomQuantity, setUseCustomQuantity] = useState(false);
   const [pricingWithDiscounts, setPricingWithDiscounts] = useState([]);
   const [customQuantityDiscount, setCustomQuantityDiscount] = useState({});
-  const [size, setSize] = useState({ width: "", height: "" });
+  const [size, setSize] = useState({ width: '', height: '' });
 
   const sizeOptions = useMemo(() => {
     return product.size_option.default_width_options.map((width, index) => ({
@@ -99,9 +101,9 @@ const ProductPrice = ({ product, setProductConfig }) => {
 
   const handleSizeChange = (event) => {
     setSelectedSize(event.target.value);
-    if (event.target.value === "customSize") {
+    if (event.target.value === 'customSize') {
       setUseCustomSize(true);
-      setCustomSize({ height: "", width: "" });
+      setCustomSize({ height: '', width: '' });
     } else {
       setUseCustomSize(false);
       const selectedSizeObj = sizeOptions.find(
@@ -118,7 +120,7 @@ const ProductPrice = ({ product, setProductConfig }) => {
 
   const handleQuantityChange = (event) => {
     setSelectedQuantity(event.target.value);
-    setUseCustomQuantity(event.target.value === "customQuantity");
+    setUseCustomQuantity(event.target.value === 'customQuantity');
   };
 
   const handleCustomWidthChange = (event) => {
@@ -138,9 +140,9 @@ const ProductPrice = ({ product, setProductConfig }) => {
   const handleCustomQuantityToggle = () => {
     setUseCustomQuantity(!useCustomQuantity);
     if (useCustomQuantity) {
-      setSelectedQuantity(""); // Clear selected quantity when toggling to custom quantity
+      setSelectedQuantity(''); // Clear selected quantity when toggling to custom quantity
     } else {
-      setCustomQuantity("");
+      setCustomQuantity('');
     }
   };
 
@@ -166,7 +168,7 @@ const ProductPrice = ({ product, setProductConfig }) => {
         <FormControl component="fieldset" fullWidth>
           <FormLabel
             component="div"
-            sx={{ fontWeight: "bold", color: "text.primary" }}
+            sx={{ fontWeight: 'bold', color: 'text.primary' }}
           >
             Select Size
           </FormLabel>
@@ -183,11 +185,11 @@ const ProductPrice = ({ product, setProductConfig }) => {
                 control={
                   <Radio
                     size="small"
-                    sx={{ paddingBottom: "6px", paddingTop: "6px" }}
+                    sx={{ paddingBottom: '6px', paddingTop: '6px' }}
                   />
                 }
                 label={
-                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     {size.width}″
                     <ClearIcon sx={{ marginX: 0.2, fontSize: 15 }} />
                     {size.height}″
@@ -204,7 +206,7 @@ const ProductPrice = ({ product, setProductConfig }) => {
               label="Custom Size"
             />
             {useCustomSize && (
-              <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <TextField
                   label="Width"
                   variant="outlined"
@@ -254,46 +256,49 @@ const ProductPrice = ({ product, setProductConfig }) => {
       <Grid>
         <FormLabel
           component="div"
-          sx={{ fontWeight: "bold", color: "text.primary" }}
+          sx={{ fontWeight: 'bold', color: 'text.primary' }}
         >
           Select Quantity
         </FormLabel>
         <RadioGroup
           aria-label="quantity"
           name="quantity"
-          value={useCustomQuantity ? "" : selectedQuantity} // Set value based on custom quantity selection
+          value={useCustomQuantity ? '' : selectedQuantity} // Set value based on custom quantity selection
           onChange={handleQuantityChange}
         >
           <Grid container>
             {pricingWithDiscounts.map(
               ({ quantity, discount, finalPrice }, index) => (
                 <Grid size={12} container key={index}>
-                  <Grid size={5}>
+                  <Grid size={4}>
                     <FormControlLabel
                       sx={{
-                        width: "100%",
-                        display: "flex",
-                        alignItems: "center",
+                        width: '100%',
+                        display: 'flex',
+                        alignItems: 'center',
                       }}
                       value={quantity}
                       control={
                         <Radio
                           size="small"
-                          sx={{ paddingBottom: "6px", paddingTop: "6px" }}
+                          sx={{ paddingBottom: '6px', paddingTop: '6px' }}
                         />
                       }
                       label={quantity}
                     />
                   </Grid>
                   <Grid
-                    size={3}
-                    sx={{ display: "flex", justifyContent: "flex-start" }}
+                    size={4}
+                    sx={{ display: 'flex', justifyContent: 'flex-start' }}
                   >
-                    {finalPrice}
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      <CurrencyRupeeIcon fontSize="small" />
+                      <Typography variant="body1">{finalPrice}</Typography>
+                    </Box>
                   </Grid>
                   <Grid
                     size={4}
-                    sx={{ display: "flex", justifyContent: "flex-start" }}
+                    sx={{ display: 'flex', justifyContent: 'flex-start' }}
                   >
                     {discount && `Save ${discount}%`}
                   </Grid>
@@ -323,15 +328,15 @@ const ProductPrice = ({ product, setProductConfig }) => {
                         },
                       }}
                       sx={{
-                        "width": 80,
-                        "& .MuiInputBase-input": {
-                          padding: "2px", // Remove padding here
+                        'width': 80,
+                        '& .MuiInputBase-input': {
+                          padding: '2px', // Remove padding here
                         },
                       }}
                       onChange={(e) => setCustomQuantity(e.target.value)}
                     />
                   ) : (
-                    "Custom Quantity"
+                    'Custom Quantity'
                   )
                 }
               />
@@ -340,13 +345,13 @@ const ProductPrice = ({ product, setProductConfig }) => {
               <>
                 <Grid
                   size={3}
-                  sx={{ display: "flex", justifyContent: "flex-start" }}
+                  sx={{ display: 'flex', justifyContent: 'flex-start' }}
                 >
                   {customQuantityDiscount.finalPrice}
                 </Grid>
                 <Grid
                   size={4}
-                  sx={{ display: "flex", justifyContent: "flex-start" }}
+                  sx={{ display: 'flex', justifyContent: 'flex-start' }}
                 >
                   {customQuantityDiscount.discount &&
                     `Save ${customQuantityDiscount.discount}%`}
