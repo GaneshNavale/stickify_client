@@ -114,20 +114,26 @@ const ProductReviews = ({ productId }) => {
             alignItems="center"
           >
             <Box sx={{ display: 'flex', gap: 1 }}>
-              <FormControl size="small" sx={{ minWidth: 120 }}>
-                <InputLabel>Per Page</InputLabel>
-                <Select
-                  value={perPage}
-                  onChange={handlePerPageChange}
-                  label="Per Page"
-                >
-                  <MenuItem value={10}>10</MenuItem>
-                  <MenuItem value={25}>25</MenuItem>
-                  <MenuItem value={50}>50</MenuItem>
-                  <MenuItem value={100}>100</MenuItem>
-                </Select>
-              </FormControl>
+              {totalPages > 1 && (
+                <FormControl size="small" sx={{ minWidth: 120 }}>
+                  <InputLabel>Per Page</InputLabel>
+                  <Select
+                    value={perPage}
+                    onChange={handlePerPageChange}
+                    label="Per Page"
+                  >
+                    <MenuItem value={10}>10</MenuItem>
+                    <MenuItem value={25}>25</MenuItem>
+                    <MenuItem value={50}>50</MenuItem>
+                    <MenuItem value={100}>100</MenuItem>
+                  </Select>
+                </FormControl>
+              )}
 
+              <Typography variant="body1" display="flex" alignItems="center">
+                Sort By{' '}
+                <ArrowForwardIcon fontSize="small" style={{ marginLeft: 4 }} />
+              </Typography>
               <Button
                 variant={sortBy === 'rating' ? 'contained' : 'outlined'}
                 onClick={() => handleSort('rating')}
@@ -210,17 +216,19 @@ const ProductReviews = ({ productId }) => {
           spacing={2}
           sx={{ mt: 3, display: 'flex', justifyContent: 'center' }}
         >
-          <Pagination
-            count={totalPages}
-            page={page + 1}
-            onChange={handlePageChange}
-            renderItem={(item) => (
-              <PaginationItem
-                slots={{ previous: ArrowBackIcon, next: ArrowForwardIcon }}
-                {...item}
-              />
-            )}
-          />
+          {totalPages > 1 && (
+            <Pagination
+              count={totalPages}
+              page={page + 1}
+              onChange={handlePageChange}
+              renderItem={(item) => (
+                <PaginationItem
+                  slots={{ previous: ArrowBackIcon, next: ArrowForwardIcon }}
+                  {...item}
+                />
+              )}
+            />
+          )}
         </Stack>
       </Box>
     </Container>
