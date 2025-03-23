@@ -79,9 +79,16 @@ const Checkout = () => {
       if (order) {
         processPayment();
       } else {
+        let billingAddressId;
+        if (sameAsShipping) {
+          billingAddressId = selectedShippingAddress?.id;
+        } else {
+          billingAddressId = selectedBillingAddress?.id;
+        }
+
         API.createOrder({
           shipping_address_id: selectedShippingAddress?.id,
-          billing_address_id: selectedBillingAddress?.id,
+          billing_address_id: billingAddressId,
         })
           .then((response) => response.data)
           .then((data) => {
