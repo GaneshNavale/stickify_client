@@ -11,7 +11,6 @@ import {
   TextField,
   Typography,
   Stack,
-  Divider,
 } from '@mui/material';
 import ClearIcon from '@mui/icons-material/Clear';
 import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
@@ -91,7 +90,7 @@ const ProductPrice = ({ product, setProductConfig }) => {
     if (customQuantity < min_quantity || customQuantity > max_quantity) {
       setErrors((prev) => ({
         ...prev,
-        quantity: `Quantity Range: ${min_quantity} - ${max_quantity}.`,
+        quantity: `Quantity must be between ${min_quantity} and ${max_quantity}.`,
       }));
       return false;
     }
@@ -154,7 +153,6 @@ const ProductPrice = ({ product, setProductConfig }) => {
       product.size_option;
     const { width, height } = customSize;
 
-    // Check if custom size values are within the allowed range
     const isSizeValid =
       !useCustomSize ||
       (width >= min_width &&
@@ -162,9 +160,11 @@ const ProductPrice = ({ product, setProductConfig }) => {
         height >= min_height &&
         height <= max_height);
 
-    // Only calculate discounts if the size is valid
     if (isSizeValid) {
       setPricingWithDiscounts(quantityOptions.map(calculateDiscounts));
+      setCustomQuantityDiscount((prev) => prev);
+    } else {
+      setPricingWithDiscounts((prev) => prev);
     }
   }, [size, customSize, product.price, quantityOptions, useCustomSize]);
 
@@ -188,9 +188,15 @@ const ProductPrice = ({ product, setProductConfig }) => {
   };
 
   const handleQuantityChange = (event) => {
-    setSelectedQuantity(event.target.value);
-    setUseCustomQuantity(event.target.value === 'customQuantity');
-    setErrors({ size: '', quantity: '' });
+    const selectedValue = event.target.value;
+
+    if (selectedValue !== 'customQuantity') {
+      setCustomQuantity('');
+      setCustomQuantityDiscount({});
+      setErrors((prev) => ({ ...prev, quantity: '' }));
+    }
+    setSelectedQuantity(selectedValue);
+    setUseCustomQuantity(selectedValue === 'customQuantity');
   };
 
   const handleCustomWidthChange = (event) => {
@@ -210,23 +216,47 @@ const ProductPrice = ({ product, setProductConfig }) => {
   const handleCustomQuantityToggle = () => {
     setUseCustomQuantity(!useCustomQuantity);
     if (useCustomQuantity) {
-      setSelectedQuantity(''); // Clear selected quantity when toggling to custom quantity
+      setSelectedQuantity('');
     } else {
       setCustomQuantity('');
     }
   };
 
+  const handleCustomQuantityChange = (event) => {
+    let value = event.target.value;
+    setCustomQuantity(value);
+
+    const { min_quantity, max_quantity } = product.quantity_option;
+    if (value < min_quantity || value > max_quantity) {
+      setErrors((prev) => ({
+        ...prev,
+        quantity: `Quantity must be between ${min_quantity} and ${max_quantity}.`,
+      }));
+    } else {
+      setErrors((prev) => ({ ...prev, quantity: '' }));
+    }
+  };
+
   useEffect(() => {
     const { min_quantity, max_quantity } = product.quantity_option;
+    const { min_width, max_width, min_height, max_height } =
+      product.size_option;
+    const { width, height } = customSize;
+
     const isQuantityValid =
       customQuantity >= min_quantity && customQuantity <= max_quantity;
 
-    // Only calculate discount for custom quantity if it is valid
-    if (
-      isQuantityValid &&
-      (!useCustomSize || (customSize.height && customSize.width))
-    ) {
+    const isSizeValid =
+      !useCustomSize ||
+      (width >= min_width &&
+        width <= max_width &&
+        height >= min_height &&
+        height <= max_height);
+
+    if (isQuantityValid && isSizeValid) {
       setCustomQuantityDiscount(calculateDiscounts(customQuantity));
+    } else {
+      setCustomQuantityDiscount((prev) => prev);
     }
   }, [customQuantity, customSize, useCustomSize]);
 
@@ -243,6 +273,7 @@ const ProductPrice = ({ product, setProductConfig }) => {
 
   return (
     <Grid container spacing={1} p={2} direction="column">
+      {/* Size */}
       <Grid>
         <FormControl component="fieldset" fullWidth>
           <FormLabel
@@ -347,6 +378,7 @@ const ProductPrice = ({ product, setProductConfig }) => {
           </RadioGroup>
         </FormControl>
       </Grid>
+      {/* Quantity */}
       <Grid>
         <FormLabel
           component="div"
@@ -435,7 +467,7 @@ const ProductPrice = ({ product, setProductConfig }) => {
                             padding: '2px',
                           },
                         }}
-                        onChange={(e) => setCustomQuantity(e.target.value)}
+                        onChange={handleCustomQuantityChange}
                         error={!!errors.quantity}
                       />
                     </Box>
@@ -447,10 +479,14 @@ const ProductPrice = ({ product, setProductConfig }) => {
             </Box>
             {/* Price for Custom Quantity */}
             <Box sx={{ width: '30%', display: 'flex', alignItems: 'center' }}>
-              <CurrencyRupeeIcon fontSize="small" />
-              <Typography variant="body1" sx={{ marginLeft: 1 }}>
-                {customQuantityDiscount.finalPrice}
-              </Typography>
+              {customQuantityDiscount.finalPrice && (
+                <>
+                  <CurrencyRupeeIcon fontSize="small" />
+                  <Typography variant="body1" sx={{ marginLeft: 1 }}>
+                    {customQuantityDiscount.finalPrice}
+                  </Typography>
+                </>
+              )}
             </Box>
             {/* Discount for Custom Quantity */}
             <Box sx={{ width: '30%' }}>
