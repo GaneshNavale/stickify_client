@@ -78,15 +78,15 @@ const Cart = () => {
                   <CardContent>
                     <Grid container justifyContent="space-between" spacing={2}>
                       <Grid item size={{ xs: 12, sm: 12, md: 4, lg: 6 }}>
-                        {item.name.length > 50 ? (
-                          <Tooltip title={item.name} arrow>
-                            <Typography variant="h6">
-                              {trimText(item.name, 50)}
-                            </Typography>
-                          </Tooltip>
-                        ) : (
-                          <Typography variant="h6">{item.name}</Typography>
-                        )}
+                        <Tooltip key={item.id} title={item.name} arrow>
+                          <Typography
+                            variant="h6"
+                            noWrap
+                            sx={{ maxWidth: '200px' }}
+                          >
+                            {item.name}
+                          </Typography>
+                        </Tooltip>
                         <Typography variant="body2" color="textSecondary">
                           Price: ₹{item.subtotal}
                         </Typography>
