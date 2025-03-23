@@ -28,4 +28,16 @@ instance.interceptors.request.use(
   }
 );
 
+instance.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    console.log('Error in axios :', error.status);
+    if (error.status == 401) {
+      localStorage.removeItem('stickify_admin_user');
+      window.location.href = '/admin';
+    }
+    return Promise.reject(error);
+  }
+);
+
 export default instance;
