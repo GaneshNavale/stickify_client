@@ -399,33 +399,39 @@ const ProductPrice = ({ product, setProductConfig }) => {
                 key={index}
                 direction="row"
                 spacing={2}
-                sx={{ alignItems: 'center', marginBottom: 1 }}
+                sx={{
+                  alignItems: 'center',
+                  marginBottom:
+                    index === pricingWithDiscounts.length - 1 ? 0 : 2,
+                }}
               >
                 {/* Quantity Radio Button */}
                 <Box sx={{ width: '30%' }}>
                   <FormControlLabel
                     value={quantity}
-                    control={
-                      <Radio
-                        size="small"
-                        sx={{ paddingBottom: '6px', paddingTop: '6px' }}
-                      />
-                    }
+                    control={<Radio size="small" />}
                     label={quantity}
+                    sx={{
+                      '& .MuiFormControlLabel-label': {
+                        marginLeft: 1,
+                      },
+                    }}
                   />
                 </Box>
+
                 {/* Price */}
                 <Box
                   sx={{ width: '30%', display: 'flex', alignItems: 'center' }}
                 >
-                  <CurrencyRupeeIcon fontSize="small" />
-                  <Typography variant="body1" sx={{ marginLeft: 1 }}>
-                    {finalPrice}
-                  </Typography>
+                  <CurrencyRupeeIcon fontSize="2px" />
+                  <Typography variant="body1">{finalPrice}</Typography>
                 </Box>
+
                 {/* Discount */}
                 <Box sx={{ width: '30%' }}>
-                  {discount && `Save ${discount}%`}
+                  {discount && (
+                    <Typography variant="body1">Save {discount}%</Typography>
+                  )}
                 </Box>
               </Stack>
             )
