@@ -78,7 +78,12 @@ const Cart = () => {
                   <CardContent>
                     <Grid container justifyContent="space-between" spacing={2}>
                       <Grid item size={{ xs: 12, sm: 12, md: 4, lg: 6 }}>
-                        <Tooltip key={item.id} title={item.name} arrow>
+                        <Tooltip
+                          key={item.id}
+                          title={item.name}
+                          arrow
+                          placement="bottom-start"
+                        >
                           <Typography
                             variant="h6"
                             noWrap
