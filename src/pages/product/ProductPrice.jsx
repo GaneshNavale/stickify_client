@@ -398,15 +398,15 @@ const ProductPrice = ({ product, setProductConfig }) => {
               <Stack
                 key={index}
                 direction="row"
-                spacing={2}
+                spacing={0} // Set spacing to 0 between items
                 sx={{
                   alignItems: 'center',
-                  marginBottom:
-                    index === pricingWithDiscounts.length - 1 ? 0 : 2,
+                  py: 0, // Remove vertical padding
+                  my: 0, // Remove vertical margin
                 }}
               >
                 {/* Quantity Radio Button */}
-                <Box sx={{ width: '30%' }}>
+                <Box sx={{ width: '30%', py: 0, my: 0 }}>
                   <FormControlLabel
                     value={quantity}
                     control={<Radio size="small" />}
@@ -415,20 +415,28 @@ const ProductPrice = ({ product, setProductConfig }) => {
                       '& .MuiFormControlLabel-label': {
                         marginLeft: 1,
                       },
+                      'py': 0,
+                      'my': 0,
                     }}
                   />
                 </Box>
 
                 {/* Price */}
                 <Box
-                  sx={{ width: '30%', display: 'flex', alignItems: 'center' }}
+                  sx={{
+                    width: '30%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    py: 0,
+                    my: 0,
+                  }}
                 >
                   <CurrencyRupeeIcon fontSize="2px" />
                   <Typography variant="body1">{finalPrice}</Typography>
                 </Box>
 
                 {/* Discount */}
-                <Box sx={{ width: '30%' }}>
+                <Box sx={{ width: '30%', py: 0, my: 0 }}>
                   {discount && (
                     <Typography variant="body1">Save {discount}%</Typography>
                   )}
