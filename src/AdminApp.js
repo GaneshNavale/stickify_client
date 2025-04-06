@@ -9,7 +9,6 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import CategoryIcon from '@mui/icons-material/Category';
 import DatasetIcon from '@mui/icons-material/Dataset';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import FormatColorFillIcon from '@mui/icons-material/FormatColorFill';
 import PeopleIcon from '@mui/icons-material/People';
@@ -21,7 +20,6 @@ import Orders from './components/order_management/Orders';
 import AdminSignIn from './components/users/AdminSignIn';
 import Users from './components/user_management/Users';
 import Categories from './components/data_management/Categories';
-import AdminUsers from './components/user_management/AdminUsers';
 import ResetUserPassword from './components/users/ResetUserPassword';
 import Category from './components/data_management/Category';
 import Products from './components/data_management/Products';
@@ -71,11 +69,6 @@ const NAVIGATION = [
         segment: '',
         title: 'Users',
         icon: <PeopleIcon color="primary" />,
-      },
-      {
-        segment: 'admin_users',
-        title: 'Admin Users',
-        icon: <AdminPanelSettingsIcon />,
       },
     ],
   },
@@ -190,10 +183,6 @@ function AdminApp(props) {
                   <Route
                     path="/admin/data_management/products/:slug"
                     element={<Product />}
-                  />
-                  <Route
-                    path="/admin/users_management/admin_users"
-                    element={<AdminUsers />}
                   />
                   <Route path="/admin/reviews" element={<ReviewManagement />} />
                 </Routes>
