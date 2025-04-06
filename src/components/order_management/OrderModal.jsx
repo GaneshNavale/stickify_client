@@ -199,9 +199,9 @@ const OrderModal = (props) => {
                   <Typography variant="body1" gutterBottom>
                     <strong>Shipping Address:</strong>
                     <br />
-                    {order.shipping_address.full_name}
+                    {order.shipping_address.full_name}<br />
                     {order.shipping_address.address_line_1},{' '}
-                    {order.shipping_address.city}
+                    {order.shipping_address.city},{' '}
                     {order.shipping_address.state},{' '}
                     {order.shipping_address.zip_code}
                   </Typography>
@@ -209,9 +209,9 @@ const OrderModal = (props) => {
                   <Typography variant="body1" gutterBottom>
                     <strong>Billing Address:</strong>
                     <br />
-                    {order.billing_address.full_name}
+                    {order.billing_address.full_name}<br />
                     {order.billing_address.address_line_1},{' '}
-                    {order.billing_address.city}
+                    {order.billing_address.city},{' '}
                     {order.billing_address.state},{' '}
                     {order.billing_address.zip_code}
                   </Typography>
