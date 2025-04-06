@@ -220,7 +220,7 @@ const SampleStickers = () => {
               name="Full Name"
               title="Frontend Developer"
               company="Xyz Pvt Ltd"
-              review="Steacker is a fantastic product that really delivers on its promises. The build quality is excellent, and it has made my daily tasks so much easier. However, I wish it had a few more customization options. Overall, I'm satisfied!"
+              review="Sticker is a fantastic product that really delivers on its promises. The build quality is excellent, and it has made my daily tasks so much easier. However, I wish it had a few more customization options. Overall, I'm satisfied!"
             />
           </Grid>
           <Grid item size={{ xs: 12, sm: 6, lg: 3 }}>
@@ -228,7 +228,7 @@ const SampleStickers = () => {
               name="Full Name"
               title="Network Engineer"
               company="Info tech."
-              review="I've been using Steacker for a month now, and I absolutely love it! The design is sleek, and it performs flawlessly. Highly recommend!"
+              review="I've been using Sticker for a month now, and I absolutely love it! The design is sleek, and it performs flawlessly. Highly recommend!"
             />
           </Grid>
         </Grid>
