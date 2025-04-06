@@ -24,7 +24,7 @@ import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 const navItems = [
   { name: "Products", path: "/categories" },
   { name: "Tools", path: "/tools" },
-  { name: "Sample Steacker", path: "/" },
+  { name: "Sample Sticker", path: "/" },
   { name: "Deals", path: "/deals" },
 ];
 
