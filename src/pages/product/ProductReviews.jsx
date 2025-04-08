@@ -183,8 +183,8 @@ const ProductReviews = ({ productId }) => {
                   <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                     <Avatar
                       sx={{ mr: 2 }}
-                      alt={user.name}
-                      src={user.avatar_image_url}
+                      alt={review.user.name}
+                      src={review.user.avatar_image_url}
                     >
                       {review.user.name.charAt(0)}
                     </Avatar>
